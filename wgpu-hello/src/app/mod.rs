@@ -57,7 +57,7 @@ impl App {
         self.pipeline = Some(pipeline);
     }
 
-    pub fn input(&self, event: &winit::event::WindowEvent) -> bool {
+    pub fn input(&self, _event: &winit::event::WindowEvent) -> bool {
         return false;
     }
 

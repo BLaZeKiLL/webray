@@ -2,6 +2,7 @@
 #![allow(clippy::needless_return)]
 
 use log::{info, error};
+
 use winit::error::EventLoopError;
 use winit::event::{KeyEvent, ElementState};
 use winit::keyboard::{KeyCode, PhysicalKey};
@@ -56,7 +57,7 @@ fn start(window: Window, mut app: App) -> Result<(), EventLoopError> {
 
 fn handle_window_event(app: &mut App, event: &WindowEvent, target: &EventLoopWindowTarget<()>) {
     if app.input(event) {
-        // if app has not processed the event
+        // if app has processed the event
         return;
     }
 

@@ -1783,6 +1783,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "wgpu-compute"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "env_logger",
+ "flume",
+ "glam",
+ "log",
+ "pollster",
+ "rand",
+ "wgpu",
+]
+
+[[package]]
 name = "wgpu-core"
 version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
