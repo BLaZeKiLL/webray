@@ -3,5 +3,6 @@ resolver = "2"
 
 members = [
   "wgpu-hello",
-  "wgpu-compute"
+  "wgpu-compute",
+  "vexray"
 ]

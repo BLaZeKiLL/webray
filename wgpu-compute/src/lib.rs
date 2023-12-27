@@ -14,6 +14,10 @@ pub async fn run() {
         .format_timestamp(None)
         .init();
 
+    run_compute_double().await;
+}
+
+async fn run_compute_double() {
     let numbers = [1, 2, 3, 4, 5];
 
     let gpu = Gpu::new().await;
