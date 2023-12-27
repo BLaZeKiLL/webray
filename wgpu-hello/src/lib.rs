@@ -1,63 +1,96 @@
-use winit::{
-    event::*,
-    event_loop::{ControlFlow, EventLoop},
-    window::WindowBuilder,
+#![deny(clippy::implicit_return)]
+#![allow(clippy::needless_return)]
+
+use log::{info, error};
+use winit::error::EventLoopError;
+use winit::event::{KeyEvent, ElementState};
+use winit::keyboard::{KeyCode, PhysicalKey};
+use winit::{event::WindowEvent, event_loop::EventLoopWindowTarget};
+
+use crate::{
+    app::App,
+    core::{gpu::Gpu, window::Window},
 };
 
-#[cfg(target_arch="wasm32")]
-use wasm_bindgen::prelude::*;
+mod app;
+mod core;
 
-#[cfg_attr(target_arch="wasm32", wasm_bindgen(start))]
-pub fn run() {
-    cfg_if::cfg_if! {
-        if #[cfg(target_arch = "wasm32")] {
-            std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-            console_log::init_with_level(log::Level::Warn).expect("Couldn't initialize logger");
-        } else {
-            env_logger::init();
-        }
-    }
+pub async fn run() -> Result<(), EventLoopError> {
+    env_logger::builder()
+        .filter_level(log::LevelFilter::Info)
+        .format_timestamp(None)
+        .init();
 
-    let event_loop = EventLoop::new();
-    let window = WindowBuilder::new().build(&event_loop).unwrap();
+    let window = Window::new();
 
-    #[cfg(target_arch = "wasm32")]
-    {
-        // Winit prevents sizing with CSS, so we have to set
-        // the size manually when on web.
-        use winit::dpi::PhysicalSize;
-        window.set_inner_size(PhysicalSize::new(450, 400));
+    info!("Window initialized");
 
-        use winit::platform::web::WindowExtWebSys;
-        web_sys::window()
-            .and_then(|win| win.document())
-            .and_then(|doc| {
-                let dst = doc.get_element_by_id("wasm-example")?;
-                let canvas = web_sys::Element::from(window.canvas());
-                dst.append_child(&canvas).ok()?;
-                Some(())
-            })
-            .expect("Couldn't append canvas to document body.");
-    }
+    let gpu = Gpu::new(&window).await;
 
-    event_loop.run(move |event, _, control_flow| match event {
-        Event::WindowEvent {
-            ref event,
-            window_id,
-        } if window_id == window.id() => match event {
-            WindowEvent::CloseRequested
-            | WindowEvent::KeyboardInput {
-                input:
-                    KeyboardInput {
-                        state: ElementState::Pressed,
-                        virtual_keycode: Some(VirtualKeyCode::Escape),
-                        ..
-                    },
-                ..
-            } => *control_flow = ControlFlow::Exit,
-            _ => {}
-        },
-        _ => {}
-    });
+    info!("WebGPU initialized");
+
+    let app = App::new(gpu);
+
+    return start(window, app);
 }
 
+fn start(window: Window, mut app: App) -> Result<(), EventLoopError> {
+    app.start();
+
+    return window
+        .event_loop
+        .run(move |event, target| match event {
+            winit::event::Event::WindowEvent {
+                ref event,
+                window_id,
+            } if window_id == window.handle.id() => {
+                // if this window
+                handle_window_event(&mut app, event, target);
+            }
+            winit::event::Event::AboutToWait => {
+                //window.handle.request_redraw(); // re-render each frame
+            }
+            _ => {}
+        });
+}
+
+fn handle_window_event(app: &mut App, event: &WindowEvent, target: &EventLoopWindowTarget<()>) {
+    if app.input(event) {
+        // if app has not processed the event
+        return;
+    }
+
+    match event {
+        winit::event::WindowEvent::CloseRequested
+        | winit::event::WindowEvent::KeyboardInput {
+            event: KeyEvent {
+                physical_key: PhysicalKey::Code(KeyCode::Escape),
+                state: ElementState::Pressed,
+                ..
+            },
+            ..
+        } => {
+            app.destroy();
+
+            target.exit();
+        }
+
+        winit::event::WindowEvent::Resized(physical_size) => {
+            app.resize(*physical_size);
+        }
+
+        winit::event::WindowEvent::RedrawRequested => {
+            app.update();
+
+            match app.render() {
+                Ok(_) => {},
+                Err(wgpu::SurfaceError::Lost) | Err(wgpu::SurfaceError::OutOfMemory) => {
+                    target.exit();
+                }
+                Err(e) => error!("{:?}", e),
+            }
+        }
+
+        _ => {}
+    }
+}

@@ -1,5 +1,5 @@
 use wgpu_hello::run;
 
 fn main() {
-    run();
+    pollster::block_on(run()).expect("App error");
 }

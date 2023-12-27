@@ -13,21 +13,11 @@ path = "src/main.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-winit = "0.28"
-env_logger = "0.10"
-log = "0.4"
+winit = { version = "0.29", features = ["rwh_05"]} # raw_window_handle_0.5 is required for compat issues should be fixed in next version of wgpu
 wgpu = "0.18"
+rand = "0.8" # RNG
+glam = "0.24" # Math lib
 
-cfg-if = "1"
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-console_error_panic_hook = "0.1.6"
-console_log = "1.0"
-wgpu = { version = "0.18", features = ["webgl"]}
-wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4.30"
-web-sys = { version = "0.3", features = [
-    "Document",
-    "Window",
-    "Element",
-]}
+log = "0.4" # log API
+env_logger = "0.10" # log API implementation
+pollster = "0.3" # block on main

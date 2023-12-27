@@ -3,8 +3,9 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
+		"wasm": "wasm-pack build ./wgpu-hello --out-dir ../src/lib/wasm/wgpu-hello",
+		"dev": "yarn wasm && vite dev",
+		"build": "yarn wasm && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -27,6 +28,8 @@
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
 		"vite": "^4.4.2",
+		"vite-plugin-top-level-await": "^1.4.0",
+		"vite-plugin-wasm": "^3.2.2",
 		"vitest": "^0.34.0"
 	},
 	"type": "module"
