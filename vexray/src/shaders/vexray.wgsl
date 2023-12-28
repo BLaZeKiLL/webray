@@ -44,8 +44,13 @@ fn ray_at(ray: Ray, t: f32) -> vec3f {
 }
 
 fn ray_color(ray: Ray) -> vec3f {
-    if hit_sphere(vec3f(0.0, 0.0, -1.0), 0.5, ray) {
-        return vec3f(1.0, 0.0, 0.0);
+    let sphere_center = vec3f(0.0, 0.0, -1.0);
+
+    let t = hit_sphere(sphere_center, 0.5, ray);
+
+    if t > 0.0 {
+        let normal = normalize(ray_at(ray, t) - sphere_center);
+        return 0.5 * vec3f(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0);
     }
 
     let unit_dir = normalize(ray.direction);
@@ -55,7 +60,8 @@ fn ray_color(ray: Ray) -> vec3f {
 // RAY_END
 
 // SPHERE_START
-fn hit_sphere(center: vec3f, radius: f32, ray: Ray) -> bool {
+/// solves the sphere ray intersection equation, which is a quadratic equation
+fn hit_sphere(center: vec3f, radius: f32, ray: Ray) -> f32 {
     let origin_to_center = ray.origin - center; // A - C
 
     let a = dot(ray.direction, ray.direction);
@@ -64,7 +70,11 @@ fn hit_sphere(center: vec3f, radius: f32, ray: Ray) -> bool {
 
     let discriminant = b * b - 4.0 * a * c;
 
-    return discriminant >= 0.0;
+    if discriminant < 0.0 {
+        return -1.0;
+    } else {
+        return (-b - sqrt(discriminant)) / (2.0 * a); // '-' -> one solution only
+    }
 }
 // SPHERE_END
 
@@ -75,9 +85,9 @@ fn hit_sphere(center: vec3f, radius: f32, ray: Ray) -> bool {
 
 @compute @workgroup_size(1, 1, 1)
 fn main(@builtin(global_invocation_id) id: vec3u) {
-    let pixel_position: vec2i = vec2i(i32(id.x), i32(id.y));
+    let pixel_position = vec2i(i32(id.x), i32(id.y));
 
-    let pixel_center: vec3f = config.pixel_zero_loc 
+    let pixel_center = config.pixel_zero_loc 
         + (f32(pixel_position.x) * config.viewport.delta_u) 
         + (f32(pixel_position.y) * config.viewport.delta_v);
     
@@ -85,7 +95,7 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
 
     let ray = Ray(config.camera.center, ray_direction);
 
-    var pixel_color: vec3f = ray_color(ray);
+    var pixel_color = ray_color(ray);
 
     textureStore(result, pixel_position, vec4f(pixel_color, 1.0)); // final output
 }
