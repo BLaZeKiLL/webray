@@ -6,7 +6,9 @@ pub struct Image {
 
 #[derive(Debug, encase::ShaderType)]
 pub struct Camera {
-    pub position: glam::Vec3,
+    /// Camera center is the eye point
+    pub center: glam::Vec3,
+    /// Distance from camera center and viewport center
     pub focal_length: f32,
 }
 
@@ -14,7 +16,9 @@ pub struct Camera {
 pub struct Viewport {
     width: f32,
     height: f32,
+    /// horizontal vector
     u: glam::Vec3,
+    /// inverted vertical vector
     v: glam::Vec3,
     delta_u: glam::Vec3,
     delta_v: glam::Vec3,
@@ -34,7 +38,7 @@ impl KernelConfig {
         let image = Image { width, height };
 
         let camera = Camera {
-            position: glam::Vec3::ZERO,
+            center: glam::Vec3::ZERO,
             focal_length: 1.0,
         };
 
@@ -47,7 +51,7 @@ impl KernelConfig {
         let delta_u = viewport_u / image.width as f32;
         let delta_v = viewport_v / image.height as f32;
 
-        let upper_left = camera.position
+        let upper_left = camera.center
             - glam::vec3(0.0, 0.0, camera.focal_length)
             - viewport_u / 2.0
             - viewport_v / 2.0;

@@ -26,6 +26,7 @@ impl KernelBuffers {
             mapped_at_creation: false,
         });
 
+        // using buffer init and write the buffer here it self, don't need to do queue.write_buffer
         let config_buffer = gpu
             .device
             .create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -44,7 +45,7 @@ impl KernelBuffers {
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rgba8Unorm,
+            format: wgpu::TextureFormat::Rgba8Unorm, // format is specified in the shader
             usage: wgpu::TextureUsages::STORAGE_BINDING | wgpu::TextureUsages::COPY_SRC,
             view_formats: &[wgpu::TextureFormat::Rgba8Unorm],
         });
