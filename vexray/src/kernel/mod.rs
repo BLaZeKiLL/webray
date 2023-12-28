@@ -18,11 +18,16 @@ pub async fn render(config: &KernelConfig) -> Result<Vec<u8>, ()> {
 
     let bind_group = create_bind_group(&gpu, &pipeline, &buffers);
 
+    info!("Render kernel initialized");
+
     submit(&gpu, config, &pipeline, &buffers, &bind_group);
+
+    info!("Render commands submitted");
 
     return finish(&gpu, config, &buffers).await;
 }
 
+/// Creates the compute pipeline and imports the vexray.wgsl compute shader
 fn create_pipeline(gpu: &Gpu) -> wgpu::ComputePipeline {
     let shader = gpu
         .device
@@ -38,6 +43,8 @@ fn create_pipeline(gpu: &Gpu) -> wgpu::ComputePipeline {
         });
 }
 
+/// Creates the bind group
+/// binds render texture to group(0), binding(0)
 fn create_bind_group(
     gpu: &Gpu,
     pipeline: &wgpu::ComputePipeline,
@@ -48,17 +55,25 @@ fn create_bind_group(
     return gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
         label: Some("Compute bind group"),
         layout: &bind_group_layout,
-        entries: &[wgpu::BindGroupEntry {
-            binding: 0,
-            resource: wgpu::BindingResource::TextureView(
-                &buffers
-                    .render
-                    .create_view(&wgpu::TextureViewDescriptor::default()),
-            ),
-        }],
+        entries: &[
+            wgpu::BindGroupEntry {
+                binding: 0,
+                resource: wgpu::BindingResource::TextureView(
+                    &buffers
+                        .render
+                        .create_view(&wgpu::TextureViewDescriptor::default()),
+                ),
+            },
+            wgpu::BindGroupEntry {
+                binding: 1,
+                resource: buffers.config.as_entire_binding(),
+            },
+        ],
     });
 }
 
+/// Creates the command encoders and configures the compute pass
+/// Submits the commands to the gpu
 fn submit(
     gpu: &Gpu,
     config: &KernelConfig,
@@ -81,7 +96,7 @@ fn submit(
 
         pass.set_pipeline(pipeline);
         pass.set_bind_group(0, bind_group, &[]);
-        pass.dispatch_workgroups(config.width, config.height, 1);
+        pass.dispatch_workgroups(config.image.width, config.image.height, 1);
     }
 
     encoder.copy_texture_to_buffer(
@@ -95,13 +110,13 @@ fn submit(
             buffer: &buffers.result,
             layout: wgpu::ImageDataLayout {
                 offset: 0,
-                bytes_per_row: Some(config.width * 4),
-                rows_per_image: Some(config.height),
+                bytes_per_row: Some(config.image.width * 4),
+                rows_per_image: Some(config.image.height),
             },
         },
         wgpu::Extent3d {
-            width: config.width,
-            height: config.height,
+            width: config.image.width,
+            height: config.image.height,
             depth_or_array_layers: 1,
         },
     );
@@ -110,8 +125,10 @@ fn submit(
     gpu.queue.submit([encoder.finish()]);
 }
 
+/// waits for finish by using device.poll (block on main thread)
+/// returns the data from result buffer
 async fn finish(gpu: &Gpu, config: &KernelConfig, buffers: &KernelBuffers) -> Result<Vec<u8>, ()> {
-    let mut output_data = vec![0u8; (config.size) as usize];
+    let mut output = vec![0u8; (config.result_size()) as usize];
 
     let result_slice = buffers.result.slice(..);
 
@@ -125,7 +142,7 @@ async fn finish(gpu: &Gpu, config: &KernelConfig, buffers: &KernelBuffers) -> Re
     if let Ok(Ok(_)) = receiver.recv_async().await {
         let result_view = result_slice.get_mapped_range();
 
-        output_data.copy_from_slice(&result_view[..]);
+        output.copy_from_slice(&result_view[..]);
     } else {
         error!("Something went wrong");
 
@@ -136,7 +153,7 @@ async fn finish(gpu: &Gpu, config: &KernelConfig, buffers: &KernelBuffers) -> Re
     // result view would be dropped by here
     buffers.result.unmap();
 
-    info!("Render complete");
+    info!("Render finished");
 
-    return Ok(output_data);
+    return Ok(output);
 }

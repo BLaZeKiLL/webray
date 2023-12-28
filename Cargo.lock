@@ -329,6 +329,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "const_panic"
+version = "0.2.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6051f239ecec86fde3410901ab7860d458d160371533842974fc61f96d15879b"
+
+[[package]]
 name = "core-foundation"
 version = "0.9.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -457,6 +463,38 @@ name = "either"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
+
+[[package]]
+name = "encase"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8fce2eeef77fd4a293a54b62aa00ac9daebfbcda4bf8998c5a815635b004aa1c"
+dependencies = [
+ "const_panic",
+ "encase_derive",
+ "glam",
+ "thiserror",
+]
+
+[[package]]
+name = "encase_derive"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e520cde08cbf4f7cc097f61573ec06ce467019803de8ae82fb2823fa1554a0e"
+dependencies = [
+ "encase_derive_impl",
+]
+
+[[package]]
+name = "encase_derive_impl"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3fe2568f851fd6144a45fa91cfed8fe5ca8fc0b56ba6797bfc1ed2771b90e37c"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "env_logger"
@@ -1781,6 +1819,7 @@ name = "vexray"
 version = "0.1.0"
 dependencies = [
  "bytemuck",
+ "encase",
  "env_logger",
  "flume",
  "glam",
