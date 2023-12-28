@@ -44,11 +44,29 @@ fn ray_at(ray: Ray, t: f32) -> vec3f {
 }
 
 fn ray_color(ray: Ray) -> vec3f {
+    if hit_sphere(vec3f(0.0, 0.0, -1.0), 0.5, ray) {
+        return vec3f(1.0, 0.0, 0.0);
+    }
+
     let unit_dir = normalize(ray.direction);
     let alpha = 0.5 * (unit_dir.y + 1.0);
     return (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0); // lerp
 }
 // RAY_END
+
+// SPHERE_START
+fn hit_sphere(center: vec3f, radius: f32, ray: Ray) -> bool {
+    let origin_to_center = ray.origin - center; // A - C
+
+    let a = dot(ray.direction, ray.direction);
+    let b = 2.0 * dot(origin_to_center, ray.direction);
+    let c = dot(origin_to_center, origin_to_center) - radius * radius;
+
+    let discriminant = b * b - 4.0 * a * c;
+
+    return discriminant >= 0.0;
+}
+// SPHERE_END
 
 // BINDINGS_START
 @group(0) @binding(0) var result: texture_storage_2d<rgba8unorm, write>; // output image
