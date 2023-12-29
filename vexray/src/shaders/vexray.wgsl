@@ -56,33 +56,12 @@ fn interval_surrounds(interval: Interval, x: f32) -> bool {
 }
 // UTILS_END
 
-// RAY_START
+// HITRECORD_START
 struct HitRecord {
     point: vec3f,
     normal: vec3f,
     t: f32,
     front_face: bool
-}
-
-struct Ray {
-    origin: vec3f,
-    direction: vec3f
-}
-
-fn ray_at(ray: Ray, t: f32) -> vec3f {
-    return ray.origin + t * ray.direction;
-}
-
-fn ray_color(ray: Ray) -> vec3f {
-    var hit = HitRecord();
-
-    if hit_world(ray, Interval(0.0, INF_F32), &hit) {
-        return 0.5 * (hit.normal + vec3f(1.0));
-    }
-
-    let unit_dir = normalize(ray.direction);
-    let alpha = 0.5 * (unit_dir.y + 1.0);
-    return (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0); // lerp
 }
 
 /// Uses dot product to figure out which side the ray is
@@ -93,6 +72,17 @@ fn hit_set_face_normal(hit: ptr<function, HitRecord>, ray: Ray, out_normal: vec3
 
     (*hit).front_face = front_face;
     (*hit).normal = normal;
+}
+// HITRECORD_END
+
+// RAY_START
+struct Ray {
+    origin: vec3f,
+    direction: vec3f
+}
+
+fn ray_at(ray: Ray, t: f32) -> vec3f {
+    return ray.origin + t * ray.direction;
 }
 // RAY_END
 
@@ -161,6 +151,35 @@ fn hit_world(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> b
 }
 // WORLD_END
 
+// RENDERER_START
+fn render_ray(ray: Ray) -> vec3f {
+    var hit = HitRecord();
+
+    if hit_world(ray, Interval(0.0, INF_F32), &hit) {
+        return 0.5 * (hit.normal + vec3f(1.0));
+    }
+
+    let unit_dir = normalize(ray.direction);
+    let alpha = 0.5 * (unit_dir.y + 1.0);
+
+    return (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0); // lerp
+}
+
+fn render(pixel_position: vec2i) -> vec4f {
+    let pixel_center = config.pixel_zero_loc 
+        + (f32(pixel_position.x) * config.viewport.delta_u) 
+        + (f32(pixel_position.y) * config.viewport.delta_v);
+    
+    let ray_direction = pixel_center - config.camera.center;
+
+    let ray = Ray(config.camera.center, ray_direction);
+
+    let pixel_color = render_ray(ray);
+
+    return vec4f(pixel_color, 1.0);
+}
+// RENDERER_END
+
 // BINDINGS_START
 @group(0) @binding(0) var result: texture_storage_2d<rgba8unorm, write>; // output image
 @group(0) @binding(1) var<uniform> config: Config; // render config
@@ -171,15 +190,7 @@ fn hit_world(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> b
 fn main(@builtin(global_invocation_id) id: vec3u) {
     let pixel_position = vec2i(i32(id.x), i32(id.y));
 
-    let pixel_center = config.pixel_zero_loc 
-        + (f32(pixel_position.x) * config.viewport.delta_u) 
-        + (f32(pixel_position.y) * config.viewport.delta_v);
-    
-    let ray_direction = pixel_center - config.camera.center;
+    let pixel_color = render(pixel_position);
 
-    let ray = Ray(config.camera.center, ray_direction);
-
-    var pixel_color = ray_color(ray);
-
-    textureStore(result, pixel_position, vec4f(pixel_color, 1.0)); // final output
+    textureStore(result, pixel_position, pixel_color); // final output
 }
