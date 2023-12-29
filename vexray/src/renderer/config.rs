@@ -41,7 +41,7 @@ impl KernelConfig {
         let camera = Camera {
             center: glam::Vec3::ZERO,
             focal_length: 1.0,
-            samples: 16
+            samples: 128
         };
 
         let viewport_height = 2.0;
