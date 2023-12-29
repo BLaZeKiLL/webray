@@ -2,6 +2,36 @@
 const INF_F32 = 0x1p+127f;
 // CONSTANTS_END
 
+// RNG_START - PCG32 implementation
+const PCG32_MULTIPLIER: u32 = 747796405u;
+const PCG32_INCREMENT: u32 = 2891336453u;
+
+struct Rng {
+    state: u32
+}
+
+var<private> rng: Rng;
+
+fn pcg32(_rng: ptr<private, Rng>) -> u32 {
+    let old_state = (*_rng).state;
+
+    (*_rng).state = (*_rng).state * PCG32_MULTIPLIER + PCG32_INCREMENT;
+
+    let xorshifted: u32 = ((old_state >> 18u) ^ old_state) >> 27u;
+    let rot: u32 = old_state >> 59u;
+    
+    return (xorshifted >> rot) | (xorshifted << ((~rot) & 31u)); // changed -rot -> ~rot
+}
+
+fn random_init(seed: vec3u) {
+    rng = Rng(seed.x * seed.y * seed.z);
+}
+
+fn random_float() -> f32 {
+    return f32(pcg32(&rng)) / 4294967296.0;
+}
+// RNG_END
+
 // IMAGE_START
 struct Image {
     width: u32,
@@ -188,6 +218,8 @@ fn render(pixel_position: vec2i) -> vec4f {
 
 @compute @workgroup_size(1, 1, 1)
 fn main(@builtin(global_invocation_id) id: vec3u) {
+    random_init(id);
+
     let pixel_position = vec2i(i32(id.x), i32(id.y));
 
     let pixel_color = render(pixel_position);
