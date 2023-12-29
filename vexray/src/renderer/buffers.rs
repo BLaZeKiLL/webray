@@ -9,11 +9,11 @@ pub struct KernelBuffers {
     /// output from render texture is copied to this
     /// so that it can be mapped and read
     pub result: wgpu::Buffer,
-    /// kernel config uniform buffer
-    pub config: wgpu::Buffer,
     /// storage texture where the rendered image is
     /// written in the compute shader
     pub render: wgpu::Texture,
+    /// kernel config uniform buffer
+    pub config: wgpu::Buffer,
     /// sphere objects in the world
     pub spheres: wgpu::Buffer,
 }
@@ -27,15 +27,6 @@ impl KernelBuffers {
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
-
-        // using buffer init and write the buffer here it self, don't need to do queue.write_buffer
-        let config_buffer = gpu
-            .device
-            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("Config uniform buffer"),
-                contents: &config.as_wgsl_bytes().unwrap()[..],
-                usage: wgpu::BufferUsages::UNIFORM,
-            });
 
         let render_texture = gpu.device.create_texture(&wgpu::TextureDescriptor {
             label: Some("Render texture"),
@@ -52,6 +43,17 @@ impl KernelBuffers {
             view_formats: &[wgpu::TextureFormat::Rgba8Unorm],
         });
 
+        // using buffer init and write the buffer here it self, don't need to do queue.write_buffer
+        // maybe we can delay this, lazy upload
+
+        let config_buffer = gpu
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("Config uniform buffer"),
+                contents: &config.as_wgsl_bytes().unwrap()[..],
+                usage: wgpu::BufferUsages::UNIFORM,
+            });
+
         let spheres_buffer = gpu
             .device
             .create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -62,8 +64,8 @@ impl KernelBuffers {
 
         return KernelBuffers {
             result: result_buffer,
-            config: config_buffer,
             render: render_texture,
+            config: config_buffer,
             spheres: spheres_buffer,
         };
     }

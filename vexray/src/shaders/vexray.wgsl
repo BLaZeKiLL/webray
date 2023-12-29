@@ -2,33 +2,32 @@
 const INF_F32 = 0x1p+127f;
 // CONSTANTS_END
 
-// RNG_START - PCG32 implementation
-const PCG32_MULTIPLIER: u32 = 747796405u;
-const PCG32_INCREMENT: u32 = 2891336453u;
-
+// RNG_START - Shader book implementation
 struct Rng {
-    state: u32
+    state: f32
 }
 
 var<private> rng: Rng;
 
-fn pcg32(_rng: ptr<private, Rng>) -> u32 {
+fn prng(_rng: ptr<private, Rng>) -> f32 {
     let old_state = (*_rng).state;
+    let new_state = fract(sin(old_state) * 100000.0);
 
-    (*_rng).state = (*_rng).state * PCG32_MULTIPLIER + PCG32_INCREMENT;
+    (*_rng).state = new_state;
 
-    let xorshifted: u32 = ((old_state >> 18u) ^ old_state) >> 27u;
-    let rot: u32 = old_state >> 59u;
-    
-    return (xorshifted >> rot) | (xorshifted << ((~rot) & 31u)); // changed -rot -> ~rot
+    return new_state;
 }
 
 fn random_init(seed: vec3u) {
-    rng = Rng(seed.x * seed.y * seed.z);
+    rng = Rng(f32(seed.x * seed.y) + 0.1337);
 }
 
 fn random_float() -> f32 {
-    return f32(pcg32(&rng)) / 4294967296.0;
+    return prng(&rng);
+}
+
+fn random_float_range(min: f32, max: f32) -> f32 {
+    return min + (max - min) * random_float();
 }
 // RNG_END
 
@@ -42,7 +41,8 @@ struct Image {
 // CAMERA_START
 struct Camera {
     center: vec3f,
-    focal_length: f32
+    focal_length: f32,
+    samples: u32
 }
 // CAMERA_END
 
@@ -200,7 +200,11 @@ fn render(pixel_position: vec2i) -> vec4f {
         + (f32(pixel_position.x) * config.viewport.delta_u) 
         + (f32(pixel_position.y) * config.viewport.delta_v);
     
-    let ray_direction = pixel_center - config.camera.center;
+    let sample_square = ((-0.5 + random_float()) * config.viewport.delta_u) + ((-0.5 + random_float()) * config.viewport.delta_v);
+
+    let pixel_sample = pixel_center + sample_square;
+    
+    let ray_direction = pixel_sample - config.camera.center;
 
     let ray = Ray(config.camera.center, ray_direction);
 
@@ -222,7 +226,13 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
 
     let pixel_position = vec2i(i32(id.x), i32(id.y));
 
-    let pixel_color = render(pixel_position);
+    var pixel_color = vec4f();
+
+    for (var i = 0u; i < config.camera.samples; i++) {
+        pixel_color += render(pixel_position);
+    }
+
+    pixel_color /= f32(config.camera.samples);
 
     textureStore(result, pixel_position, pixel_color); // final output
 }
