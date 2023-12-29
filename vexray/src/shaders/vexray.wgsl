@@ -33,6 +33,12 @@ struct Config {
 }
 // CONFIG_END
 
+// UTILS_START
+fn vec3f_len_squared(v: vec3f) -> f32 {
+    return v.x * v.x + v.y * v.y + v.z * v.z;
+}
+// UTILS_END
+
 // RAY_START
 struct Ray {
     origin: vec3f,
@@ -50,7 +56,7 @@ fn ray_color(ray: Ray) -> vec3f {
 
     if t > 0.0 {
         let normal = normalize(ray_at(ray, t) - sphere_center);
-        return 0.5 * vec3f(normal.x + 1.0, normal.y + 1.0, normal.z + 1.0);
+        return 0.5 * (normal + vec3f(1.0));
     }
 
     let unit_dir = normalize(ray.direction);
@@ -64,16 +70,16 @@ fn ray_color(ray: Ray) -> vec3f {
 fn hit_sphere(center: vec3f, radius: f32, ray: Ray) -> f32 {
     let origin_to_center = ray.origin - center; // A - C
 
-    let a = dot(ray.direction, ray.direction);
-    let b = 2.0 * dot(origin_to_center, ray.direction);
-    let c = dot(origin_to_center, origin_to_center) - radius * radius;
+    let a = vec3f_len_squared(ray.direction);
+    let half_b = dot(origin_to_center, ray.direction);
+    let c = vec3f_len_squared(origin_to_center) - radius * radius;
 
-    let discriminant = b * b - 4.0 * a * c;
+    let discriminant = half_b * half_b - a * c;
 
     if discriminant < 0.0 {
         return -1.0;
     } else {
-        return (-b - sqrt(discriminant)) / (2.0 * a); // '-' -> one solution only
+        return (-half_b - sqrt(discriminant)) / a; // '-' -> one solution only
     }
 }
 // SPHERE_END
