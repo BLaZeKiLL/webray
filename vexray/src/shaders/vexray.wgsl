@@ -41,6 +41,19 @@ struct Config {
 fn vec3f_len_squared(v: vec3f) -> f32 {
     return v.x * v.x + v.y * v.y + v.z * v.z;
 }
+
+struct Interval {
+    min: f32,
+    max: f32
+}
+
+fn interval_contains(interval: Interval, x: f32) -> bool {
+    return interval.min <= x && x <= interval.max;
+}
+
+fn interval_surrounds(interval: Interval, x: f32) -> bool {
+    return interval.min < x && x < interval.max;
+}
 // UTILS_END
 
 // RAY_START
@@ -63,7 +76,7 @@ fn ray_at(ray: Ray, t: f32) -> vec3f {
 fn ray_color(ray: Ray) -> vec3f {
     var hit = HitRecord();
 
-    if hit_world(ray, 0.0, INF_F32, &hit) {
+    if hit_world(ray, Interval(0.0, INF_F32), &hit) {
         return 0.5 * (hit.normal + vec3f(1.0));
     }
 
@@ -84,7 +97,7 @@ fn hit_set_face_normal(hit: ptr<function, HitRecord>, ray: Ray, out_normal: vec3
 // RAY_END
 
 // hit interface
-// fn hit(shape: Shape, ray: Ray, rmin: f32, rmax: f32, hit: ptr<function, HitRecord>) -> bool {}
+// fn hit(shape: Shape, ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> bool {}
 
 // SPHERE_START
 struct Sphere {
@@ -93,7 +106,7 @@ struct Sphere {
 }
 
 /// solves the sphere ray intersection equation, which is a quadratic equation
-fn hit_sphere(sphere: Sphere, ray: Ray, rmin: f32, rmax: f32, hit: ptr<function, HitRecord>) -> bool {
+fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> bool {
     let origin_to_center = ray.origin - sphere.center; // A - C
 
     let a = vec3f_len_squared(ray.direction);
@@ -109,9 +122,9 @@ fn hit_sphere(sphere: Sphere, ray: Ray, rmin: f32, rmax: f32, hit: ptr<function,
     let sqrtd = sqrt(discriminant);
 
     var root = (-half_b - sqrtd) / a;
-    if root <= rmin || root >= rmax {
+    if !interval_surrounds(ray_limits, root) {
         root = (-half_b + sqrtd) / a;
-        if root <= rmin || root >= rmax {
+        if !interval_surrounds(ray_limits, root) {
             return false;
         }
     }
@@ -128,16 +141,16 @@ fn hit_sphere(sphere: Sphere, ray: Ray, rmin: f32, rmax: f32, hit: ptr<function,
 // SPHERE_END
 
 // WORLD_START
-fn hit_world(ray: Ray, rmin: f32, rmax: f32, hit: ptr<function, HitRecord>) -> bool {
+fn hit_world(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> bool {
     var temp_hit = HitRecord();
     var hit_anything = false;
-    var closest_so_far = rmax;
+    var closest_so_far = ray_limits.max;
 
     // arrayLength returns a u32, so we make i also u32 to make logical operation happy
     for (var i = 0u; i < arrayLength(&world); i++) {
         let sphere = world[i];
 
-        if hit_sphere(sphere, ray, rmin, closest_so_far, &temp_hit) {
+        if hit_sphere(sphere, ray, Interval(ray_limits.min, closest_so_far), &temp_hit) {
             hit_anything = true;
             closest_so_far = temp_hit.t;
             *hit = temp_hit;
