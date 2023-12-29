@@ -2,7 +2,7 @@ use wgpu::util::DeviceExt;
 
 use crate::core::gpu::Gpu;
 
-use super::config::KernelConfig;
+use super::{config::KernelConfig, world::World};
 
 /// Container for kernel buffers
 pub struct KernelBuffers {
@@ -14,10 +14,12 @@ pub struct KernelBuffers {
     /// storage texture where the rendered image is
     /// written in the compute shader
     pub render: wgpu::Texture,
+    /// sphere objects in the world
+    pub spheres: wgpu::Buffer,
 }
 
 impl KernelBuffers {
-    pub fn new(gpu: &Gpu, config: &KernelConfig) -> Self {
+    pub fn new(gpu: &Gpu, config: &KernelConfig, world: &World) -> Self {
         // &arr and &arr[..] are different, second one is a slice and what we need
         let result_buffer = gpu.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Result buffer"),
@@ -50,10 +52,19 @@ impl KernelBuffers {
             view_formats: &[wgpu::TextureFormat::Rgba8Unorm],
         });
 
+        let spheres_buffer = gpu
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("Sphere objects buffer"),
+                contents: &world.sphere_objects_as_wgsl_bytes().unwrap()[..],
+                usage: wgpu::BufferUsages::STORAGE,
+            });
+
         return KernelBuffers {
             result: result_buffer,
             config: config_buffer,
             render: render_texture,
+            spheres: spheres_buffer,
         };
     }
 }

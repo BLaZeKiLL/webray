@@ -2,19 +2,21 @@ use log::{error, info};
 
 use crate::{core::gpu::Gpu, kernel::buffers::KernelBuffers};
 
-use self::config::KernelConfig;
+use self::{config::KernelConfig, world::World};
 
 mod buffers;
+mod shapes;
+pub mod world;
 pub mod config;
 
-pub async fn render(config: &KernelConfig) -> Result<Vec<u8>, ()> {
+pub async fn render(config: &KernelConfig, world: &World) -> Result<Vec<u8>, ()> {
     info!("Render start");
 
     let gpu = Gpu::new().await;
 
     let pipeline = create_pipeline(&gpu);
 
-    let buffers = KernelBuffers::new(&gpu, config);
+    let buffers = KernelBuffers::new(&gpu, config, world);
 
     let bind_group = create_bind_group(&gpu, &pipeline, &buffers);
 
@@ -68,6 +70,10 @@ fn create_bind_group(
                 binding: 1,
                 resource: buffers.config.as_entire_binding(),
             },
+            wgpu::BindGroupEntry {
+                binding: 2,
+                resource: buffers.spheres.as_entire_binding()
+            }
         ],
     });
 }

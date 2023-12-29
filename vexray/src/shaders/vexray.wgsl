@@ -1,3 +1,7 @@
+// CONSTANTS_START
+const INF_F32 = 0x1p+127f;
+// CONSTANTS_END
+
 // IMAGE_START
 struct Image {
     width: u32,
@@ -40,6 +44,13 @@ fn vec3f_len_squared(v: vec3f) -> f32 {
 // UTILS_END
 
 // RAY_START
+struct HitRecord {
+    point: vec3f,
+    normal: vec3f,
+    t: f32,
+    front_face: bool
+}
+
 struct Ray {
     origin: vec3f,
     direction: vec3f
@@ -50,43 +61,97 @@ fn ray_at(ray: Ray, t: f32) -> vec3f {
 }
 
 fn ray_color(ray: Ray) -> vec3f {
-    let sphere_center = vec3f(0.0, 0.0, -1.0);
+    var hit = HitRecord();
 
-    let t = hit_sphere(sphere_center, 0.5, ray);
-
-    if t > 0.0 {
-        let normal = normalize(ray_at(ray, t) - sphere_center);
-        return 0.5 * (normal + vec3f(1.0));
+    if hit_world(ray, 0.0, INF_F32, &hit) {
+        return 0.5 * (hit.normal + vec3f(1.0));
     }
 
     let unit_dir = normalize(ray.direction);
     let alpha = 0.5 * (unit_dir.y + 1.0);
     return (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0); // lerp
 }
+
+/// Uses dot product to figure out which side the ray is
+/// out_normal needs to be a unit vector
+fn hit_set_face_normal(hit: ptr<function, HitRecord>, ray: Ray, out_normal: vec3f) {
+    let front_face = dot(ray.direction, out_normal) < 0.0;
+    let normal = select(-out_normal, out_normal, front_face);
+
+    (*hit).front_face = front_face;
+    (*hit).normal = normal;
+}
 // RAY_END
 
+// hit interface
+// fn hit(shape: Shape, ray: Ray, rmin: f32, rmax: f32, hit: ptr<function, HitRecord>) -> bool {}
+
 // SPHERE_START
+struct Sphere {
+    center: vec3f,
+    radius: f32
+}
+
 /// solves the sphere ray intersection equation, which is a quadratic equation
-fn hit_sphere(center: vec3f, radius: f32, ray: Ray) -> f32 {
-    let origin_to_center = ray.origin - center; // A - C
+fn hit_sphere(sphere: Sphere, ray: Ray, rmin: f32, rmax: f32, hit: ptr<function, HitRecord>) -> bool {
+    let origin_to_center = ray.origin - sphere.center; // A - C
 
     let a = vec3f_len_squared(ray.direction);
     let half_b = dot(origin_to_center, ray.direction);
-    let c = vec3f_len_squared(origin_to_center) - radius * radius;
+    let c = vec3f_len_squared(origin_to_center) - sphere.radius * sphere.radius;
 
     let discriminant = half_b * half_b - a * c;
 
     if discriminant < 0.0 {
-        return -1.0;
-    } else {
-        return (-half_b - sqrt(discriminant)) / a; // '-' -> one solution only
+        return false;
     }
+
+    let sqrtd = sqrt(discriminant);
+
+    var root = (-half_b - sqrtd) / a;
+    if root <= rmin || root >= rmax {
+        root = (-half_b + sqrtd) / a;
+        if root <= rmin || root >= rmax {
+            return false;
+        }
+    }
+
+    let point = ray_at(ray, root);
+    let out_normal = (point - sphere.center) / sphere.radius; // this will be unit length
+
+    (*hit).t = root;
+    (*hit).point = point;
+    hit_set_face_normal(hit, ray, out_normal);
+
+    return true;
 }
 // SPHERE_END
+
+// WORLD_START
+fn hit_world(ray: Ray, rmin: f32, rmax: f32, hit: ptr<function, HitRecord>) -> bool {
+    var temp_hit = HitRecord();
+    var hit_anything = false;
+    var closest_so_far = rmax;
+
+    // arrayLength returns a u32, so we make i also u32 to make logical operation happy
+    for (var i = 0u; i < arrayLength(&world); i++) {
+        let sphere = world[i];
+
+        if hit_sphere(sphere, ray, rmin, closest_so_far, &temp_hit) {
+            hit_anything = true;
+            closest_so_far = temp_hit.t;
+            *hit = temp_hit;
+        }
+    }
+
+    return hit_anything;
+}
+// WORLD_END
 
 // BINDINGS_START
 @group(0) @binding(0) var result: texture_storage_2d<rgba8unorm, write>; // output image
 @group(0) @binding(1) var<uniform> config: Config; // render config
+@group(0) @binding(2) var<storage, read> world: array<Sphere>;
 // BINDINGS_END
 
 @compute @workgroup_size(1, 1, 1)

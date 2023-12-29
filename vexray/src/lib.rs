@@ -12,10 +12,15 @@ pub async fn run() {
         .format_timestamp_millis()
         .init();
 
-    let config = kernel::config::KernelConfig::new(1920, 1080);
     let path = "render.png";
+    let config = kernel::config::KernelConfig::new(1920, 1080);
+    
+    let mut world = kernel::world::World::new();
 
-    if let Ok(output) = kernel::render(&config).await {
+    world.add_sphere(glam::vec3(0.0, 0.0, -1.0), 0.5);
+    world.add_sphere(glam::vec3(0.0, -100.5, -1.0), 100.0);
+
+    if let Ok(output) = kernel::render(&config, &world).await {
         output_image(output, &config, path);
     };
 }
