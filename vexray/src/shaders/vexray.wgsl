@@ -2,28 +2,37 @@
 const INF_F32 = 0x1p+127f;
 // CONSTANTS_END
 
-// RNG_START - Shader book implementation
+// RNG_START - Pcg32 modified
+// https://github.com/grigoryoskin/vulkan-compute-ray-tracing/blob/master/resources/shaders/source/include/random.glsl
 struct Rng {
-    state: f32
+    state: u32
 }
 
 var<private> rng: Rng;
 
-fn prng(_rng: ptr<private, Rng>) -> f32 {
+fn step_rng(state: u32) -> u32 {
+    return state * 747796405u + 1u;
+}
+
+fn pcg32(_rng: ptr<private, Rng>) -> u32 {
     let old_state = (*_rng).state;
-    let new_state = fract(sin(old_state) * 100000.0);
+
+    let new_state = step_rng(old_state);
 
     (*_rng).state = new_state;
 
-    return new_state;
+    let w1 = ((new_state >> ((new_state >> 28u) + 4u)) ^ new_state) * 277803737u;
+    let w2 = (w1 >> 22u) ^ w1;
+
+    return w2;
 }
 
 fn random_init(seed: vec3u) {
-    rng = Rng(f32(seed.x * seed.y) + 0.1337);
+    rng = Rng((seed.x * seed.y) + 1337u);
 }
 
 fn random_float() -> f32 {
-    return prng(&rng);
+    return f32(pcg32(&rng)) / 4294967295.0;
 }
 
 fn random_float_range(min: f32, max: f32) -> f32 {
