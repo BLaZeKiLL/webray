@@ -240,19 +240,21 @@ fn render_ray(ray: Ray) -> vec3f {
 fn render_ray_v2(ray: Ray) -> vec3f {
     var current_ray_origin = ray.origin;
     var current_ray_direction = ray.direction;
-    // var accumulated_color = vec3f();
 
+    // start with background color
     let unit_dir = normalize(ray.direction);
     let alpha = 0.5 * (unit_dir.y + 1.0);
 
     var accumulated_color = (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0);
 
-    // this is not correct and will always result in the sky color
-    for (var i = 0u; i < config.camera.bounces; i++) { // number of bounces
+    var bounce = 0u;
+
+    // try world hits
+    for (bounce = 0u; bounce < config.camera.bounces; bounce++) {
         var hit = HitRecord();
 
         if hit_world(Ray(current_ray_origin, current_ray_direction), Interval(0.001, INF_F32), &hit) {
-            let direction = random_on_hemisphere(hit.normal);
+            let direction = hit.normal + random_unit_vector();
 
             current_ray_origin = hit.point;
             current_ray_direction = direction;
@@ -261,6 +263,11 @@ fn render_ray_v2(ray: Ray) -> vec3f {
         } else {
             break;
         }
+    }
+
+    // max bounce condition
+    if bounce >= config.camera.bounces {
+        accumulated_color = vec3f();
     }
 
     return accumulated_color;
