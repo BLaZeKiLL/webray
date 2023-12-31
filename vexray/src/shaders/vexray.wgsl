@@ -2,6 +2,25 @@
 const INF_F32 = 0x1p+127f;
 // CONSTANTS_END
 
+// UTILS_START
+fn vec3f_len_squared(v: vec3f) -> f32 {
+    return v.x * v.x + v.y * v.y + v.z * v.z;
+}
+
+struct Interval {
+    min: f32,
+    max: f32
+}
+
+fn interval_contains(interval: Interval, x: f32) -> bool {
+    return interval.min <= x && x <= interval.max;
+}
+
+fn interval_surrounds(interval: Interval, x: f32) -> bool {
+    return interval.min < x && x < interval.max;
+}
+// UTILS_END
+
 // RNG_START - Pcg32 modified
 // https://github.com/grigoryoskin/vulkan-compute-ray-tracing/blob/master/resources/shaders/source/include/random.glsl
 struct Rng {
@@ -38,6 +57,38 @@ fn random_float() -> f32 {
 fn random_float_range(min: f32, max: f32) -> f32 {
     return min + (max - min) * random_float();
 }
+
+fn random_vec3f() -> vec3f {
+    return vec3f(random_float(), random_float(), random_float());
+}
+
+fn random_vec3f_range(min: f32, max: f32) -> vec3f {
+    return vec3f(random_float_range(min, max), random_float_range(min, max), random_float_range(min, max));
+}
+
+fn random_in_unit_sphere() -> vec3f {
+    loop {
+        let p = random_vec3f_range(-1.0, 1.0);
+        if vec3f_len_squared(p) < 1.0 {
+            return p;
+        }
+    }
+    return vec3f(); // never reach here
+}
+
+fn random_unit_vector() -> vec3f {
+    return normalize(random_in_unit_sphere());
+}
+
+fn random_on_hemisphere(normal: vec3f) -> vec3f {
+    let unit = random_unit_vector();
+
+    if dot(unit, normal) > 0.0 { // same side
+        return unit;
+    } else {
+        return -unit;
+    }
+}
 // RNG_END
 
 // IMAGE_START
@@ -51,7 +102,8 @@ struct Image {
 struct Camera {
     center: vec3f,
     focal_length: f32,
-    samples: u32
+    samples: u32,
+    bounces: u32
 }
 // CAMERA_END
 
@@ -75,25 +127,6 @@ struct Config {
     pixel_zero_loc: vec3f
 }
 // CONFIG_END
-
-// UTILS_START
-fn vec3f_len_squared(v: vec3f) -> f32 {
-    return v.x * v.x + v.y * v.y + v.z * v.z;
-}
-
-struct Interval {
-    min: f32,
-    max: f32
-}
-
-fn interval_contains(interval: Interval, x: f32) -> bool {
-    return interval.min <= x && x <= interval.max;
-}
-
-fn interval_surrounds(interval: Interval, x: f32) -> bool {
-    return interval.min < x && x < interval.max;
-}
-// UTILS_END
 
 // HITRECORD_START
 struct HitRecord {
@@ -204,6 +237,35 @@ fn render_ray(ray: Ray) -> vec3f {
     return (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0); // lerp
 }
 
+fn render_ray_v2(ray: Ray) -> vec3f {
+    var current_ray_origin = ray.origin;
+    var current_ray_direction = ray.direction;
+    // var accumulated_color = vec3f();
+
+    let unit_dir = normalize(ray.direction);
+    let alpha = 0.5 * (unit_dir.y + 1.0);
+
+    var accumulated_color = (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0);
+
+    // this is not correct and will always result in the sky color
+    for (var i = 0u; i < config.camera.bounces; i++) { // number of bounces
+        var hit = HitRecord();
+
+        if hit_world(Ray(current_ray_origin, current_ray_direction), Interval(0.001, INF_F32), &hit) {
+            let direction = random_on_hemisphere(hit.normal);
+
+            current_ray_origin = hit.point;
+            current_ray_direction = direction;
+
+            accumulated_color *= 0.5;
+        } else {
+            break;
+        }
+    }
+
+    return accumulated_color;
+}
+
 fn render(pixel_position: vec2i) -> vec4f {
     let pixel_center = config.pixel_zero_loc 
         + (f32(pixel_position.x) * config.viewport.delta_u) 
@@ -217,7 +279,7 @@ fn render(pixel_position: vec2i) -> vec4f {
 
     let ray = Ray(config.camera.center, ray_direction);
 
-    let pixel_color = render_ray(ray);
+    let pixel_color = render_ray_v2(ray);
 
     return vec4f(pixel_color, 1.0);
 }

@@ -11,6 +11,7 @@ pub struct Camera {
     /// Distance from camera center and viewport center
     pub focal_length: f32,
     pub samples: u32,
+    pub bounces: u32
 }
 
 #[derive(Debug, encase::ShaderType)]
@@ -41,7 +42,8 @@ impl KernelConfig {
         let camera = Camera {
             center: glam::Vec3::ZERO,
             focal_length: 1.0,
-            samples: 128
+            samples: 128,
+            bounces: 64
         };
 
         let viewport_height = 2.0;
