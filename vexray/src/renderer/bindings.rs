@@ -73,11 +73,7 @@ impl KernelBindings {
             });
     }
 
-    fn config_bind_group(
-        &self,
-        gpu: &Gpu,
-        buffers: &KernelBuffers,
-    ) -> wgpu::BindGroup {
+    fn config_bind_group(&self, gpu: &Gpu, buffers: &KernelBuffers) -> wgpu::BindGroup {
         return gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("Config bind group"),
             layout: &self.config_layout,
@@ -116,11 +112,7 @@ impl KernelBindings {
             });
     }
 
-    fn scene_bind_group(
-        &self,
-        gpu: &Gpu,
-        buffers: &KernelBuffers,
-    ) -> wgpu::BindGroup {
+    fn scene_bind_group(&self, gpu: &Gpu, buffers: &KernelBuffers) -> wgpu::BindGroup {
         return gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("Scene bind group"),
             layout: &self.scene_layout,
@@ -157,15 +149,21 @@ impl KernelBindings {
                         },
                         count: None,
                     },
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 2,
+                        visibility: wgpu::ShaderStages::COMPUTE,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Storage { read_only: true },
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
+                    },
                 ],
             });
     }
 
-    fn material_bind_group(
-        &self,
-        gpu: &Gpu,
-        buffers: &KernelBuffers,
-    ) -> wgpu::BindGroup {
+    fn material_bind_group(&self, gpu: &Gpu, buffers: &KernelBuffers) -> wgpu::BindGroup {
         return gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("Material bind group"),
             layout: &self.material_layout,
@@ -177,6 +175,10 @@ impl KernelBindings {
                 wgpu::BindGroupEntry {
                     binding: 1,
                     resource: buffers.metal_mats.as_entire_binding(),
+                },
+                wgpu::BindGroupEntry {
+                    binding: 2,
+                    resource: buffers.dielectric_mats.as_entire_binding()
                 }
             ],
         });

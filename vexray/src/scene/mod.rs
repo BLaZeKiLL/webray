@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::renderer::{
-    material::{KDiffuseMat, KMetalMat},
+    material::{KDiffuseMat, KMetalMat, KDielectricMat},
     scene::KernelScene,
     shapes::KSphere,
 };
@@ -51,6 +51,10 @@ impl From<Scene> for KernelScene {
                     let idx = kernel_scene.register_metal_material(KMetalMat { albedo, roughness });
                     materials.insert(i, (2, idx));
                 }
+                Material::Dielectric(ior) => {
+                    let idx = kernel_scene.register_dielectric_material(KDielectricMat { ior });
+                    materials.insert(i, (3, idx));
+                },
             }
         }
 

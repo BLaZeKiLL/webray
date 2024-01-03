@@ -17,6 +17,14 @@ fn vec3f_reflect(v: vec3f, n: vec3f) -> vec3f {
     return v - 2.0 * dot(v, n) * n;
 }
 
+fn vec3f_refract(uv: vec3f, n: vec3f, etai_over_etat: f32) -> vec3f {
+    let cos_theta = min(dot(-uv, n), 1.0);
+    let r_out_perp = etai_over_etat * (uv + cos_theta * n);
+    let r_out_para = -sqrt(abs(1.0 - vec3f_len_squared(r_out_perp))) * n;
+
+    return r_out_perp + r_out_para;
+}
+
 struct Interval {
     min: f32,
     max: f32
@@ -179,6 +187,9 @@ fn scatter(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattere
         case 2u: {
             return scatter_metal(ray, hit, attenuation, scattered);
         }
+        case 3u: {
+            return scatter_dielectric(ray, hit, attenuation, scattered);
+        }
         default: {
             return false;
         }
@@ -214,6 +225,24 @@ fn scatter_metal(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, sc
 
     (*scattered) = Ray(hit.point, reflected + material.roughness * random_unit_vector());
     (*attenuation) = material.albedo;
+
+    return true;
+}
+
+struct DielectricMat {
+    ior: f32
+}
+
+fn scatter_dielectric(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
+    let material = dielectric_mats[hit.mat_index];
+
+    (*attenuation) = vec3f(1.0);
+
+    let refraction_ratio = select(material.ior, 1.0 / material.ior ,hit.front_face);
+
+    let refracted = vec3f_refract(normalize(ray.direction), hit.normal, refraction_ratio);
+
+    (*scattered) = Ray(hit.point, refracted);
 
     return true;
 }
@@ -360,6 +389,7 @@ fn render(pixel_position: vec2i) -> vec4f {
 // Material Bindings
 @group(2) @binding(0) var<storage, read> diffuse_mats: array<DiffuseMat>;
 @group(2) @binding(1) var<storage, read> metal_mats: array<MetalMat>;
+@group(2) @binding(2) var<storage, read> dielectric_mats: array<DielectricMat>;
 // BINDINGS_END
 
 @compute @workgroup_size(1, 1, 1)

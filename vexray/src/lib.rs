@@ -2,6 +2,7 @@
 #![allow(clippy::needless_return)]
 
 use log::{error, info};
+use scene::{material::Material, shape::Shape};
 
 mod core;
 mod renderer;
@@ -39,29 +40,19 @@ fn output_image(image_data: Vec<u8>, config: &renderer::config::KernelConfig, pa
 fn create_demo_scene() -> scene::Scene {
     let mut scene = scene::Scene::new();
 
-    let diffuse_mat_1 = scene.register_material(scene::material::Material::Diffuse(glam::vec3(
-        0.8, 0.8, 0.0,
-    )));
+    let diffuse_mat_1 = scene.register_material(Material::Diffuse(glam::vec3(0.8, 0.8, 0.0)));
 
-    let diffuse_mat_2 = scene.register_material(scene::material::Material::Diffuse(glam::vec3(
-        0.8, 0.2, 0.0,
-    )));
+    let diffuse_mat_2 = scene.register_material(Material::Diffuse(glam::vec3(0.8, 0.2, 0.0)));
 
-    let metal_mat_1 = scene.register_material(scene::material::Material::Metal(
-        glam::vec3(0.8, 0.8, 0.8),
-        0.2,
-    ));
+    let metal_mat_1 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.8, 0.8), 0.2));
 
-    let metal_mat_2 = scene.register_material(scene::material::Material::Metal(
-        glam::vec3(0.8, 0.6, 0.8),
-        0.8,
-    ));
+    let metal_mat_2 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.6, 0.8), 0.8));
 
-    let sphere_1 = scene::shape::Shape::Sphere(glam::vec3(-1.0, 0.0, -1.0), 0.5, metal_mat_1);
-    let sphere_2 = scene::shape::Shape::Sphere(glam::vec3(0.0, 0.0, -1.0), 0.5, diffuse_mat_2);
-    let sphere_3 = scene::shape::Shape::Sphere(glam::vec3(1.0, 0.0, -1.0), 0.5, metal_mat_2);
+    let sphere_1 = Shape::Sphere(glam::vec3(-1.0, 0.0, -1.0), 0.5, metal_mat_1);
+    let sphere_2 = Shape::Sphere(glam::vec3(0.0, 0.0, -1.0), 0.5, diffuse_mat_2);
+    let sphere_3 = Shape::Sphere(glam::vec3(1.0, 0.0, -1.0), 0.5, metal_mat_2);
 
-    let ground = scene::shape::Shape::Sphere(glam::vec3(0.0, -100.5, -1.0), 100.0, diffuse_mat_1);
+    let ground = Shape::Sphere(glam::vec3(0.0, -100.5, -1.0), 100.0, diffuse_mat_1);
 
     scene.register_shape(sphere_1);
     scene.register_shape(sphere_2);

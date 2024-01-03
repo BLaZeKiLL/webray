@@ -19,6 +19,7 @@ pub struct KernelBuffers {
     pub spheres: wgpu::Buffer,
     pub diffuse_mats: wgpu::Buffer,
     pub metal_mats: wgpu::Buffer,
+    pub dielectric_mats: wgpu::Buffer,
 }
 
 impl KernelBuffers {
@@ -65,13 +66,13 @@ impl KernelBuffers {
                 usage: wgpu::BufferUsages::STORAGE,
             });
 
-        let diffuse_mats_buffer = gpu
-            .device
-            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("Scene diffuse materials buffer"),
-                contents: &scene.diffuse_mats_as_wgsl_bytes().unwrap()[..],
-                usage: wgpu::BufferUsages::STORAGE,
-            });
+        let diffuse_mats_buffer =
+            gpu.device
+                .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                    label: Some("Scene diffuse materials buffer"),
+                    contents: &scene.diffuse_mats_as_wgsl_bytes().unwrap()[..],
+                    usage: wgpu::BufferUsages::STORAGE,
+                });
 
         let metal_mats_buffer = gpu
             .device
@@ -81,13 +82,22 @@ impl KernelBuffers {
                 usage: wgpu::BufferUsages::STORAGE,
             });
 
+        let dielectric_mats_buffer =
+            gpu.device
+                .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                    label: Some("Scene dielectric materials buffer"),
+                    contents: &scene.dielectric_mats_as_wgsl_bytes().unwrap()[..],
+                    usage: wgpu::BufferUsages::STORAGE,
+                });
+
         return KernelBuffers {
             result: result_buffer,
             render: render_texture,
             config: config_buffer,
             spheres: spheres_buffer,
             diffuse_mats: diffuse_mats_buffer,
-            metal_mats: metal_mats_buffer
+            metal_mats: metal_mats_buffer,
+            dielectric_mats: dielectric_mats_buffer
         };
     }
 }

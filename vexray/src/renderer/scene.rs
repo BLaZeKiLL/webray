@@ -1,10 +1,11 @@
-use super::{shapes::KSphere, material::{KDiffuseMat, KMetalMat}};
+use super::{shapes::KSphere, material::{KDiffuseMat, KMetalMat, KDielectricMat}};
 
 #[derive(Debug)]
 pub struct KernelScene {
     spheres: Vec<KSphere>,
     diffuse_mats: Vec<KDiffuseMat>,
-    metal_mats: Vec<KMetalMat>
+    metal_mats: Vec<KMetalMat>,
+    dielectric_mats: Vec<KDielectricMat>
 }
 
 impl KernelScene {
@@ -13,7 +14,13 @@ impl KernelScene {
             spheres: Vec::new(),
             diffuse_mats: Vec::new(),
             metal_mats: Vec::new(),
+            dielectric_mats: Vec::new()
         };
+    }
+
+    pub fn register_sphere(&mut self, sphere: KSphere) -> u32 {
+        self.spheres.push(sphere);
+        return self.spheres.len() as u32 - 1;
     }
 
     pub fn register_diffuse_material(&mut self, mat: KDiffuseMat) -> u32 {
@@ -26,9 +33,9 @@ impl KernelScene {
         return self.metal_mats.len() as u32 - 1;
     }
 
-    pub fn register_sphere(&mut self, sphere: KSphere) -> u32 {
-        self.spheres.push(sphere);
-        return self.spheres.len() as u32 - 1;
+    pub fn register_dielectric_material(&mut self, mat: KDielectricMat) -> u32 {
+        self.dielectric_mats.push(mat);
+        return self.dielectric_mats.len() as u32 - 1;
     }
 
     pub fn spheres_as_wgsl_bytes(&self) -> encase::internal::Result<Vec<u8>> {
@@ -46,6 +53,12 @@ impl KernelScene {
     pub fn metal_mats_as_wgsl_bytes(&self) -> encase::internal::Result<Vec<u8>> {
         let mut buffer = encase::StorageBuffer::new(Vec::new());
         buffer.write(&self.metal_mats).unwrap();
+        return Ok(buffer.into_inner());
+    }
+
+    pub fn dielectric_mats_as_wgsl_bytes(&self) -> encase::internal::Result<Vec<u8>> {
+        let mut buffer = encase::StorageBuffer::new(Vec::new());
+        buffer.write(&self.dielectric_mats).unwrap();
         return Ok(buffer.into_inner());
     }
 }
