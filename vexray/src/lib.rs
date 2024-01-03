@@ -28,7 +28,7 @@ pub async fn run() {
         look_from: glam::vec3(-2.0, 2.0, 1.0),
         look_at: glam::vec3(0.0, 0.0, -1.0),
         vup: glam::vec3(0.0, 1.0, 0.0),
-        vfov: 90.0,
+        vfov: 20.0,
     };
     let config = KernelConfig::new(render_config, camera_config);
 
@@ -61,7 +61,7 @@ fn create_demo_scene() -> scene::Scene {
 
     // let metal_mat_1 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.8, 0.8), 0.2));
 
-    let metal_mat_2 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.6, 0.8), 0.8));
+    let metal_mat_2 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.6, 0.2), 0.1));
 
     let dielectric_mat_1 = scene.register_material(Material::Dielectric(1.5));
 
