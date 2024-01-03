@@ -44,11 +44,14 @@ fn create_demo_scene() -> scene::Scene {
 
     let diffuse_mat_2 = scene.register_material(Material::Diffuse(glam::vec3(0.8, 0.2, 0.0)));
 
-    let metal_mat_1 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.8, 0.8), 0.2));
+    // let metal_mat_1 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.8, 0.8), 0.2));
 
     let metal_mat_2 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.6, 0.8), 0.8));
 
-    let sphere_1 = Shape::Sphere(glam::vec3(-1.0, 0.0, -1.0), 0.5, metal_mat_1);
+    let dielectric_mat_1 = scene.register_material(Material::Dielectric(1.5));
+
+    // -ve radius with a di-electric creates a hollow glass bubble
+    let sphere_1 = Shape::Sphere(glam::vec3(-1.0, 0.0, -1.0), -0.4, dielectric_mat_1);
     let sphere_2 = Shape::Sphere(glam::vec3(0.0, 0.0, -1.0), 0.5, diffuse_mat_2);
     let sphere_3 = Shape::Sphere(glam::vec3(1.0, 0.0, -1.0), 0.5, metal_mat_2);
 

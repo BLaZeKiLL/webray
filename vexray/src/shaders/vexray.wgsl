@@ -240,11 +240,30 @@ fn scatter_dielectric(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f
 
     let refraction_ratio = select(material.ior, 1.0 / material.ior ,hit.front_face);
 
-    let refracted = vec3f_refract(normalize(ray.direction), hit.normal, refraction_ratio);
+    let unit_direction = normalize(ray.direction);
 
-    (*scattered) = Ray(hit.point, refracted);
+    let cos_theta = min(dot(-unit_direction, hit.normal), 1.0);
+    let sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+
+    var direction: vec3f;
+
+    let cannot_refract = refraction_ratio * sin_theta > 1.0;
+
+    if cannot_refract || reflectance(cos_theta, refraction_ratio) > random_float() {
+        direction = vec3f_reflect(unit_direction, hit.normal);
+    } else {
+        direction = vec3f_refract(unit_direction, hit.normal, refraction_ratio);
+    }
+
+    (*scattered) = Ray(hit.point, direction);
 
     return true;
+}
+
+fn reflectance(cosine: f32, refraction_ratio: f32) -> f32 {
+    var r0 = (1.0 - refraction_ratio) / (1.0 + refraction_ratio);
+    r0 = r0 * r0;
+    return r0 + (1.0 - r0) * pow((1.0 - cosine), 5.0);
 }
 // MATERIAL_END
 
