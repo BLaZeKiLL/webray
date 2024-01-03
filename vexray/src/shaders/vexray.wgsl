@@ -359,10 +359,10 @@ fn render_ray_v2(ray: Ray) -> vec3f {
         }
     }
 
-    // max bounce condition
-    // if bounce >= config.camera.bounces {
-    //     accumulated_color = ERR_COLOR;
-    // }
+    //max bounce condition
+    if bounce >= config.camera.bounces {
+        accumulated_color = ERR_COLOR;
+    }
 
     return accumulated_color;
 }
