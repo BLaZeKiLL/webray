@@ -345,7 +345,7 @@ fn render_ray(ray: Ray) -> vec3f {
     let unit_dir = normalize(ray.direction);
     let alpha = 0.5 * (unit_dir.y + 1.0);
 
-    var accumulated_color = (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0);
+    var accumulated_color = (1.0 - alpha) * vec3f(1.0) + alpha * vec3f(0.3, 0.6, 1.0);
 
     var bounce = 0u;
 

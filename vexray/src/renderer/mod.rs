@@ -14,6 +14,7 @@ pub mod shapes;
 pub mod scene;
 
 pub async fn render(config: &KernelConfig, scene: &KernelScene) -> Result<Vec<u8>, ()> {
+    dbg!(&config);
     dbg!(&scene);
 
     info!("Render start");

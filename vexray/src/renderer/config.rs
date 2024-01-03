@@ -35,30 +35,51 @@ pub struct KernelConfig {
     pixel_zero_loc: glam::Vec3,
 }
 
-impl KernelConfig {
-    pub fn new(width: u32, height: u32) -> Self {
-        let image = Image { width, height };
+pub struct RenderConfig {
+    pub width: u32,
+    pub height: u32,
+    pub samples: u32,
+    pub bounces: u32,
+}
 
-        let camera = Camera {
-            center: glam::Vec3::ZERO,
-            focal_length: 1.0,
-            samples: 128,
-            bounces: 64,
+pub struct CameraConfig {
+    pub look_from: glam::Vec3,
+    pub look_at: glam::Vec3,
+    pub vup: glam::Vec3,
+    pub vfov: f32,
+}
+
+impl KernelConfig {
+    /// A lot of camera calculations
+    pub fn new(render_config: RenderConfig, camera_config: CameraConfig) -> Self {
+        let image = Image {
+            width: render_config.width,
+            height: render_config.height,
         };
 
-        let viewport_height = 2.0;
+        let camera = Camera {
+            center: camera_config.look_from,
+            focal_length: (camera_config.look_from - camera_config.look_at).length(),
+            samples: render_config.samples,
+            bounces: render_config.bounces,
+        };
+
+        let h = (camera_config.vfov.to_radians() / 2.0).tan(); // 90 deg this equation = 1.0
+        let viewport_height = 2.0 * h * camera.focal_length;
         let viewport_width = viewport_height * (image.width as f32 / image.height as f32);
 
-        let viewport_u = glam::vec3(viewport_width, 0.0, 0.0);
-        let viewport_v = glam::vec3(0.0, -viewport_height, 0.0);
+        let w = (camera_config.look_from - camera_config.look_at).normalize();
+        let u = camera_config.vup.cross(w).normalize();
+        let v = w.cross(u);
+
+        let viewport_u = viewport_width * u;
+        let viewport_v = viewport_height * -v;
 
         let delta_u = viewport_u / image.width as f32;
         let delta_v = viewport_v / image.height as f32;
 
-        let upper_left = camera.center
-            - glam::vec3(0.0, 0.0, camera.focal_length)
-            - viewport_u / 2.0
-            - viewport_v / 2.0;
+        let upper_left =
+            camera.center - (camera.focal_length * w) - (viewport_u / 2.0) - (viewport_v / 2.0);
 
         let viewport = Viewport {
             width: viewport_width,
