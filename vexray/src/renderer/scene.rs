@@ -49,24 +49,3 @@ impl KernelScene {
         return Ok(buffer.into_inner());
     }
 }
-
-// #[derive(Debug, encase::ShaderType)]
-// struct KSpheres {
-//     length: encase::ArrayLength,
-//     #[size(runtime)]
-//     instances: Vec<KSphere>
-// }
-
-// #[derive(Debug, encase::ShaderType)]
-// struct KDiffuseMats {
-//     length: encase::ArrayLength,
-//     #[size(runtime)]
-//     instances: Vec<KDiffuseMat>
-// }
-
-// #[derive(Debug, encase::ShaderType)]
-// struct KMetalMats {
-//     length: encase::ArrayLength,
-//     #[size(runtime)]
-//     instances: Vec<KMetalMat>
-// }

@@ -225,8 +225,8 @@ fn scatter_metal(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, sc
 struct Sphere {
     center: vec3f,
     radius: f32,
-    // mat_type: u32,
-    // mat_index: u32
+    mat_type: u32,
+    mat_index: u32
 }
 
 /// solves the sphere ray intersection equation, which is a quadratic equation
@@ -259,8 +259,8 @@ fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function,
     (*hit).t = root;
     (*hit).point = point;
 
-    (*hit).mat_type = 1u;
-    (*hit).mat_index = 1u;
+    (*hit).mat_type = sphere.mat_type;
+    (*hit).mat_index = sphere.mat_index;
 
     hit_set_face_normal(hit, ray, out_normal);
 
