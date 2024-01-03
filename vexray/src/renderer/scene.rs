@@ -1,5 +1,6 @@
 use super::{shapes::KSphere, material::{KDiffuseMat, KMetalMat}};
 
+#[derive(Debug)]
 pub struct KernelScene {
     spheres: KSpheres,
     diffuse_mats: KDiffuseMats,
