@@ -16,7 +16,7 @@ path = "src/main.rs"
 # winit = { version = "0.29", features = ["rwh_05"]} # raw_window_handle_0.5 is required for compat issues should be fixed in next version of wgpu
 wgpu = "0.18"
 rand = "0.8" # RNG
-glam = "0.24" # Math lib
+glam = "0.25" # Math lib
 
 log = "0.4" # log API
 env_logger = "0.10" # log API implementation
@@ -24,4 +24,4 @@ pollster = "0.3" # block on main
 bytemuck = "1.14" # byte operations
 flume = "0.11" # channels for communication
 image = "0.24" # image manupilation
-encase = { version = "0.6", features = ["glam"]} # gpu memory layout mappimg utility
+encase = { version = "0.7", features = ["glam"]} # gpu memory layout mappimg utility

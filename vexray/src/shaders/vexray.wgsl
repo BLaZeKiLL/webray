@@ -140,9 +140,9 @@ struct Config {
 
 // HITRECORD_START
 struct HitRecord {
+    t: f32,
     point: vec3f,
     normal: vec3f,
-    t: f32,
     mat_type: u32,
     mat_index: u32,
     front_face: bool
@@ -174,7 +174,7 @@ fn ray_at(ray: Ray, t: f32) -> vec3f {
 fn scatter(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
     switch hit.mat_type {
         case 1u: {
-            return scatter_lambertian(ray, hit, attenuation, scattered);
+            return scatter_diffuse(ray, hit, attenuation, scattered);
         }
         case 2u: {
             return scatter_metal(ray, hit, attenuation, scattered);
@@ -185,12 +185,12 @@ fn scatter(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattere
     }
 }
 
-struct LambertianMat {
+struct DiffuseMat {
     albedo: vec3f
 }
 
-fn scatter_lambertian(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
-    let material = lambertian_mat[hit.mat_index];
+fn scatter_diffuse(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
+    let material = diffuse_mats[hit.mat_index];
     var scatter_direction = hit.normal + random_unit_vector();
 
     if vec3f_near_zero(scatter_direction) {
@@ -208,7 +208,7 @@ struct MetalMat {
 }
 
 fn scatter_metal(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
-    let material = metal_mat[hit.mat_index];
+    let material = metal_mats[hit.mat_index];
     let reflected = vec3f_reflect(normalize(ray.direction), hit.normal);
 
     (*scattered) = Ray(hit.point, reflected);
@@ -225,8 +225,8 @@ fn scatter_metal(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, sc
 struct Sphere {
     center: vec3f,
     radius: f32,
-    mat_type: u32,
-    mat_index: u32
+    // mat_type: u32,
+    // mat_index: u32
 }
 
 /// solves the sphere ray intersection equation, which is a quadratic equation
@@ -259,24 +259,21 @@ fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function,
     (*hit).t = root;
     (*hit).point = point;
 
-    (*hit).mat_type = sphere.mat_type;
-    (*hit).mat_index = sphere.mat_index;
+    (*hit).mat_type = 1u;
+    (*hit).mat_index = 1u;
 
     hit_set_face_normal(hit, ray, out_normal);
 
     return true;
 }
-// SPHERE_END
-
-// WORLD_START
-fn hit_world(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> bool {
+fn hit_spheres(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> bool {
     var temp_hit = HitRecord();
     var hit_anything = false;
     var closest_so_far = ray_limits.max;
 
     // arrayLength returns a u32, so we make i also u32 to make logical operation happy
-    for (var i = 0u; i < arrayLength(&world); i++) {
-        let sphere = world[i];
+    for (var i = 0u; i < arrayLength(&spheres); i++) {
+        let sphere = spheres[i];
 
         if hit_sphere(sphere, ray, Interval(ray_limits.min, closest_so_far), &temp_hit) {
             hit_anything = true;
@@ -289,7 +286,7 @@ fn hit_world(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> b
 
     return hit_anything;
 }
-// WORLD_END
+// SPHERE_END
 
 // RENDERER_START
 fn render_ray(ray: Ray) -> vec3f {
@@ -309,7 +306,7 @@ fn render_ray(ray: Ray) -> vec3f {
         var hit = HitRecord();
         let ray = Ray(current_ray_origin, current_ray_direction);
 
-        if hit_world(ray, Interval(0.001, INF_F32), &hit) {
+        if hit_spheres(ray, Interval(0.001, INF_F32), &hit) {
             var scatter = Ray();
             var attenuation = vec3f();
 
@@ -359,10 +356,10 @@ fn render(pixel_position: vec2i) -> vec4f {
 @group(0) @binding(0) var result: texture_storage_2d<rgba8unorm, write>; // output image
 @group(0) @binding(1) var<uniform> config: Config; // render config
 // Scene Bindings
-@group(1) @binding(0) var<storage, read> world: array<Sphere>; // move to different group
+@group(1) @binding(0) var<storage, read> spheres: array<Sphere>; // move to different group
 // Material Bindings
-@group(2) @binding(0) var<storage, read> lambertian_mat: array<LambertianMat>;
-@group(2) @binding(1) var<storage, read> metal_mat: array<MetalMat>;
+@group(2) @binding(0) var<storage, read> diffuse_mats: array<DiffuseMat>;
+@group(2) @binding(1) var<storage, read> metal_mats: array<MetalMat>;
 // BINDINGS_END
 
 @compute @workgroup_size(1, 1, 1)
