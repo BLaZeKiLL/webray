@@ -2,7 +2,8 @@ use std::collections::HashMap;
 
 use crate::renderer::{
     material::{KDiffuseMat, KMetalMat},
-    scene::KernelScene, shapes::KSphere,
+    scene::KernelScene,
+    shapes::KSphere,
 };
 
 use self::{material::Material, shape::Shape};
@@ -46,8 +47,8 @@ impl From<Scene> for KernelScene {
                     let idx = kernel_scene.register_diffuse_material(KDiffuseMat { albedo });
                     materials.insert(i, (1, idx));
                 }
-                Material::Metal(albedo) => {
-                    let idx = kernel_scene.register_metal_material(KMetalMat { albedo });
+                Material::Metal(albedo, roughness) => {
+                    let idx = kernel_scene.register_metal_material(KMetalMat { albedo, roughness });
                     materials.insert(i, (2, idx));
                 }
             }
@@ -61,8 +62,7 @@ impl From<Scene> for KernelScene {
                     kernel_scene.register_sphere(KSphere {
                         center,
                         radius,
-                        mat_type: mat.0,
-                        mat_index: mat.1,
+                        mid: glam::uvec4(mat.0, mat.1, 0, 0),
                     });
                 }
             }
