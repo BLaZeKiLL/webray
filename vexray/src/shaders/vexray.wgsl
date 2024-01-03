@@ -204,7 +204,7 @@ fn scatter_diffuse(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, 
 }
 
 struct MetalMat {
-    albedo: vec3f
+    albedo: vec3f,
     roughness: f32
 }
 
@@ -212,7 +212,7 @@ fn scatter_metal(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, sc
     let material = metal_mats[hit.mat_index];
     let reflected = vec3f_reflect(normalize(ray.direction), hit.normal);
 
-    (*scattered) = Ray(hit.point, reflected);
+    (*scattered) = Ray(hit.point, reflected + material.roughness * random_unit_vector());
     (*attenuation) = material.albedo;
 
     return true;
