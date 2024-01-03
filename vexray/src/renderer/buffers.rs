@@ -2,7 +2,7 @@ use wgpu::util::DeviceExt;
 
 use crate::core::gpu::Gpu;
 
-use super::{config::KernelConfig, world::World};
+use super::{config::KernelConfig, scene::KernelScene};
 
 /// Container for kernel buffers
 pub struct KernelBuffers {
@@ -14,12 +14,15 @@ pub struct KernelBuffers {
     pub render: wgpu::Texture,
     /// kernel config uniform buffer
     pub config: wgpu::Buffer,
-    /// sphere objects in the world
+
+    // Scene buffers
     pub spheres: wgpu::Buffer,
+    pub diffuse_mats: wgpu::Buffer,
+    pub metal_mats: wgpu::Buffer,
 }
 
 impl KernelBuffers {
-    pub fn new(gpu: &Gpu, config: &KernelConfig, world: &World) -> Self {
+    pub fn new(gpu: &Gpu, config: &KernelConfig, scene: &KernelScene) -> Self {
         // &arr and &arr[..] are different, second one is a slice and what we need
         let result_buffer = gpu.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Result buffer"),
@@ -57,8 +60,24 @@ impl KernelBuffers {
         let spheres_buffer = gpu
             .device
             .create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("Sphere objects buffer"),
-                contents: &world.sphere_objects_as_wgsl_bytes().unwrap()[..],
+                label: Some("Scene spheres buffer"),
+                contents: &scene.spheres_as_wgsl_bytes().unwrap()[..],
+                usage: wgpu::BufferUsages::STORAGE,
+            });
+
+        let diffuse_mats_buffer = gpu
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("Scene diffuse materials buffer"),
+                contents: &scene.diffuse_mats_as_wgsl_bytes().unwrap()[..],
+                usage: wgpu::BufferUsages::STORAGE,
+            });
+
+        let metal_mats_buffer = gpu
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("Scene metal materials buffer"),
+                contents: &scene.metal_mats_as_wgsl_bytes().unwrap()[..],
                 usage: wgpu::BufferUsages::STORAGE,
             });
 
@@ -67,6 +86,8 @@ impl KernelBuffers {
             render: render_texture,
             config: config_buffer,
             spheres: spheres_buffer,
+            diffuse_mats: diffuse_mats_buffer,
+            metal_mats: metal_mats_buffer
         };
     }
 }

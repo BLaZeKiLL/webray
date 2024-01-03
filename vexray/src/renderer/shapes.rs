@@ -1,11 +1,7 @@
 #[derive(Debug, encase::ShaderType)]
-pub struct Sphere {
-    center: glam::Vec3,
-    radius: f32
-}
-
-impl Sphere {
-    pub fn new(center: glam::Vec3, radius: f32) -> Self {
-        return Self { center, radius };
-    }
+pub struct KSphere {
+    pub center: glam::Vec3,
+    pub radius: f32,
+    pub mat_type: u32,
+    pub mat_index: u32
 }

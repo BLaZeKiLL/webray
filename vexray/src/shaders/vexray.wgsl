@@ -1,10 +1,19 @@
 // CONSTANTS_START
 const INF_F32 = 0x1p+127f;
+const EPSILON = 0x1p-149f;
 // CONSTANTS_END
 
 // UTILS_START
 fn vec3f_len_squared(v: vec3f) -> f32 {
     return v.x * v.x + v.y * v.y + v.z * v.z;
+}
+
+fn vec3f_near_zero(v: vec3f) -> bool {
+    return v.x < EPSILON && v.y < EPSILON && v.z < EPSILON;
+}
+
+fn vec3f_reflect(v: vec3f, n: vec3f) -> vec3f {
+    return v - 2.0 * dot(v, n) * n;
 }
 
 struct Interval {
@@ -130,9 +139,11 @@ struct Config {
 
 // HITRECORD_START
 struct HitRecord {
+    t: f32,
     point: vec3f,
     normal: vec3f,
-    t: f32,
+    mat_type: u32,
+    mat_index: u32,
     front_face: bool
 }
 
@@ -158,13 +169,63 @@ fn ray_at(ray: Ray, t: f32) -> vec3f {
 }
 // RAY_END
 
+// MATERIAL_START
+fn scatter(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
+    switch hit.mat_type {
+        case 1u: {
+            return scatter_lambertian(ray, hit, attenuation, scattered);
+        }
+        case 2u: {
+            return scatter_metal(ray, hit, attenuation, scattered);
+        }
+        default: {
+            return false;
+        }
+    }
+}
+
+struct LambertianMat {
+    albedo: vec3f
+}
+
+fn scatter_lambertian(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
+    let material = lambertian_mat[hit.mat_index];
+    var scatter_direction = hit.normal + random_unit_vector();
+
+    if vec3f_near_zero(scatter_direction) {
+        scatter_direction = hit.normal;
+    }
+
+    (*scattered) = Ray(hit.point, scatter_direction);
+    (*attenuation) = material.albedo;
+
+    return true;
+}
+
+struct MetalMat {
+    albedo: vec3f
+}
+
+fn scatter_metal(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
+    let material = metal_mat[hit.mat_index];
+    let reflected = vec3f_reflect(normalize(ray.direction), hit.normal);
+
+    (*scattered) = Ray(hit.point, reflected);
+    (*attenuation) = material.albedo;
+
+    return true;
+}
+// MATERIAL_END
+
 // hit interface
 // fn hit(shape: Shape, ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> bool {}
 
 // SPHERE_START
 struct Sphere {
     center: vec3f,
-    radius: f32
+    radius: f32,
+    mat_type: u32,
+    mat_index: u32
 }
 
 /// solves the sphere ray intersection equation, which is a quadratic equation
@@ -196,6 +257,10 @@ fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function,
 
     (*hit).t = root;
     (*hit).point = point;
+
+    (*hit).mat_type = sphere.mat_type;
+    (*hit).mat_index = sphere.mat_index;
+
     hit_set_face_normal(hit, ray, out_normal);
 
     return true;
@@ -225,16 +290,44 @@ fn hit_world(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> b
 
 // RENDERER_START
 fn render_ray(ray: Ray) -> vec3f {
-    var hit = HitRecord();
+    var current_ray_origin = ray.origin;
+    var current_ray_direction = ray.direction;
 
-    if hit_world(ray, Interval(0.0, INF_F32), &hit) {
-        return 0.5 * (hit.normal + vec3f(1.0));
-    }
-
+    // start with background color
     let unit_dir = normalize(ray.direction);
     let alpha = 0.5 * (unit_dir.y + 1.0);
 
-    return (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0); // lerp
+    var accumulated_color = (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0);
+
+    var bounce = 0u;
+
+    // try world hits
+    for (bounce = 0u; bounce < config.camera.bounces; bounce++) {
+        var hit = HitRecord();
+        let ray = Ray(current_ray_origin, current_ray_direction);
+
+        if hit_world(ray, Interval(0.001, INF_F32), &hit) {
+            var scatter = Ray();
+            var attenuation = vec3f();
+
+            if scatter(ray, hit, &attenuation, &scatter) {
+                accumulated_color *= 0.5;
+            } 
+            else {
+                accumulated_color = vec3f(1.0, 1.0, 1.0);
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    // max bounce condition
+    // if bounce >= config.camera.bounces {
+    //     accumulated_color = vec3f(0.8, 0.8, 0.8);
+    // }
+
+    return accumulated_color;
 }
 
 fn render_ray_v2(ray: Ray) -> vec3f {
@@ -293,9 +386,14 @@ fn render(pixel_position: vec2i) -> vec4f {
 // RENDERER_END
 
 // BINDINGS_START
+// Config Bindings
 @group(0) @binding(0) var result: texture_storage_2d<rgba8unorm, write>; // output image
 @group(0) @binding(1) var<uniform> config: Config; // render config
-@group(0) @binding(2) var<storage, read> world: array<Sphere>;
+// Scene Bindings
+@group(1) @binding(0) var<storage, read> world: array<Sphere>; // move to different group
+// Material Bindings
+@group(2) @binding(0) var<storage, read> lambertian_mat: array<LambertianMat>;
+@group(2) @binding(1) var<storage, read> metal_mat: array<MetalMat>;
 // BINDINGS_END
 
 @compute @workgroup_size(1, 1, 1)
@@ -312,5 +410,6 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
 
     pixel_color /= f32(config.camera.samples);
 
-    textureStore(result, pixel_position, pixel_color); // final output
+    // sqrt applies gamma 2 transformation
+    textureStore(result, pixel_position, sqrt(pixel_color)); // final output
 }

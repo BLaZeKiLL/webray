@@ -1,26 +1,25 @@
 use crate::core::gpu::Gpu;
 
-use super::{buffers::KernelBuffers, config::KernelConfig};
+use super::{bindings::KernelBindings, buffers::KernelBuffers, config::KernelConfig};
 
 pub struct Kernel {
     pub pipeline: wgpu::ComputePipeline,
-    pub bind_group: wgpu::BindGroup,
 }
 
 impl Kernel {
-    pub fn new(gpu: &Gpu, buffers: &KernelBuffers) -> Self {
-        let bind_group_layout = Kernel::create_bind_group_layout(gpu);
+    pub fn new(gpu: &Gpu, bindings: &KernelBindings) -> Self {
+        let pipeline = Kernel::create_pipeline(gpu, bindings);
 
-        let bind_group = Kernel::create_bind_group(gpu, &bind_group_layout, buffers);
-        let pipeline = Kernel::create_pipeline(gpu, &bind_group_layout);
-
-        return Kernel {
-            pipeline,
-            bind_group,
-        };
+        return Kernel { pipeline };
     }
 
-    pub fn submit(&self, gpu: &Gpu, config: &KernelConfig, buffers: &KernelBuffers) {
+    pub fn submit(
+        &self,
+        gpu: &Gpu,
+        config: &KernelConfig,
+        bindings: &KernelBindings,
+        buffers: &KernelBuffers,
+    ) {
         // Setup commands
         let mut encoder = gpu
             .device
@@ -35,7 +34,9 @@ impl Kernel {
             });
 
             pass.set_pipeline(&self.pipeline);
-            pass.set_bind_group(0, &self.bind_group, &[]);
+            pass.set_bind_group(0, bindings.config_binding.as_ref().unwrap(), &[]);
+            pass.set_bind_group(1, bindings.scene_binding.as_ref().unwrap(), &[]);
+            pass.set_bind_group(2, bindings.material_binding.as_ref().unwrap(), &[]);
             pass.dispatch_workgroups(config.image.width, config.image.height, 1);
         }
 
@@ -97,50 +98,7 @@ impl Kernel {
         return Ok(output);
     }
 
-    fn create_bind_group_layout(gpu: &Gpu) -> wgpu::BindGroupLayout {
-        return gpu
-            .device
-            .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-                label: Some("Compute bind group layout"),
-                entries: &[
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 0,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::StorageTexture {
-                            access: wgpu::StorageTextureAccess::WriteOnly,
-                            format: wgpu::TextureFormat::Rgba8Unorm,
-                            view_dimension: wgpu::TextureViewDimension::D2,
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 1,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Uniform,
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
-                    },
-                    wgpu::BindGroupLayoutEntry {
-                        binding: 2,
-                        visibility: wgpu::ShaderStages::COMPUTE,
-                        ty: wgpu::BindingType::Buffer {
-                            ty: wgpu::BufferBindingType::Storage { read_only: true },
-                            has_dynamic_offset: false,
-                            min_binding_size: None,
-                        },
-                        count: None,
-                    },
-                ],
-            });
-    }
-
-    fn create_pipeline(
-        gpu: &Gpu,
-        bind_group_layout: &wgpu::BindGroupLayout,
-    ) -> wgpu::ComputePipeline {
+    fn create_pipeline(gpu: &Gpu, bindings: &KernelBindings) -> wgpu::ComputePipeline {
         let shader = gpu
             .device
             .create_shader_module(wgpu::include_wgsl!("../shaders/vexray.wgsl"));
@@ -149,7 +107,7 @@ impl Kernel {
             .device
             .create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some("Compute pipeline layout"),
-                bind_group_layouts: &[bind_group_layout],
+                bind_group_layouts: &bindings.pipeline_layout()[..],
                 push_constant_ranges: &[],
             });
 
@@ -161,34 +119,5 @@ impl Kernel {
                 module: &shader,
                 entry_point: "main",
             });
-    }
-
-    fn create_bind_group(
-        gpu: &Gpu,
-        bind_group_layout: &wgpu::BindGroupLayout,
-        buffers: &KernelBuffers,
-    ) -> wgpu::BindGroup {
-        return gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("Compute bind group"),
-            layout: bind_group_layout,
-            entries: &[
-                wgpu::BindGroupEntry {
-                    binding: 0,
-                    resource: wgpu::BindingResource::TextureView(
-                        &buffers
-                            .render
-                            .create_view(&wgpu::TextureViewDescriptor::default()),
-                    ),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: buffers.config.as_entire_binding(),
-                },
-                wgpu::BindGroupEntry {
-                    binding: 2,
-                    resource: buffers.spheres.as_entire_binding(),
-                },
-            ],
-        });
     }
 }
