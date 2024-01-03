@@ -171,51 +171,51 @@ fn ray_at(ray: Ray, t: f32) -> vec3f {
 // RAY_END
 
 // MATERIAL_START
-// fn scatter(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
-//     switch hit.mat_type {
-//         case 1u: {
-//             return scatter_lambertian(ray, hit, attenuation, scattered);
-//         }
-//         case 2u: {
-//             return scatter_metal(ray, hit, attenuation, scattered);
-//         }
-//         default: {
-//             return false;
-//         }
-//     }
-// }
+fn scatter(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
+    switch hit.mat_type {
+        case 1u: {
+            return scatter_lambertian(ray, hit, attenuation, scattered);
+        }
+        case 2u: {
+            return scatter_metal(ray, hit, attenuation, scattered);
+        }
+        default: {
+            return false;
+        }
+    }
+}
 
-// struct LambertianMat {
-//     albedo: vec3f
-// }
+struct LambertianMat {
+    albedo: vec3f
+}
 
-// fn scatter_lambertian(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
-//     let material = lambertian_mat[hit.mat_index];
-//     var scatter_direction = hit.normal + random_unit_vector();
+fn scatter_lambertian(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
+    let material = lambertian_mat[hit.mat_index];
+    var scatter_direction = hit.normal + random_unit_vector();
 
-//     if vec3f_near_zero(scatter_direction) {
-//         scatter_direction = hit.normal;
-//     }
+    if vec3f_near_zero(scatter_direction) {
+        scatter_direction = hit.normal;
+    }
 
-//     (*scattered) = Ray(hit.point, scatter_direction);
-//     (*attenuation) = material.albedo;
+    (*scattered) = Ray(hit.point, scatter_direction);
+    (*attenuation) = material.albedo;
 
-//     return true;
-// }
+    return true;
+}
 
-// struct MetalMat {
-//     albedo: vec3f
-// }
+struct MetalMat {
+    albedo: vec3f
+}
 
-// fn scatter_metal(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
-//     let material = metal_mat[hit.mat_index];
-//     let reflected = vec3f_reflect(normalize(ray.direction), hit.normal);
+fn scatter_metal(ray: Ray, hit: HitRecord, attenuation: ptr<function, vec3f>, scattered: ptr<function, Ray>) -> bool {
+    let material = metal_mat[hit.mat_index];
+    let reflected = vec3f_reflect(normalize(ray.direction), hit.normal);
 
-//     (*scattered) = Ray(hit.point, reflected);
-//     (*attenuation) = material.albedo;
+    (*scattered) = Ray(hit.point, reflected);
+    (*attenuation) = material.albedo;
 
-//     return true;
-// }
+    return true;
+}
 // MATERIAL_END
 
 // hit interface
@@ -393,8 +393,8 @@ fn render(pixel_position: vec2i) -> vec4f {
 // Scene Bindings
 @group(1) @binding(0) var<storage, read> world: array<Sphere>; // move to different group
 // Material Bindings
-// @group(2) @binding(0) var<storage, read> lambertian_mat: array<LambertianMat>;
-// @group(2) @binding(1) var<storage, read> metal_mat: array<MetalMat>;
+@group(2) @binding(0) var<storage, read> lambertian_mat: array<LambertianMat>;
+@group(2) @binding(1) var<storage, read> metal_mat: array<MetalMat>;
 // BINDINGS_END
 
 @compute @workgroup_size(1, 1, 1)
