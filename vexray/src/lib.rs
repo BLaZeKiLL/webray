@@ -40,7 +40,7 @@ fn create_demo_scene() -> scene::Scene {
     let mut scene = scene::Scene::new();
     
     let diffuse_mat_1 = scene.register_material(scene::material::Material::Diffuse(glam::vec3(0.8, 0.8, 0.0)));
-    let diffuse_mat_2 = scene.register_material(scene::material::Material::Diffuse(glam::vec3(0.8, 0.8, 0.0)));
+    let diffuse_mat_2 = scene.register_material(scene::material::Material::Diffuse(glam::vec3(0.4, 0.8, 0.0)));
 
     let sphere_1 = scene::shape::Shape::Sphere(glam::vec3(0.0, 0.0, -1.0), 0.5, diffuse_mat_1);
     let sphere_2 = scene::shape::Shape::Sphere(glam::vec3(0.0, -100.5, -1.0), 100.0, diffuse_mat_2);

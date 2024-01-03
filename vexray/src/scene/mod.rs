@@ -46,8 +46,8 @@ impl From<Scene> for KernelScene {
                     let idx = kernel_scene.register_diffuse_material(KDiffuseMat { albedo });
                     materials.insert(i, (1, idx));
                 }
-                Material::Metal(albedo, roughness) => {
-                    let idx = kernel_scene.register_metal_material(KMetalMat { albedo, roughness });
+                Material::Metal(albedo) => {
+                    let idx = kernel_scene.register_metal_material(KMetalMat { albedo });
                     materials.insert(i, (2, idx));
                 }
             }

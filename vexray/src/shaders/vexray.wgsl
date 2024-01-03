@@ -315,8 +315,8 @@ fn render_ray(ray: Ray) -> vec3f {
                 current_ray_origin = scatter.origin;
                 current_ray_direction = scatter.direction;
                 accumulated_color *= attenuation;
-            } else {
-                accumulated_color = ERR_COLOR;
+            } else { // else should never happen
+                accumulated_color = vec3f(f32(hit.mat_type));
                 break;
             }
         } else {
