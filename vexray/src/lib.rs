@@ -42,7 +42,7 @@ fn create_demo_scene() -> scene::Scene {
 
     let diffuse_mat_1 = scene.register_material(Material::Diffuse(glam::vec3(0.8, 0.8, 0.0)));
 
-    let diffuse_mat_2 = scene.register_material(Material::Diffuse(glam::vec3(0.8, 0.2, 0.0)));
+    let diffuse_mat_2 = scene.register_material(Material::Diffuse(glam::vec3(0.1, 0.2, 0.5)));
 
     // let metal_mat_1 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.8, 0.8), 0.2));
 
@@ -50,18 +50,19 @@ fn create_demo_scene() -> scene::Scene {
 
     let dielectric_mat_1 = scene.register_material(Material::Dielectric(1.5));
 
-    // -ve radius with a di-electric creates a hollow glass bubble
-    let sphere_1 = Shape::Sphere(glam::vec3(-1.0, 0.0, -1.0), -0.4, dielectric_mat_1);
-    let sphere_2 = Shape::Sphere(glam::vec3(0.0, 0.0, -1.0), 0.5, diffuse_mat_2);
-    let sphere_3 = Shape::Sphere(glam::vec3(1.0, 0.0, -1.0), 0.5, metal_mat_2);
+    // left
+    // 2 spheres and 1 with -ve radius with di-electric mat gives a hollow glass bubble look
+    scene.register_shape(Shape::Sphere(glam::vec3(-1.0, 0.0, -1.0), 0.5, dielectric_mat_1));
+    scene.register_shape(Shape::Sphere(glam::vec3(-1.0, 0.0, -1.0), -0.4, dielectric_mat_1));
 
-    let ground = Shape::Sphere(glam::vec3(0.0, -100.5, -1.0), 100.0, diffuse_mat_1);
+    // center
+    scene.register_shape(Shape::Sphere(glam::vec3(0.0, 0.0, -1.0), 0.5, diffuse_mat_2));
 
-    scene.register_shape(sphere_1);
-    scene.register_shape(sphere_2);
-    scene.register_shape(sphere_3);
+    // right
+    scene.register_shape(Shape::Sphere(glam::vec3(1.0, 0.0, -1.0), 0.5, metal_mat_2));
 
-    scene.register_shape(ground);
+    // ground
+    scene.register_shape(Shape::Sphere(glam::vec3(0.0, -100.5, -1.0), 100.0, diffuse_mat_1));
 
     return scene;
 }
