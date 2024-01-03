@@ -2,26 +2,22 @@
 pub struct Image {
     pub width: u32,
     pub height: u32,
+    samples: u32,
+    bounces: u32,
 }
 
 #[derive(Debug, encase::ShaderType)]
 pub struct Camera {
-    /// Camera center is the eye point
-    pub center: glam::Vec3,
-    /// Distance from camera center and viewport center
-    pub focal_length: f32,
-    pub samples: u32,
-    pub bounces: u32,
+    center: glam::Vec3,
+    focal_length: f32,
 }
 
 #[derive(Debug, encase::ShaderType)]
 pub struct Viewport {
     width: f32,
     height: f32,
-    /// horizontal vector
-    u: glam::Vec3,
-    /// inverted vertical vector
-    v: glam::Vec3,
+    u: glam::Vec3, // local horizontal vector
+    v: glam::Vec3, // local inverted vertical vector
     delta_u: glam::Vec3,
     delta_v: glam::Vec3,
     upper_left: glam::Vec3,
@@ -55,13 +51,13 @@ impl KernelConfig {
         let image = Image {
             width: render_config.width,
             height: render_config.height,
+            samples: render_config.samples,
+            bounces: render_config.bounces,
         };
 
         let camera = Camera {
             center: camera_config.look_from,
-            focal_length: (camera_config.look_from - camera_config.look_at).length(),
-            samples: render_config.samples,
-            bounces: render_config.bounces,
+            focal_length: (camera_config.look_from - camera_config.look_at).length()
         };
 
         let h = (camera_config.vfov.to_radians() / 2.0).tan(); // 90 deg this equation = 1.0

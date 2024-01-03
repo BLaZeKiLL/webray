@@ -113,6 +113,8 @@ fn random_on_hemisphere(normal: vec3f) -> vec3f {
 struct Image {
     width: u32,
     height: u32,
+    samples: u32,
+    bounces: u32
 }
 // IMAGE_END
 
@@ -120,8 +122,6 @@ struct Image {
 struct Camera {
     center: vec3f,
     focal_length: f32,
-    samples: u32,
-    bounces: u32
 }
 // CAMERA_END
 
@@ -350,7 +350,7 @@ fn render_ray(ray: Ray) -> vec3f {
     var bounce = 0u;
 
     // try world hits
-    for (bounce = 0u; bounce < config.camera.bounces; bounce++) {
+    for (bounce = 0u; bounce < config.image.bounces; bounce++) {
         var hit = HitRecord();
         let ray = Ray(current_ray_origin, current_ray_direction);
 
@@ -373,7 +373,7 @@ fn render_ray(ray: Ray) -> vec3f {
     }
 
     // max bounce condition
-    if bounce >= config.camera.bounces {
+    if bounce >= config.image.bounces {
         accumulated_color = vec3f(0.0, 0.0, 0.0);
     }
 
@@ -419,11 +419,11 @@ fn main(@builtin(global_invocation_id) id: vec3u) {
 
     var pixel_color = vec4f();
 
-    for (var i = 0u; i < config.camera.samples; i++) {
+    for (var i = 0u; i < config.image.samples; i++) {
         pixel_color += render(pixel_position);
     }
 
-    pixel_color /= f32(config.camera.samples);
+    pixel_color /= f32(config.image.samples);
 
     // sqrt applies gamma 2 transformation
     textureStore(result, pixel_position, sqrt(pixel_color)); // final output
