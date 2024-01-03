@@ -32,7 +32,6 @@ impl KernelScene {
     }
 
     pub fn spheres_as_wgsl_bytes(&self) -> encase::internal::Result<Vec<u8>> {
-        dbg!(&self.spheres);
         let mut buffer = encase::StorageBuffer::new(Vec::new());
         buffer.write(&self.spheres).unwrap();
         return Ok(buffer.into_inner());

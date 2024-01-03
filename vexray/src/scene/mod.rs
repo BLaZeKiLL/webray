@@ -68,8 +68,6 @@ impl From<Scene> for KernelScene {
             }
         }
 
-        dbg!(&kernel_scene);
-
         return kernel_scene;
     }
 }

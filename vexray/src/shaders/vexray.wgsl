@@ -140,9 +140,9 @@ struct Config {
 
 // HITRECORD_START
 struct HitRecord {
-    t: f32,
     point: vec3f,
     normal: vec3f,
+    t: f32,
     mat_type: u32,
     mat_index: u32,
     front_face: bool
@@ -259,8 +259,8 @@ fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function,
     (*hit).t = root;
     (*hit).point = point;
 
-    // (*hit).mat_type = sphere.mat_type;
-    // (*hit).mat_index = sphere.mat_index;
+    (*hit).mat_type = 1u;
+    (*hit).mat_index = 0u;
 
     hit_set_face_normal(hit, ray, out_normal);
 
@@ -290,48 +290,7 @@ fn hit_world(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> b
 // WORLD_END
 
 // RENDERER_START
-// fn render_ray(ray: Ray) -> vec3f {
-//     var current_ray_origin = ray.origin;
-//     var current_ray_direction = ray.direction;
-
-//     // start with background color
-//     let unit_dir = normalize(ray.direction);
-//     let alpha = 0.5 * (unit_dir.y + 1.0);
-
-//     var accumulated_color = (1.0 - alpha) * vec3f(1.0, 1.0, 1.0) + alpha * vec3f(0.3, 0.6, 1.0);
-
-//     var bounce = 0u;
-
-//     // try world hits
-//     for (bounce = 0u; bounce < config.camera.bounces; bounce++) {
-//         var hit = HitRecord();
-//         let ray = Ray(current_ray_origin, current_ray_direction);
-
-//         if hit_world(ray, Interval(0.001, INF_F32), &hit) {
-//             var scatter = Ray();
-//             var attenuation = vec3f();
-
-//             if scatter(ray, hit, &attenuation, &scatter) {
-//                 accumulated_color *= 0.5;
-//             } 
-//             else {
-//                 accumulated_color = ERR_COLOR;
-//                 break;
-//             }
-//         } else {
-//             break;
-//         }
-//     }
-
-//     // max bounce condition
-//     if bounce >= config.camera.bounces {
-//         accumulated_color = vec3f(0.0, 0.0, 0.0);
-//     }
-
-//     return accumulated_color;
-// }
-
-fn render_ray_v2(ray: Ray) -> vec3f {
+fn render_ray(ray: Ray) -> vec3f {
     var current_ray_origin = ray.origin;
     var current_ray_direction = ray.direction;
 
@@ -346,22 +305,28 @@ fn render_ray_v2(ray: Ray) -> vec3f {
     // try world hits
     for (bounce = 0u; bounce < config.camera.bounces; bounce++) {
         var hit = HitRecord();
+        let ray = Ray(current_ray_origin, current_ray_direction);
 
-        if hit_world(Ray(current_ray_origin, current_ray_direction), Interval(0.001, INF_F32), &hit) {
-            let direction = hit.normal + random_unit_vector();
+        if hit_world(ray, Interval(0.001, INF_F32), &hit) {
+            var scatter = Ray();
+            var attenuation = vec3f();
 
-            current_ray_origin = hit.point;
-            current_ray_direction = direction;
-
-            accumulated_color *= 0.5;
+            if scatter(ray, hit, &attenuation, &scatter) {
+                current_ray_origin = scatter.origin;
+                current_ray_direction = scatter.direction;
+                accumulated_color *= attenuation;
+            } else {
+                accumulated_color = ERR_COLOR;
+                break;
+            }
         } else {
             break;
         }
     }
 
-    //max bounce condition
+    // max bounce condition
     if bounce >= config.camera.bounces {
-        accumulated_color = ERR_COLOR;
+        accumulated_color = vec3f(0.0, 0.0, 0.0);
     }
 
     return accumulated_color;
@@ -380,7 +345,7 @@ fn render(pixel_position: vec2i) -> vec4f {
 
     let ray = Ray(config.camera.center, ray_direction);
 
-    let pixel_color = render_ray_v2(ray);
+    let pixel_color = render_ray(ray);
 
     return vec4f(pixel_color, 1.0);
 }
