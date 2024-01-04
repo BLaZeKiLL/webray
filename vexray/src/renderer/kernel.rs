@@ -1,3 +1,5 @@
+use log::info;
+
 use crate::core::gpu::Gpu;
 
 use super::{bindings::KernelBindings, buffers::KernelBuffers, config::KernelConfig};
@@ -81,7 +83,9 @@ impl Kernel {
         result_slice.map_async(wgpu::MapMode::Read, move |v| sender.send(v).unwrap());
 
         // Wait for result
-        gpu.device.poll(wgpu::Maintain::Wait);
+        let status = gpu.device.poll(wgpu::Maintain::Wait);
+
+        info!("Poll status: {}", status);
 
         if let Ok(Ok(_)) = receiver.recv_async().await {
             let result_view = result_slice.get_mapped_range();

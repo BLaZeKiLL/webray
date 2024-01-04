@@ -46,8 +46,8 @@ fn create_cover_config() -> KernelConfig {
     let render_config = RenderConfig {
         width: 1920,
         height: 1080,
-        samples: 128,
-        bounces: 16,
+        samples: 32,
+        bounces: 8,
     };
 
     let camera_config = CameraConfig {
@@ -73,8 +73,8 @@ fn create_cover_scene() -> scene::Scene {
         ground_mat,
     ));
 
-    for a in -5..5 {
-        for b in -5..5 {
+    for a in -11..11 {
+        for b in -11..11 {
             let choose_mat: f64 = rng.gen();
             let center = glam::vec3(
                 a as f32 + 0.9 * rng.gen::<f32>(),
@@ -86,14 +86,17 @@ fn create_cover_scene() -> scene::Scene {
                 if choose_mat < 0.8 { // diffuse
                     let albedo = color::random_color(&mut rng) * color::random_color(&mut rng);
                     let mat = scene.register_material(Material::Diffuse(albedo));
+
                     scene.register_shape(Shape::Sphere(center, 0.2, mat));
                 } else if choose_mat < 0.95 { // metal
                     let albedo = color::random_color_range(&mut rng, 0.5, 1.0);
                     let roughness: f32 = rng.gen_range(0.0..0.5);
                     let mat = scene.register_material(Material::Metal(albedo, roughness));
+
                     scene.register_shape(Shape::Sphere(center, 0.2, mat));
                 } else { // dielectric
                     let mat = scene.register_material(Material::Dielectric(1.5));
+
                     scene.register_shape(Shape::Sphere(center, 0.2, mat));
                 }
             }
