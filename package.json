@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"wasm": "wasm-pack build ./wgpu-hello --out-dir ../src/lib/wasm/wgpu-hello",
+		"wasm": "wasm-pack build ./vexray --out-dir ../src/lib/wasm/vexray",
 		"dev": "yarn wasm && vite dev",
 		"build": "yarn wasm && vite build",
 		"preview": "vite preview",
