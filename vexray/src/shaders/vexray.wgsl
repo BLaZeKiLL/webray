@@ -94,6 +94,16 @@ fn random_in_unit_sphere() -> vec3f {
     return vec3f(); // never reach here
 }
 
+fn random_in_unit_disk() -> vec3f {
+    loop {
+        let p = vec3f(random_float_range(-1.0, 1.0), random_float_range(-1.0, 1.0), 0.0);
+        if vec3f_len_squared(p) < 1.0 {
+            return p;
+        }
+    }
+    return vec3f(); // never reach here
+}
+
 fn random_unit_vector() -> vec3f {
     return normalize(random_in_unit_sphere());
 }
@@ -121,6 +131,9 @@ struct Image {
 // CAMERA_START
 struct Camera {
     center: vec3f,
+    defocus_angle: f32,
+    defocus_disk_u: vec3f,
+    defocus_disk_v: vec3f
 }
 // CAMERA_END
 
@@ -386,9 +399,10 @@ fn render(pixel_position: vec2i) -> vec4f {
 
     let pixel_sample = pixel_center + sample_square();
     
-    let ray_direction = pixel_sample - config.camera.center;
+    let ray_origin = select(defocus_disk_sample(), config.camera.center, config.camera.defocus_angle <= 0.0);
+    let ray_direction = pixel_sample - ray_origin;
 
-    let ray = Ray(config.camera.center, ray_direction);
+    let ray = Ray(ray_origin, ray_direction);
 
     let pixel_color = render_ray(ray);
 
@@ -397,6 +411,11 @@ fn render(pixel_position: vec2i) -> vec4f {
 
 fn sample_square() -> vec3f {
     return ((-0.5 + random_float()) * config.viewport.delta_u) + ((-0.5 + random_float()) * config.viewport.delta_v);
+}
+
+fn defocus_disk_sample() -> vec3f {
+    let p = random_in_unit_disk();
+    return config.camera.center + (p.x * config.camera.defocus_disk_u) + (p.y * config.camera.defocus_disk_v);
 }
 // RENDERER_END
 

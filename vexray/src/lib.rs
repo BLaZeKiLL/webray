@@ -29,6 +29,8 @@ pub async fn run() {
         look_at: glam::vec3(0.0, 0.0, -1.0),
         v_up: glam::vec3(0.0, 1.0, 0.0),
         v_fov: 20.0,
+        defocus_angle: 10.0,
+        focus_distance: 3.4
     };
     let config = KernelConfig::new(render_config, camera_config);
 
