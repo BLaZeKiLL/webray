@@ -83,9 +83,7 @@ impl Kernel {
         result_slice.map_async(wgpu::MapMode::Read, move |v| sender.send(v).unwrap());
 
         // Wait for result
-        let status = gpu.device.poll(wgpu::Maintain::Wait);
-
-        info!("Poll status: {}", status);
+        gpu.device.poll(wgpu::Maintain::Wait);
 
         if let Ok(Ok(_)) = receiver.recv_async().await {
             let result_view = result_slice.get_mapped_range();
