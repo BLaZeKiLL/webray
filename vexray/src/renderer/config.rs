@@ -9,9 +9,9 @@ pub struct Image {
 #[derive(Debug, encase::ShaderType)]
 pub struct Camera {
     center: glam::Vec3,
-    defocus_angle: f32,
-    defocus_disk_u: glam::Vec3,
-    defocus_disk_v: glam::Vec3
+    dof_angle: f32,
+    dof_disk_u: glam::Vec3,
+    dof_disk_v: glam::Vec3
 }
 
 #[derive(Debug, encase::ShaderType)]
@@ -45,8 +45,8 @@ pub struct CameraConfig {
     pub look_at: glam::Vec3,
     pub v_up: glam::Vec3,
     pub v_fov: f32,
-    pub defocus_angle: f32,
-    pub focus_distance: f32
+    pub dof_angle: f32,
+    pub dof_distance: f32
 }
 
 impl KernelConfig {
@@ -54,7 +54,7 @@ impl KernelConfig {
     pub fn new(render_config: RenderConfig, camera_config: CameraConfig) -> Self {
         // Determine viewport dimensions.
         let h = (camera_config.v_fov.to_radians() / 2.0).tan(); // 90 deg this equation = 1.0
-        let viewport_height = 2.0 * h * camera_config.focus_distance;
+        let viewport_height = 2.0 * h * camera_config.dof_distance;
         let viewport_width =
             viewport_height * (render_config.width as f32 / render_config.height as f32);
 
@@ -73,13 +73,13 @@ impl KernelConfig {
 
         // Calculate the location of the upper left pixel.
         let upper_left = camera_config.look_from
-            - (camera_config.focus_distance * w) 
+            - (camera_config.dof_distance * w) 
             - (viewport_u / 2.0) 
             - (viewport_v / 2.0);
         let pixel_zero_loc = upper_left + 0.5 * (delta_u + delta_v);
 
         // Calculate the camera defocus disk basis vectors.
-        let defocus_radius = camera_config.focus_distance * (camera_config.defocus_angle / 2.0).to_radians().tan();
+        let defocus_radius = camera_config.dof_distance * (camera_config.dof_angle / 2.0).to_radians().tan();
         let defocus_disk_u = u * defocus_radius;
         let defocus_disk_v = v * defocus_radius;
 
@@ -92,9 +92,9 @@ impl KernelConfig {
 
         let camera = Camera {
             center: camera_config.look_from,
-            defocus_angle: camera_config.defocus_angle,
-            defocus_disk_u,
-            defocus_disk_v
+            dof_angle: camera_config.dof_angle,
+            dof_disk_u: defocus_disk_u,
+            dof_disk_v: defocus_disk_v
         };
 
         let viewport = Viewport {

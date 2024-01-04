@@ -131,9 +131,9 @@ struct Image {
 // CAMERA_START
 struct Camera {
     center: vec3f,
-    defocus_angle: f32,
-    defocus_disk_u: vec3f,
-    defocus_disk_v: vec3f
+    dof_angle: f32,
+    dof_disk_u: vec3f,
+    dof_disk_v: vec3f
 }
 // CAMERA_END
 
@@ -399,7 +399,7 @@ fn render(pixel_position: vec2i) -> vec4f {
 
     let pixel_sample = pixel_center + sample_square();
     
-    let ray_origin = select(defocus_disk_sample(), config.camera.center, config.camera.defocus_angle <= 0.0);
+    let ray_origin = select(dof_disk_sample(), config.camera.center, config.camera.dof_angle <= 0.0);
     let ray_direction = pixel_sample - ray_origin;
 
     let ray = Ray(ray_origin, ray_direction);
@@ -413,9 +413,9 @@ fn sample_square() -> vec3f {
     return ((-0.5 + random_float()) * config.viewport.delta_u) + ((-0.5 + random_float()) * config.viewport.delta_v);
 }
 
-fn defocus_disk_sample() -> vec3f {
+fn dof_disk_sample() -> vec3f {
     let p = random_in_unit_disk();
-    return config.camera.center + (p.x * config.camera.defocus_disk_u) + (p.y * config.camera.defocus_disk_v);
+    return config.camera.center + (p.x * config.camera.dof_disk_u) + (p.y * config.camera.dof_disk_v);
 }
 // RENDERER_END
 
