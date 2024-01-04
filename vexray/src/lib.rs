@@ -27,8 +27,8 @@ pub async fn run() {
     let camera_config = CameraConfig {
         look_from: glam::vec3(-2.0, 2.0, 1.0),
         look_at: glam::vec3(0.0, 0.0, -1.0),
-        vup: glam::vec3(0.0, 1.0, 0.0),
-        vfov: 20.0,
+        v_up: glam::vec3(0.0, 1.0, 0.0),
+        v_fov: 20.0,
     };
     let config = KernelConfig::new(render_config, camera_config);
 

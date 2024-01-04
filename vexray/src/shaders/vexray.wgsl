@@ -121,7 +121,6 @@ struct Image {
 // CAMERA_START
 struct Camera {
     center: vec3f,
-    focal_length: f32,
 }
 // CAMERA_END
 
@@ -384,10 +383,8 @@ fn render(pixel_position: vec2i) -> vec4f {
     let pixel_center = config.pixel_zero_loc 
         + (f32(pixel_position.x) * config.viewport.delta_u) 
         + (f32(pixel_position.y) * config.viewport.delta_v);
-    
-    let sample_square = ((-0.5 + random_float()) * config.viewport.delta_u) + ((-0.5 + random_float()) * config.viewport.delta_v);
 
-    let pixel_sample = pixel_center + sample_square;
+    let pixel_sample = pixel_center + sample_square();
     
     let ray_direction = pixel_sample - config.camera.center;
 
@@ -396,6 +393,10 @@ fn render(pixel_position: vec2i) -> vec4f {
     let pixel_color = render_ray(ray);
 
     return vec4f(pixel_color, 1.0);
+}
+
+fn sample_square() -> vec3f {
+    return ((-0.5 + random_float()) * config.viewport.delta_u) + ((-0.5 + random_float()) * config.viewport.delta_v);
 }
 // RENDERER_END
 

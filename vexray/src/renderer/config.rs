@@ -9,7 +9,6 @@ pub struct Image {
 #[derive(Debug, encase::ShaderType)]
 pub struct Camera {
     center: glam::Vec3,
-    focal_length: f32,
 }
 
 #[derive(Debug, encase::ShaderType)]
@@ -41,8 +40,8 @@ pub struct RenderConfig {
 pub struct CameraConfig {
     pub look_from: glam::Vec3,
     pub look_at: glam::Vec3,
-    pub vup: glam::Vec3,
-    pub vfov: f32,
+    pub v_up: glam::Vec3,
+    pub v_fov: f32,
 }
 
 impl KernelConfig {
@@ -54,18 +53,19 @@ impl KernelConfig {
             samples: render_config.samples,
             bounces: render_config.bounces,
         };
+    
+        let focal_length = (camera_config.look_from - camera_config.look_at).length();
 
         let camera = Camera {
             center: camera_config.look_from,
-            focal_length: (camera_config.look_from - camera_config.look_at).length()
         };
 
-        let h = (camera_config.vfov.to_radians() / 2.0).tan(); // 90 deg this equation = 1.0
-        let viewport_height = 2.0 * h * camera.focal_length;
+        let h = (camera_config.v_fov.to_radians() / 2.0).tan(); // 90 deg this equation = 1.0
+        let viewport_height = 2.0 * h * focal_length;
         let viewport_width = viewport_height * (image.width as f32 / image.height as f32);
 
         let w = (camera_config.look_from - camera_config.look_at).normalize();
-        let u = camera_config.vup.cross(w).normalize();
+        let u = camera_config.v_up.cross(w).normalize();
         let v = w.cross(u);
 
         let viewport_u = viewport_width * u;
@@ -75,7 +75,7 @@ impl KernelConfig {
         let delta_v = viewport_v / image.height as f32;
 
         let upper_left =
-            camera.center - (camera.focal_length * w) - (viewport_u / 2.0) - (viewport_v / 2.0);
+            camera.center - (focal_length * w) - (viewport_u / 2.0) - (viewport_v / 2.0);
 
         let viewport = Viewport {
             width: viewport_width,
