@@ -47,35 +47,44 @@ pub struct CameraConfig {
 impl KernelConfig {
     /// A lot of camera calculations
     pub fn new(render_config: RenderConfig, camera_config: CameraConfig) -> Self {
+        let focal_length = (camera_config.look_from - camera_config.look_at).length();
+
+        // Determine viewport dimensions.
+        let h = (camera_config.v_fov.to_radians() / 2.0).tan(); // 90 deg this equation = 1.0
+        let viewport_height = 2.0 * h * focal_length;
+        let viewport_width =
+            viewport_height * (render_config.width as f32 / render_config.height as f32);
+
+        // Calculate the u,v,w unit basis vectors for the camera coordinate frame.
+        let w = (camera_config.look_from - camera_config.look_at).normalize();
+        let u = camera_config.v_up.cross(w).normalize();
+        let v = w.cross(u);
+
+        // Calculate the vectors across the horizontal and down the vertical viewport edges.
+        let viewport_u = viewport_width * u;
+        let viewport_v = viewport_height * -v;
+
+        // Calculate the horizontal and vertical delta vectors to the next pixel.
+        let delta_u = viewport_u / render_config.width as f32;
+        let delta_v = viewport_v / render_config.height as f32;
+
+        // Calculate the location of the upper left pixel.
+        let upper_left = camera_config.look_from
+            - (focal_length * w) 
+            - (viewport_u / 2.0) 
+            - (viewport_v / 2.0);
+        let pixel_zero_loc = upper_left + 0.5 * (delta_u + delta_v);
+
         let image = Image {
             width: render_config.width,
             height: render_config.height,
             samples: render_config.samples,
             bounces: render_config.bounces,
         };
-    
-        let focal_length = (camera_config.look_from - camera_config.look_at).length();
 
         let camera = Camera {
             center: camera_config.look_from,
         };
-
-        let h = (camera_config.v_fov.to_radians() / 2.0).tan(); // 90 deg this equation = 1.0
-        let viewport_height = 2.0 * h * focal_length;
-        let viewport_width = viewport_height * (image.width as f32 / image.height as f32);
-
-        let w = (camera_config.look_from - camera_config.look_at).normalize();
-        let u = camera_config.v_up.cross(w).normalize();
-        let v = w.cross(u);
-
-        let viewport_u = viewport_width * u;
-        let viewport_v = viewport_height * -v;
-
-        let delta_u = viewport_u / image.width as f32;
-        let delta_v = viewport_v / image.height as f32;
-
-        let upper_left =
-            camera.center - (focal_length * w) - (viewport_u / 2.0) - (viewport_v / 2.0);
 
         let viewport = Viewport {
             width: viewport_width,
@@ -91,7 +100,7 @@ impl KernelConfig {
             image,
             camera,
             viewport,
-            pixel_zero_loc: upper_left + 0.5 * (delta_u + delta_v),
+            pixel_zero_loc,
         };
     }
 
