@@ -46,7 +46,7 @@ fn create_cover_config() -> KernelConfig {
     let render_config = RenderConfig {
         width: 1920,
         height: 1080,
-        samples: 34,
+        samples: 32,
         bounces: 8,
     };
 
@@ -115,66 +115,66 @@ fn create_cover_scene() -> scene::Scene {
     return scene;
 }
 
-fn create_demo_config() -> KernelConfig {
-    let render_config = RenderConfig {
-        width: 1920,
-        height: 1080,
-        samples: 128,
-        bounces: 16,
-    };
+// fn create_demo_config() -> KernelConfig {
+//     let render_config = RenderConfig {
+//         width: 1920,
+//         height: 1080,
+//         samples: 128,
+//         bounces: 16,
+//     };
 
-    let camera_config = CameraConfig {
-        look_from: glam::vec3(-2.0, 2.0, 1.0),
-        look_at: glam::vec3(0.0, 0.0, -1.0),
-        v_up: glam::vec3(0.0, 1.0, 0.0),
-        v_fov: 20.0,
-        dof_angle: 10.0,
-        dof_distance: 3.4,
-    };
+//     let camera_config = CameraConfig {
+//         look_from: glam::vec3(-2.0, 2.0, 1.0),
+//         look_at: glam::vec3(0.0, 0.0, -1.0),
+//         v_up: glam::vec3(0.0, 1.0, 0.0),
+//         v_fov: 20.0,
+//         dof_angle: 10.0,
+//         dof_distance: 3.4,
+//     };
 
-    return KernelConfig::new(render_config, camera_config);
-}
+//     return KernelConfig::new(render_config, camera_config);
+// }
 
-fn create_demo_scene() -> scene::Scene {
-    let mut scene = scene::Scene::new();
+// fn create_demo_scene() -> scene::Scene {
+//     let mut scene = scene::Scene::new();
 
-    let diffuse_mat_1 = scene.register_material(Material::Diffuse(glam::vec3(0.6, 0.8, 0.0)));
+//     let diffuse_mat_1 = scene.register_material(Material::Diffuse(glam::vec3(0.6, 0.8, 0.0)));
 
-    let diffuse_mat_2 = scene.register_material(Material::Diffuse(glam::vec3(0.1, 0.2, 0.5)));
+//     let diffuse_mat_2 = scene.register_material(Material::Diffuse(glam::vec3(0.1, 0.2, 0.5)));
 
-    let metal_mat_2 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.6, 0.2), 0.1));
+//     let metal_mat_2 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.6, 0.2), 0.1));
 
-    let dielectric_mat_1 = scene.register_material(Material::Dielectric(1.5));
+//     let dielectric_mat_1 = scene.register_material(Material::Dielectric(1.5));
 
-    // left
-    // 2 spheres and 1 with -ve radius with di-electric mat gives a hollow glass bubble look
-    scene.register_shape(Shape::Sphere(
-        glam::vec3(-1.0, 0.0, -1.0),
-        0.5,
-        dielectric_mat_1,
-    ));
-    scene.register_shape(Shape::Sphere(
-        glam::vec3(-1.0, 0.0, -1.0),
-        -0.4,
-        dielectric_mat_1,
-    ));
+//     // left
+//     // 2 spheres and 1 with -ve radius with di-electric mat gives a hollow glass bubble look
+//     scene.register_shape(Shape::Sphere(
+//         glam::vec3(-1.0, 0.0, -1.0),
+//         0.5,
+//         dielectric_mat_1,
+//     ));
+//     scene.register_shape(Shape::Sphere(
+//         glam::vec3(-1.0, 0.0, -1.0),
+//         -0.4,
+//         dielectric_mat_1,
+//     ));
 
-    // center
-    scene.register_shape(Shape::Sphere(
-        glam::vec3(0.0, 0.0, -1.0),
-        0.5,
-        diffuse_mat_2,
-    ));
+//     // center
+//     scene.register_shape(Shape::Sphere(
+//         glam::vec3(0.0, 0.0, -1.0),
+//         0.5,
+//         diffuse_mat_2,
+//     ));
 
-    // right
-    scene.register_shape(Shape::Sphere(glam::vec3(1.0, 0.0, -1.0), 0.5, metal_mat_2));
+//     // right
+//     scene.register_shape(Shape::Sphere(glam::vec3(1.0, 0.0, -1.0), 0.5, metal_mat_2));
 
-    // ground
-    scene.register_shape(Shape::Sphere(
-        glam::vec3(0.0, -100.5, -1.0),
-        100.0,
-        diffuse_mat_1,
-    ));
+//     // ground
+//     scene.register_shape(Shape::Sphere(
+//         glam::vec3(0.0, -100.5, -1.0),
+//         100.0,
+//         diffuse_mat_1,
+//     ));
 
-    return scene;
-}
+//     return scene;
+// }

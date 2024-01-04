@@ -1,5 +1,3 @@
-use log::info;
-
 use crate::core::gpu::Gpu;
 
 use super::{bindings::KernelBindings, buffers::KernelBuffers, config::KernelConfig};
