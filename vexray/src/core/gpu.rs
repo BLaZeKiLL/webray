@@ -27,6 +27,10 @@ impl Gpu {
             .await
             .unwrap();
 
+        device.on_uncaptured_error(Box::new(|error| {
+            panic!("Aborting due to an error: {}", error);
+        }));
+
         return Gpu {
             device,
             queue,
