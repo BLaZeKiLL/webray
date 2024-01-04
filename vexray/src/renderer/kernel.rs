@@ -19,7 +19,7 @@ impl Kernel {
         config: &KernelConfig,
         bindings: &KernelBindings,
         buffers: &KernelBuffers,
-    ) {
+    ) -> wgpu::SubmissionIndex {
         // Setup commands
         let mut encoder = gpu
             .device
@@ -63,7 +63,7 @@ impl Kernel {
         );
 
         // Submit commands
-        gpu.queue.submit([encoder.finish()]);
+        return gpu.queue.submit([encoder.finish()]);
     }
 
     pub async fn finish(
@@ -71,6 +71,7 @@ impl Kernel {
         gpu: &Gpu,
         config: &KernelConfig,
         buffers: &KernelBuffers,
+        submission_index: wgpu::SubmissionIndex
     ) -> Result<Vec<u8>, ()> {
         let mut output = vec![0u8; (config.result_size()) as usize];
 
@@ -81,7 +82,7 @@ impl Kernel {
         result_slice.map_async(wgpu::MapMode::Read, move |v| sender.send(v).unwrap());
 
         // Wait for result
-        gpu.device.poll(wgpu::Maintain::Wait);
+        gpu.device.poll(wgpu::Maintain::WaitForSubmissionIndex(submission_index));
 
         if let Ok(Ok(_)) = receiver.recv_async().await {
             let result_view = result_slice.get_mapped_range();
