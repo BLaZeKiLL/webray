@@ -1,0 +1,2 @@
+[env]
+METAL_DEVICE_WRAPPER_TYPE="1" # Metal validation layer
