@@ -46,8 +46,8 @@ fn create_cover_config() -> KernelConfig {
     let render_config = RenderConfig {
         width: 1920,
         height: 1080,
-        samples: 512,
-        bounces: 64,
+        samples: 32,
+        bounces: 8,
     };
 
     let camera_config = CameraConfig {
