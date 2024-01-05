@@ -85,23 +85,21 @@ fn random_vec3f_range(min: f32, max: f32) -> vec3f {
 }
 
 fn random_in_unit_sphere() -> vec3f {
-    loop {
-        let p = random_vec3f_range(-1.0, 1.0);
-        if vec3f_len_squared(p) < 1.0 {
-            return p;
-        }
+    let p = random_vec3f_range(-1.0, 1.0);
+    if vec3f_len_squared(p) >= 1.0 {
+        return normalize(p);
+    } else {
+        return p;
     }
-    return vec3f(); // never reach here
 }
 
 fn random_in_unit_disk() -> vec3f {
-    loop {
-        let p = vec3f(random_float_range(-1.0, 1.0), random_float_range(-1.0, 1.0), 0.0);
-        if vec3f_len_squared(p) < 1.0 {
-            return p;
-        }
+    let p = vec3f(random_float_range(-1.0, 1.0), random_float_range(-1.0, 1.0), 0.0);
+    if vec3f_len_squared(p) >= 1.0 {
+        return normalize(p);
+    } else {
+        return p;
     }
-    return vec3f(); // never reach here
 }
 
 fn random_unit_vector() -> vec3f {
