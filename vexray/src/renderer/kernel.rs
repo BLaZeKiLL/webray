@@ -37,7 +37,7 @@ impl Kernel {
             pass.set_bind_group(0, bindings.config_binding.as_ref().unwrap(), &[]);
             pass.set_bind_group(1, bindings.scene_binding.as_ref().unwrap(), &[]);
             pass.set_bind_group(2, bindings.material_binding.as_ref().unwrap(), &[]);
-            pass.dispatch_workgroups(config.image.width, config.image.height, 1);
+            pass.dispatch_workgroups(config.image.width / 8, config.image.height / 8, 1);
         }
 
         encoder.copy_texture_to_buffer(
@@ -82,6 +82,10 @@ impl Kernel {
         result_slice.map_async(wgpu::MapMode::Read, move |v| sender.send(v).unwrap());
 
         // Wait for result
+        // wgpu has an internal timeout of 5 secs
+        // wgpu has a bug where timeout is treated as success which triggers the map_async callback
+        // causing early mapping when without the results being populated
+        // https://github.com/gfx-rs/wgpu/issues/3601
         gpu.device.poll(wgpu::Maintain::WaitForSubmissionIndex(submission_index));
 
         if let Ok(Ok(_)) = receiver.recv_async().await {
