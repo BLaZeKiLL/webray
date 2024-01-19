@@ -1821,22 +1821,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 
 [[package]]
-name = "vexray"
-version = "0.1.0"
-dependencies = [
- "bytemuck",
- "encase",
- "env_logger",
- "flume",
- "glam 0.25.0",
- "image",
- "log",
- "pollster",
- "rand",
- "wgpu",
-]
-
-[[package]]
 name = "walkdir"
 version = "2.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2045,6 +2029,22 @@ checksum = "aa30049b1c872b72c89866d458eae9f20380ab280ffd1b1e18df2d3e2d98cfe0"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "webray"
+version = "0.1.0"
+dependencies = [
+ "bytemuck",
+ "encase",
+ "env_logger",
+ "flume",
+ "glam 0.25.0",
+ "image",
+ "log",
+ "pollster",
+ "rand",
+ "wgpu",
 ]
 
 [[package]]
