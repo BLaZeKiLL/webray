@@ -106,7 +106,7 @@ impl Kernel {
     fn create_pipeline(gpu: &Gpu, bindings: &KernelBindings) -> wgpu::ComputePipeline {
         let shader = gpu
             .device
-            .create_shader_module(wgpu::include_wgsl!("../shaders/vexray.wgsl"));
+            .create_shader_module(wgpu::include_wgsl!("../shaders/webray.wgsl"));
 
         let pipeline_layout = gpu
             .device

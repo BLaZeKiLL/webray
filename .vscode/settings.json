@@ -1,9 +1,7 @@
 {
     "cSpell.words": [
         "wgpu",
-        "winit"
+        "winit",
+        "webray"
     ],
-    "rust-analyzer.linkedProjects": [
-        "./vexray/Cargo.toml"
-    ]
 }

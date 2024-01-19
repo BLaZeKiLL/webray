@@ -20,9 +20,9 @@ pub async fn run() {
 
     let path = "render.png";
 
-    let config = create_cover_config();
+    let config = create_demo_config();
 
-    let scene = create_cover_scene();
+    let scene = create_demo_scene();
 
     if let Ok(output) = renderer::render(&config, &scene.into()).await {
         output_image(output, &config, path);
