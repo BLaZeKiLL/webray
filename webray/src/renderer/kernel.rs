@@ -72,6 +72,8 @@ impl Kernel {
                             height
                         );
 
+                        self.render_tile(gpu, tile_position * size, width, height, bindings, buffers);
+
                         id += 1;
                     }
                 }
@@ -131,28 +133,6 @@ impl Kernel {
             pass.set_bind_group(2, bindings.execution_binding.as_ref().unwrap(), &[]);
             pass.dispatch_workgroups(width, height, 1);
         }
-
-        // encoder.copy_texture_to_buffer(
-        //     wgpu::ImageCopyTexture {
-        //         texture: &buffers.render,
-        //         mip_level: 0,
-        //         origin: wgpu::Origin3d::ZERO,
-        //         aspect: wgpu::TextureAspect::All,
-        //     },
-        //     wgpu::ImageCopyBuffer {
-        //         buffer: &buffers.result,
-        //         layout: wgpu::ImageDataLayout {
-        //             offset: 0,
-        //             bytes_per_row: Some(kernel_config.image.width * 4),
-        //             rows_per_image: Some(kernel_config.image.height),
-        //         },
-        //     },
-        //     wgpu::Extent3d {
-        //         width: kernel_config.image.width,
-        //         height: kernel_config.image.height,
-        //         depth_or_array_layers: 1,
-        //     },
-        // );
 
         // Submit commands
         let submission_index = gpu.queue.submit([encoder.finish()]);

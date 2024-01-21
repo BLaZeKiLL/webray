@@ -122,7 +122,7 @@ pub fn create_demo_config() -> Config {
         height: 1080,
         samples: 128,
         bounces: 32,
-        tile_size: TileSize::Full
+        tile_size: TileSize::Square(256)
     };
 
     let camera_config = CameraConfig {
