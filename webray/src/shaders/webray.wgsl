@@ -418,15 +418,20 @@ fn dof_disk_sample() -> vec3f {
 // RENDERER_END
 
 // BINDINGS_START
-// Config Bindings
+// System Bindings
 @group(0) @binding(0) var result: texture_storage_2d<rgba8unorm, write>; // output image
-@group(0) @binding(1) var<uniform> config: Config; // render config
-// Scene Bindings
-@group(1) @binding(0) var<storage, read> spheres: array<Sphere>; // move to different group
-// Material Bindings
-@group(2) @binding(0) var<storage, read> diffuse_mats: array<DiffuseMat>;
-@group(2) @binding(1) var<storage, read> metal_mats: array<MetalMat>;
-@group(2) @binding(2) var<storage, read> dielectric_mats: array<DielectricMat>;
+
+// User Bindings
+// - Config bindings
+@group(1) @binding(0) var<uniform> config: Config; // render config
+// - Scene bindings
+@group(1) @binding(1) var<storage, read> spheres: array<Sphere>; // move to different group
+// - Material Bindings
+@group(1) @binding(2) var<storage, read> diffuse_mats: array<DiffuseMat>;
+@group(1) @binding(3) var<storage, read> metal_mats: array<MetalMat>;
+@group(1) @binding(4) var<storage, read> dielectric_mats: array<DielectricMat>;
+
+// Execution Bindings
 // BINDINGS_END
 
 @compute @workgroup_size(1, 1, 1)

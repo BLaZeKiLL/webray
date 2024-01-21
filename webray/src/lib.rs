@@ -3,7 +3,7 @@
 
 use log::{error, info};
 use rand::Rng;
-use renderer::config::{CameraConfig, KernelConfig, RenderConfig};
+use renderer::config::{CameraConfig, KernelConfig, RenderConfig, TileSize};
 use scene::{material::Material, shape::Shape};
 use utils::color;
 
@@ -46,8 +46,9 @@ fn create_cover_config() -> KernelConfig {
     let render_config = RenderConfig {
         width: 1920,
         height: 1080,
-        samples: 64,
+        samples: 256,
         bounces: 12,
+        tile_size: TileSize::Square(256)
     };
 
     let camera_config = CameraConfig {
@@ -121,6 +122,7 @@ fn create_demo_config() -> KernelConfig {
         height: 1080,
         samples: 128,
         bounces: 32,
+        tile_size: TileSize::Full
     };
 
     let camera_config = CameraConfig {

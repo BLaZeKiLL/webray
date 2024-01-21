@@ -24,13 +24,15 @@ impl Kernel {
 
         // scoped threads can borrow non-'static data as scope guarantees
         // all threads will join at the end of the scope
-        std::thread::scope(|scope| {
-            let _ = scope.spawn(move || {
-                let submission_index = self.submit(gpu, config, bindings, buffers);
+        // std::thread::scope(|scope| {
+        //     let _ = scope.spawn(move || {
+
+        //     });
+        // });
+
+        let submission_index = self.submit(gpu, config, bindings, buffers);
     
-                self.wait(gpu, buffers, submission_index, sender);
-            });
-        });
+        self.wait(gpu, buffers, submission_index, sender);
 
         let result = self.finish(config, buffers, receiver).await;
 
@@ -51,16 +53,16 @@ impl Kernel {
                 label: Some("Command encoder"),
             });
 
-        {
+        { // scope to bypass mutable borrow
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                 label: Some("Compute pass"),
                 timestamp_writes: None,
             });
 
             pass.set_pipeline(&self.pipeline);
-            pass.set_bind_group(0, bindings.config_binding.as_ref().unwrap(), &[]);
-            pass.set_bind_group(1, bindings.scene_binding.as_ref().unwrap(), &[]);
-            pass.set_bind_group(2, bindings.material_binding.as_ref().unwrap(), &[]);
+            pass.set_bind_group(0, bindings.system_binding.as_ref().unwrap(), &[]);
+            pass.set_bind_group(1, bindings.user_binding.as_ref().unwrap(), &[]);
+            // pass.set_bind_group(2, bindings.execution_binding.as_ref().unwrap(), &[]);
             pass.dispatch_workgroups(config.image.width, config.image.height, 1);
         }
 
@@ -106,7 +108,7 @@ impl Kernel {
         // wgpu has a bug where timeout is treated as success which triggers the map_async callback
         // causing early mapping when without the results being populated
         // https://github.com/gfx-rs/wgpu/issues/3601
-        gpu.device.poll(wgpu::Maintain::WaitForSubmissionIndex(submission_index));
+        gpu.device.poll(wgpu::Maintain::WaitForSubmissionIndex(submission_index)).panic_on_timeout();
     }
 
     async fn finish(

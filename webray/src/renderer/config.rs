@@ -33,11 +33,17 @@ pub struct KernelConfig {
     pixel_zero_loc: glam::Vec3,
 }
 
+pub enum TileSize {
+    Full,
+    Square(u32)
+}
+
 pub struct RenderConfig {
     pub width: u32,
     pub height: u32,
     pub samples: u32,
     pub bounces: u32,
+    pub tile_size: TileSize
 }
 
 pub struct CameraConfig {
