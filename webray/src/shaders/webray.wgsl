@@ -429,7 +429,7 @@ fn dof_disk_sample() -> vec3f {
 @group(2) @binding(2) var<storage, read> dielectric_mats: array<DielectricMat>;
 // BINDINGS_END
 
-@compute @workgroup_size(8, 8, 1)
+@compute @workgroup_size(1, 1, 1)
 fn main(@builtin(global_invocation_id) id: vec3u) {
     random_init(id);
 

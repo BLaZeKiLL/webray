@@ -34,11 +34,7 @@ pub async fn render(config: &KernelConfig, scene: &KernelScene) -> Result<Vec<u8
 
     info!("Kernel initialized");
 
-    let submission_index = kernel.submit(&gpu, config, &bindings, &buffers);
-
-    info!("Commands submitted");
-
-    let result = kernel.finish(&gpu, config, &buffers, submission_index).await;
+    let result = kernel.execute(&gpu, config, &bindings, &buffers).await;
 
     match result {
         Ok(_) => info!("Render finished"),

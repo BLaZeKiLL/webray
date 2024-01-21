@@ -13,7 +13,31 @@ impl Kernel {
         return Kernel { pipeline };
     }
 
-    pub fn submit(
+    pub async fn execute(
+        &self,
+        gpu: &Gpu,
+        config: &KernelConfig,
+        bindings: &KernelBindings,
+        buffers: &KernelBuffers,
+    ) -> Result<Vec<u8>, ()> {
+        let (sender, receiver) = flume::bounded(1);
+
+        // scoped threads can borrow non-'static data as scope guarantees
+        // all threads will join at the end of the scope
+        std::thread::scope(|scope| {
+            let _ = scope.spawn(move || {
+                let submission_index = self.submit(gpu, config, bindings, buffers);
+    
+                self.wait(gpu, buffers, submission_index, sender);
+            });
+        });
+
+        let result = self.finish(config, buffers, receiver).await;
+
+        return result;
+    }
+
+    fn submit(
         &self,
         gpu: &Gpu,
         config: &KernelConfig,
@@ -37,7 +61,7 @@ impl Kernel {
             pass.set_bind_group(0, bindings.config_binding.as_ref().unwrap(), &[]);
             pass.set_bind_group(1, bindings.scene_binding.as_ref().unwrap(), &[]);
             pass.set_bind_group(2, bindings.material_binding.as_ref().unwrap(), &[]);
-            pass.dispatch_workgroups(config.image.width / 8, config.image.height / 8, 1);
+            pass.dispatch_workgroups(config.image.width, config.image.height, 1);
         }
 
         encoder.copy_texture_to_buffer(
@@ -66,18 +90,14 @@ impl Kernel {
         return gpu.queue.submit([encoder.finish()]);
     }
 
-    pub async fn finish(
+    fn wait(        
         &self,
         gpu: &Gpu,
-        config: &KernelConfig,
         buffers: &KernelBuffers,
-        submission_index: wgpu::SubmissionIndex
-    ) -> Result<Vec<u8>, ()> {
-        let mut output = vec![0u8; (config.result_size()) as usize];
-
+        submission_index: wgpu::SubmissionIndex,
+        sender: flume::Sender<Result<(), wgpu::BufferAsyncError>>,
+    ) {
         let result_slice = buffers.result.slice(..);
-
-        let (sender, receiver) = flume::bounded(1);
 
         result_slice.map_async(wgpu::MapMode::Read, move |v| sender.send(v).unwrap());
 
@@ -87,9 +107,18 @@ impl Kernel {
         // causing early mapping when without the results being populated
         // https://github.com/gfx-rs/wgpu/issues/3601
         gpu.device.poll(wgpu::Maintain::WaitForSubmissionIndex(submission_index));
+    }
+
+    async fn finish(
+        &self,
+        config: &KernelConfig,
+        buffers: &KernelBuffers,
+        receiver: flume::Receiver<Result<(), wgpu::BufferAsyncError>>
+    ) -> Result<Vec<u8>, ()> {
+        let mut output = vec![0u8; (config.result_size()) as usize];
 
         if let Ok(Ok(_)) = receiver.recv_async().await {
-            let result_view = result_slice.get_mapped_range();
+            let result_view = buffers.result.slice(..).get_mapped_range();
 
             output.copy_from_slice(&result_view[..]);
         } else {
