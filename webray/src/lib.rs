@@ -20,9 +20,9 @@ pub async fn run() {
 
     let path = "render.png";
 
-    let config = create_demo_config();
+    let config = create_cover_config();
 
-    let scene = create_demo_scene();
+    let scene = create_cover_scene();
 
     if let Ok(output) = renderer::render(&config, &scene.into()).await {
         output_image(output, &config, path);
@@ -122,7 +122,7 @@ pub fn create_demo_config() -> Config {
         height: 1080,
         samples: 128,
         bounces: 32,
-        tile_size: TileSize::Square(256)
+        tile_size: TileSize::Full
     };
 
     let camera_config = CameraConfig {
