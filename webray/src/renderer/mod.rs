@@ -1,19 +1,25 @@
 use log::{error, info};
 
-use crate::{core::gpu::Gpu, renderer::{buffers::KernelBuffers, kernel::Kernel, bindings::KernelBindings}};
+use crate::{
+    core::gpu::Gpu,
+    renderer::{bindings::KernelBindings, buffers::KernelBuffers, kernel::Kernel},
+};
 
-use self::{config::KernelConfig, scene::KernelScene, };
+use self::{
+    config::Config,
+    scene::KernelScene,
+};
 
-mod kernel;
-mod buffers;
 mod bindings;
+mod buffers;
+mod kernel;
 
-pub mod material;
 pub mod config;
-pub mod shapes;
+pub mod material;
 pub mod scene;
+pub mod shapes;
 
-pub async fn render(config: &KernelConfig, scene: &KernelScene) -> Result<Vec<u8>, ()> {
+pub async fn render(config: &Config, scene: &KernelScene) -> Result<Vec<u8>, ()> {
     // dbg!(&config);
     // dbg!(&scene);
 
@@ -23,7 +29,8 @@ pub async fn render(config: &KernelConfig, scene: &KernelScene) -> Result<Vec<u8
 
     info!("Device acquired");
 
-    let buffers = KernelBuffers::new(&gpu, config, scene);
+    let buffers = KernelBuffers::new(&gpu, &config.kernel, scene);
+
     let mut bindings = KernelBindings::new(&gpu);
 
     bindings.bind_buffers(&gpu, &buffers);
@@ -34,7 +41,9 @@ pub async fn render(config: &KernelConfig, scene: &KernelScene) -> Result<Vec<u8
 
     info!("Kernel initialized");
 
-    let result = kernel.execute(&gpu, config, &bindings, &buffers).await;
+    let result = kernel
+        .execute(&gpu, &config.kernel, &config.system, &bindings, &buffers)
+        .await;
 
     match result {
         Ok(_) => info!("Render finished"),

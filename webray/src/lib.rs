@@ -3,7 +3,7 @@
 
 use log::{error, info};
 use rand::Rng;
-use renderer::config::{CameraConfig, KernelConfig, RenderConfig, TileSize};
+use renderer::config::{CameraConfig, RenderConfig, TileSize, Config};
 use scene::{material::Material, shape::Shape};
 use utils::color;
 
@@ -29,12 +29,12 @@ pub async fn run() {
     };
 }
 
-fn output_image(image_data: Vec<u8>, config: &KernelConfig, path: &str) {
+fn output_image(image_data: Vec<u8>, config: &Config, path: &str) {
     match image::save_buffer(
         path,
         &image_data,
-        config.image.width,
-        config.image.height,
+        config.kernel.image.width,
+        config.kernel.image.height,
         image::ColorType::Rgba8,
     ) {
         Ok(_) => info!("Image saved"),
@@ -42,7 +42,7 @@ fn output_image(image_data: Vec<u8>, config: &KernelConfig, path: &str) {
     }
 }
 
-fn create_cover_config() -> KernelConfig {
+pub fn create_cover_config() -> Config {
     let render_config = RenderConfig {
         width: 1920,
         height: 1080,
@@ -60,10 +60,10 @@ fn create_cover_config() -> KernelConfig {
         dof_distance: 10.0,
     };
 
-    return KernelConfig::new(render_config, camera_config);
+    return Config::new(&render_config, &camera_config);
 }
 
-fn create_cover_scene() -> scene::Scene {
+pub fn create_cover_scene() -> scene::Scene {
     let mut scene = scene::Scene::new();
     let mut rng = rand::thread_rng();
 
@@ -116,7 +116,7 @@ fn create_cover_scene() -> scene::Scene {
     return scene;
 }
 
-fn create_demo_config() -> KernelConfig {
+pub fn create_demo_config() -> Config {
     let render_config = RenderConfig {
         width: 1920,
         height: 1080,
@@ -134,10 +134,10 @@ fn create_demo_config() -> KernelConfig {
         dof_distance: 3.4,
     };
 
-    return KernelConfig::new(render_config, camera_config);
+    return Config::new(&render_config, &camera_config);
 }
 
-fn create_demo_scene() -> scene::Scene {
+pub fn create_demo_scene() -> scene::Scene {
     let mut scene = scene::Scene::new();
 
     let diffuse_mat_1 = scene.register_material(Material::Diffuse(glam::vec3(0.6, 0.8, 0.0)));

@@ -30,14 +30,14 @@ impl KernelBindings {
     pub fn bind_buffers(&mut self, gpu: &Gpu, buffers: &KernelBuffers) {
         self.system_binding = Some(self.system_bind_group(gpu, buffers));
         self.user_binding = Some(self.user_bind_group(gpu, buffers));
-        self.execution_binding = Some(self.execution_bind_group(gpu, buffers));
+        self.execution_binding = Some(self.execution_bind_group(gpu));
     }
 
     pub fn pipeline_layout(&self) -> Vec<&wgpu::BindGroupLayout> {
         let layout = vec![
             &self.system_layout,
             &self.user_layout,
-            // &self.execution_layout,
+            &self.execution_layout,
         ];
 
         return layout;
@@ -174,7 +174,7 @@ impl KernelBindings {
             });
     }
 
-    fn execution_bind_group(&self, gpu: &Gpu, buffers: &KernelBuffers) -> wgpu::BindGroup {
+    fn execution_bind_group(&self, gpu: &Gpu) -> wgpu::BindGroup {
         return gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("Execution bind group"),
             layout: &self.execution_layout,

@@ -156,6 +156,12 @@ struct Config {
 }
 // CONFIG_END
 
+// EXECUTION_CONTEXT_START
+struct ExecutionContext {
+    tile_position: vec2u
+}
+// EXECUTION_CONTEXT_END
+
 // HITRECORD_START
 struct HitRecord {
     t: f32,
@@ -431,7 +437,8 @@ fn dof_disk_sample() -> vec3f {
 @group(1) @binding(3) var<storage, read> metal_mats: array<MetalMat>;
 @group(1) @binding(4) var<storage, read> dielectric_mats: array<DielectricMat>;
 
-// Execution Bindings
+// Execution Context Bindings
+@group(2) @binding(0) var<uniform> execution_context: ExecutionContext; // current execution context
 // BINDINGS_END
 
 @compute @workgroup_size(1, 1, 1)
