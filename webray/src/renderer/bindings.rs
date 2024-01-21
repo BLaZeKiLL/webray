@@ -30,7 +30,7 @@ impl KernelBindings {
     pub fn bind_buffers(&mut self, gpu: &Gpu, buffers: &KernelBuffers) {
         self.system_binding = Some(self.system_bind_group(gpu, buffers));
         self.user_binding = Some(self.user_bind_group(gpu, buffers));
-        self.execution_binding = Some(self.execution_bind_group(gpu));
+        self.execution_binding = Some(self.execution_bind_group(gpu, buffers));
     }
 
     pub fn pipeline_layout(&self) -> Vec<&wgpu::BindGroupLayout> {
@@ -170,16 +170,30 @@ impl KernelBindings {
             .device
             .create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
                 label: Some("Execution bind group layout"),
-                entries: &[],
+                entries: &[
+                    wgpu::BindGroupLayoutEntry {
+                        binding: 0,
+                        visibility: wgpu::ShaderStages::COMPUTE,
+                        ty: wgpu::BindingType::Buffer {
+                            ty: wgpu::BufferBindingType::Uniform,
+                            has_dynamic_offset: false,
+                            min_binding_size: None,
+                        },
+                        count: None,
+                    },
+                ],
             });
     }
 
-    fn execution_bind_group(&self, gpu: &Gpu) -> wgpu::BindGroup {
+    fn execution_bind_group(&self, gpu: &Gpu, buffers: &KernelBuffers) -> wgpu::BindGroup {
         return gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("Execution bind group"),
             layout: &self.execution_layout,
             entries: &[
-
+                wgpu::BindGroupEntry {
+                    binding: 0,
+                    resource: buffers.execution_context.as_entire_binding(),
+                },
             ],
         });
     }

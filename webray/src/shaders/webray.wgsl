@@ -445,7 +445,7 @@ fn dof_disk_sample() -> vec3f {
 fn main(@builtin(global_invocation_id) id: vec3u) {
     random_init(id);
 
-    let pixel_position = vec2i(i32(id.x), i32(id.y));
+    let pixel_position = vec2i(i32(execution_context.tile_position.x + id.x), i32(execution_context.tile_position.y + id.y));
 
     var pixel_color = vec4f();
 
