@@ -1,11 +1,10 @@
 #![deny(clippy::implicit_return)]
 #![allow(clippy::needless_return)]
 
-use log::{error, info};
 use rand::Rng;
 use renderer::config::{CameraConfig, RenderConfig, TileSize, Config};
 use scene::{material::Material, shape::Shape};
-use utils::color;
+use utils::{color, metrics::Metrics};
 
 mod core;
 mod utils;
@@ -20,13 +19,25 @@ pub async fn run() {
 
     let path = "render.png";
 
-    let config = create_cover_config();
+    let config = create_demo_config();
 
-    let scene = create_cover_scene();
+    let scene = create_demo_scene();
 
-    if let Ok(output) = renderer::render(&config, &scene.into()).await {
+    let mut metrics = Some(Metrics::new());
+
+    if let Ok(output) = renderer::render(&config, &scene.into(), &mut metrics).await {
         output_image(output, &config, path);
+
+        if let Some(m) = metrics.as_mut() {
+            m.capture_output_write();
+        }
     };
+
+    if let Some(m) = metrics.as_mut() {
+        m.capture_total();
+
+        m.log();
+    }
 }
 
 fn output_image(image_data: Vec<u8>, config: &Config, path: &str) {
@@ -37,8 +48,8 @@ fn output_image(image_data: Vec<u8>, config: &Config, path: &str) {
         config.kernel.image.height,
         image::ColorType::Rgba8,
     ) {
-        Ok(_) => info!("Image saved"),
-        Err(e) => error!("{:?}", e),
+        Ok(_) => log::info!("Output saved at path: {}", path),
+        Err(e) => log::error!("{:?}", e),
     }
 }
 
