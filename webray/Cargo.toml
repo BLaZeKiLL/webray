@@ -25,10 +25,10 @@ bytemuck = "1.14" # byte operations
 encase = { version = "0.7", features = ["glam"]} # gpu memory layout mappimg utility
 
 flume = "0.11" # channels for communication
-image = "0.24" # image manupilation
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 env_logger = "0.10" # log API implementation
+image = "0.24" # image manupilation
 pollster = "0.3" # block on main
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
@@ -39,4 +39,5 @@ wasm-bindgen-futures = "0.4"
 web-sys = { version = "0.3", features = [
     "ImageData",
     "HtmlImageElement",
+    "CanvasRenderingContext2d",
 ]}

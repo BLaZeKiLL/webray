@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { run } from '$lib/wasm/wgpu-hello';
+    import { run } from '$lib/wasm/webray';
 
     run();
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<img width="1280" height="720" id="output-image-target" alt="webray render output">
