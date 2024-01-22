@@ -55,11 +55,11 @@ fn output_image(image_data: Vec<u8>, config: &Config, path: &str) {
 
 pub fn create_cover_config() -> Config {
     let render_config = RenderConfig {
-        width: 1920,
-        height: 1080,
-        samples: 256,
-        bounces: 12,
-        tile_size: TileSize::Square(256)
+        width: 3840,
+        height: 2160,
+        samples: 512,
+        bounces: 64,
+        tile_size: TileSize::Square(64)
     };
 
     let camera_config = CameraConfig {
