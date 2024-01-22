@@ -1,6 +1,9 @@
 #![deny(clippy::implicit_return)]
 #![allow(clippy::needless_return)]
 
+#[cfg(target_arch="wasm32")]
+use wasm_bindgen::prelude::*;
+
 use rand::Rng;
 use renderer::config::{CameraConfig, RenderConfig, TileSize, Config};
 use scene::{material::Material, shape::Shape};

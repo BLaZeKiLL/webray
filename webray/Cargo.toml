@@ -17,11 +17,23 @@ path = "src/main.rs"
 wgpu = "0.19"
 rand = "0.8" # RNG
 glam = "0.25" # Math lib
-
+cfg-if = "0.1" # Configuration macros
 log = "0.4" # log API
-env_logger = "0.10" # log API implementation
 pollster = "0.3" # block on main
 bytemuck = "1.14" # byte operations
 flume = "0.11" # channels for communication
 image = "0.24" # image manupilation
 encase = { version = "0.7", features = ["glam"]} # gpu memory layout mappimg utility
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+env_logger = "0.10" # log API implementation
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+console_error_panic_hook = "0.1"
+console_log = "1.0"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+web-sys = { version = "0.3", features = [
+    "ImageData",
+    "HtmlImageElement",
+]}
