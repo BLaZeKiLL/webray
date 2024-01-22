@@ -1,30 +1,42 @@
 #![deny(clippy::implicit_return)]
 #![allow(clippy::needless_return)]
 
-#[cfg(target_arch="wasm32")]
+#[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-use rand::Rng;
-use renderer::config::{CameraConfig, RenderConfig, TileSize, Config};
-use scene::{material::Material, shape::Shape};
-use utils::{color, metrics::Metrics};
+use renderer::config::Config;
+use utils::metrics::Metrics;
 
 mod core;
-mod utils;
-mod scene;
+mod demo;
 mod renderer;
+mod scene;
+mod utils;
 
-pub async fn run() {
-    env_logger::builder()
-        .filter_level(log::LevelFilter::Info)
-        .format_timestamp_millis()
-        .init();
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
+pub fn run() {
+    cfg_if::cfg_if! {
+        if #[cfg(target_arch = "wasm32")] {
+            std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+            console_log::init_with_level(log::Level::Info).expect("Could not initialize logger");
+            wasm_bindgen_futures::spawn_local(run_internal());
+        } else {
+            env_logger::builder()
+                .filter_level(log::LevelFilter::Info)
+                .format_timestamp_millis()
+                .init();
 
+            pollster::block_on(run_internal());
+        }
+    }
+}
+
+async fn run_internal() {
     let path = "render.png";
 
-    let config = create_demo_config();
+    let config = demo::create_demo_config();
 
-    let scene = create_demo_scene();
+    let scene = demo::create_demo_scene();
 
     let mut metrics = Some(Metrics::new());
 
@@ -54,143 +66,4 @@ fn output_image(image_data: Vec<u8>, config: &Config, path: &str) {
         Ok(_) => log::info!("Output saved at path: {}", path),
         Err(e) => log::error!("{:?}", e),
     }
-}
-
-pub fn create_cover_config() -> Config {
-    let render_config = RenderConfig {
-        width: 3840,
-        height: 2160,
-        samples: 512,
-        bounces: 64,
-        tile_size: TileSize::Square(64)
-    };
-
-    let camera_config = CameraConfig {
-        look_from: glam::vec3(13.0, 2.0, 3.0),
-        look_at: glam::vec3(0.0, 0.0, 0.0),
-        v_up: glam::vec3(0.0, 1.0, 0.0),
-        v_fov: 20.0,
-        dof_angle: 0.6,
-        dof_distance: 10.0,
-    };
-
-    return Config::new(&render_config, &camera_config);
-}
-
-pub fn create_cover_scene() -> scene::Scene {
-    let mut scene = scene::Scene::new();
-    let mut rng = rand::thread_rng();
-
-    let ground_mat = scene.register_material(Material::Diffuse(glam::vec3(0.5, 0.5, 0.5)));
-    scene.register_shape(Shape::Sphere(
-        glam::vec3(0.0, -1000.0, 0.0),
-        1000.0,
-        ground_mat,
-    ));
-
-    for a in -11..11 {
-        for b in -11..11 {
-            let choose_mat: f64 = rng.gen();
-            let center = glam::vec3(
-                a as f32 + 0.9 * rng.gen::<f32>(),
-                0.2,
-                b as f32 + 0.9 * rng.gen::<f32>(),
-            );
-
-            if (center - glam::vec3(4.0, 0.2, 0.0)).length() > 0.9 {
-                if choose_mat < 0.8 { // diffuse
-                    let albedo = color::random_color(&mut rng) * color::random_color(&mut rng);
-                    let mat = scene.register_material(Material::Diffuse(albedo));
-
-                    scene.register_shape(Shape::Sphere(center, 0.2, mat));
-                } else if choose_mat < 0.95 { // metal
-                    let albedo = color::random_color_range(&mut rng, 0.5, 1.0);
-                    let roughness: f32 = rng.gen_range(0.0..0.5);
-                    let mat = scene.register_material(Material::Metal(albedo, roughness));
-
-                    scene.register_shape(Shape::Sphere(center, 0.2, mat));
-                } else { // dielectric
-                    let mat = scene.register_material(Material::Dielectric(1.5));
-
-                    scene.register_shape(Shape::Sphere(center, 0.2, mat));
-                }
-            }
-        }
-    }
-
-    let mat1 = scene.register_material(Material::Dielectric(1.5));
-    scene.register_shape(Shape::Sphere(glam::vec3(0.0, 1.0, 0.0), 1.0, mat1));
-
-    let mat2 = scene.register_material(Material::Diffuse(glam::vec3(0.4, 0.2, 0.1)));
-    scene.register_shape(Shape::Sphere(glam::vec3(-4.0, 1.0, 0.0), 1.0, mat2));
-
-    let mat3 = scene.register_material(Material::Metal(glam::vec3(0.7, 0.6, 0.5), 0.0));
-    scene.register_shape(Shape::Sphere(glam::vec3(4.0, 1.0, 0.0), 1.0, mat3));
-
-    return scene;
-}
-
-pub fn create_demo_config() -> Config {
-    let render_config = RenderConfig {
-        width: 3840,
-        height: 2160,
-        samples: 512,
-        bounces: 32,
-        tile_size: TileSize::Square(256)
-    };
-
-    let camera_config = CameraConfig {
-        look_from: glam::vec3(-2.0, 2.0, 1.0),
-        look_at: glam::vec3(0.0, 0.0, -1.0),
-        v_up: glam::vec3(0.0, 1.0, 0.0),
-        v_fov: 20.0,
-        dof_angle: 0.6,
-        dof_distance: 3.4,
-    };
-
-    return Config::new(&render_config, &camera_config);
-}
-
-pub fn create_demo_scene() -> scene::Scene {
-    let mut scene = scene::Scene::new();
-
-    let diffuse_mat_1 = scene.register_material(Material::Diffuse(glam::vec3(0.6, 0.8, 0.0)));
-
-    let diffuse_mat_2 = scene.register_material(Material::Diffuse(glam::vec3(0.1, 0.2, 0.5)));
-
-    let metal_mat_2 = scene.register_material(Material::Metal(glam::vec3(0.8, 0.6, 0.2), 0.1));
-
-    let dielectric_mat_1 = scene.register_material(Material::Dielectric(1.5));
-
-    // left
-    // 2 spheres and 1 with -ve radius with di-electric mat gives a hollow glass bubble look
-    scene.register_shape(Shape::Sphere(
-        glam::vec3(-1.0, 0.0, -1.0),
-        0.5,
-        dielectric_mat_1,
-    ));
-    scene.register_shape(Shape::Sphere(
-        glam::vec3(-1.0, 0.0, -1.0),
-        -0.4,
-        dielectric_mat_1,
-    ));
-
-    // center
-    scene.register_shape(Shape::Sphere(
-        glam::vec3(0.0, 0.0, -1.0),
-        0.5,
-        diffuse_mat_2,
-    ));
-
-    // right
-    scene.register_shape(Shape::Sphere(glam::vec3(1.0, 0.0, -1.0), 0.5, metal_mat_2));
-
-    // ground
-    scene.register_shape(Shape::Sphere(
-        glam::vec3(0.0, -100.5, -1.0),
-        100.0,
-        diffuse_mat_1,
-    ));
-
-    return scene;
 }
