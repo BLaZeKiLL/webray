@@ -57,6 +57,8 @@ impl Kernel {
             }
             TileSize::Square(size) => {
                 let mut id = 1;
+                let total_tile_count = tile_count.x * tile_count.y;
+
                 for x in 0..tile_count.x {
                     for y in 0..tile_count.y {
                         let tile_position = glam::uvec2(x, y);
@@ -65,7 +67,8 @@ impl Kernel {
                         let height = ((y + 1) * size).min(kernel_config.image.height) - (y * size);
 
                         log::info!(
-                            "Rendering tile {}: {}, width: {}, height: {}",
+                            "Rendering ({:07.3}%) tile {}: {}, width: {}, height: {}",
+                            ((id as f32) * 100.0) / (total_tile_count as f32),
                             id,
                             tile_position,
                             width,

@@ -35,6 +35,12 @@ impl Scene {
     }
 }
 
+impl Default for Scene {
+    fn default() -> Self {
+        return Self::new();
+    }
+}
+
 impl From<Scene> for KernelScene {
     fn from(scene: Scene) -> Self {
         let mut kernel_scene = KernelScene::new();
