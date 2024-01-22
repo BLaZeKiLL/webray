@@ -1,25 +1,33 @@
+use std::mem::size_of;
+
 use wgpu::util::DeviceExt;
 
 use crate::core::gpu::Gpu;
 
-use super::{config::KernelConfig, scene::KernelScene};
+use super::{
+    config::{ExecutionContext, KernelConfig},
+    scene::KernelScene,
+};
 
 /// Container for kernel buffers
 pub struct KernelBuffers {
+    // System buffers
     /// output from render texture is copied to this
     /// so that it can be mapped and read
     pub result: wgpu::Buffer,
     /// storage texture where the rendered image is
     /// written in the compute shader
     pub render: wgpu::Texture,
-    /// kernel config uniform buffer
-    pub config: wgpu::Buffer,
 
-    // Scene buffers
+    // User buffers
+    pub config: wgpu::Buffer,
     pub spheres: wgpu::Buffer,
     pub diffuse_mats: wgpu::Buffer,
     pub metal_mats: wgpu::Buffer,
     pub dielectric_mats: wgpu::Buffer,
+
+    // Execution Context buffers
+    pub execution_context: wgpu::Buffer,
 }
 
 impl KernelBuffers {
@@ -90,6 +98,13 @@ impl KernelBuffers {
                     usage: wgpu::BufferUsages::STORAGE,
                 });
 
+        let execution_context_buffer = gpu.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("Execution Context buffer"),
+            size: size_of::<ExecutionContext>() as wgpu::BufferAddress,
+            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+
         return KernelBuffers {
             result: result_buffer,
             render: render_texture,
@@ -97,7 +112,8 @@ impl KernelBuffers {
             spheres: spheres_buffer,
             diffuse_mats: diffuse_mats_buffer,
             metal_mats: metal_mats_buffer,
-            dielectric_mats: dielectric_mats_buffer
+            dielectric_mats: dielectric_mats_buffer,
+            execution_context: execution_context_buffer,
         };
     }
 }

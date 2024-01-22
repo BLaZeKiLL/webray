@@ -156,6 +156,12 @@ struct Config {
 }
 // CONFIG_END
 
+// EXECUTION_CONTEXT_START
+struct ExecutionContext {
+    tile_position: vec2u
+}
+// EXECUTION_CONTEXT_END
+
 // HITRECORD_START
 struct HitRecord {
     t: f32,
@@ -418,22 +424,28 @@ fn dof_disk_sample() -> vec3f {
 // RENDERER_END
 
 // BINDINGS_START
-// Config Bindings
+// System Bindings
 @group(0) @binding(0) var result: texture_storage_2d<rgba8unorm, write>; // output image
-@group(0) @binding(1) var<uniform> config: Config; // render config
-// Scene Bindings
-@group(1) @binding(0) var<storage, read> spheres: array<Sphere>; // move to different group
-// Material Bindings
-@group(2) @binding(0) var<storage, read> diffuse_mats: array<DiffuseMat>;
-@group(2) @binding(1) var<storage, read> metal_mats: array<MetalMat>;
-@group(2) @binding(2) var<storage, read> dielectric_mats: array<DielectricMat>;
+
+// User Bindings
+// - Config bindings
+@group(1) @binding(0) var<uniform> config: Config; // render config
+// - Scene bindings
+@group(1) @binding(1) var<storage, read> spheres: array<Sphere>; // move to different group
+// - Material Bindings
+@group(1) @binding(2) var<storage, read> diffuse_mats: array<DiffuseMat>;
+@group(1) @binding(3) var<storage, read> metal_mats: array<MetalMat>;
+@group(1) @binding(4) var<storage, read> dielectric_mats: array<DielectricMat>;
+
+// Execution Context Bindings
+@group(2) @binding(0) var<uniform> execution_context: ExecutionContext; // current execution context
 // BINDINGS_END
 
-@compute @workgroup_size(8, 8, 1)
+@compute @workgroup_size(1, 1, 1)
 fn main(@builtin(global_invocation_id) id: vec3u) {
     random_init(id);
 
-    let pixel_position = vec2i(i32(id.x), i32(id.y));
+    let pixel_position = vec2i(i32(execution_context.tile_position.x + id.x), i32(execution_context.tile_position.y + id.y));
 
     var pixel_color = vec4f();
 

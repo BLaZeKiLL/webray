@@ -1,48 +1,71 @@
-use log::{error, info};
+use crate::{
+    core::gpu::Gpu,
+    renderer::{bindings::KernelBindings, buffers::KernelBuffers, kernel::Kernel}, utils::metrics::Metrics,
+};
 
-use crate::{core::gpu::Gpu, renderer::{buffers::KernelBuffers, kernel::Kernel, bindings::KernelBindings}};
+use self::{
+    config::Config,
+    scene::KernelScene,
+};
 
-use self::{config::KernelConfig, scene::KernelScene, };
-
-mod kernel;
-mod buffers;
 mod bindings;
+mod buffers;
+mod kernel;
 
-pub mod material;
 pub mod config;
-pub mod shapes;
+pub mod material;
 pub mod scene;
+pub mod shapes;
 
-pub async fn render(config: &KernelConfig, scene: &KernelScene) -> Result<Vec<u8>, ()> {
+pub async fn render(config: &Config, scene: &KernelScene, metrics: &mut Option<Metrics>) -> Result<Vec<u8>, ()> {
     // dbg!(&config);
     // dbg!(&scene);
 
-    info!("Render start");
+    log::info!("Render start");
+
+    if let Some(m) = metrics.as_mut() {
+        m.start();
+    }
 
     let gpu = Gpu::new().await;
 
-    info!("Device acquired");
+    log::info!("Device acquired");
 
-    let buffers = KernelBuffers::new(&gpu, config, scene);
+    if let Some(m) = metrics.as_mut() {
+        m.capture_device_acquisition();
+    }
+
+    let buffers = KernelBuffers::new(&gpu, &config.kernel, scene);
+
     let mut bindings = KernelBindings::new(&gpu);
 
     bindings.bind_buffers(&gpu, &buffers);
 
-    info!("Scene buffers uploaded");
+    log::info!("Scene buffers uploaded");
+
+    if let Some(m) = metrics.as_mut() {
+        m.capture_scene_upload();
+    }
 
     let kernel = Kernel::new(&gpu, &bindings);
 
-    info!("Kernel initialized");
+    log::info!("Kernel initialized");
 
-    let submission_index = kernel.submit(&gpu, config, &bindings, &buffers);
+    if let Some(m) = metrics.as_mut() {
+        m.capture_kernel_initialization();
+    }
 
-    info!("Commands submitted");
-
-    let result = kernel.finish(&gpu, config, &buffers, submission_index).await;
+    let result = kernel
+        .execute(&gpu, &config.kernel, &config.system, &bindings, &buffers)
+        .await;
 
     match result {
-        Ok(_) => info!("Render finished"),
-        Err(_) => error!("Something went wrong"),
+        Ok(_) => log::info!("Render finished"),
+        Err(_) => log::error!("Something went wrong"),
+    }
+
+    if let Some(m) = metrics.as_mut() {
+        m.capture_rendering();
     }
 
     return result;

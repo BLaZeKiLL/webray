@@ -1,11 +1,10 @@
 #![deny(clippy::implicit_return)]
 #![allow(clippy::needless_return)]
 
-use log::{error, info};
 use rand::Rng;
-use renderer::config::{CameraConfig, KernelConfig, RenderConfig};
+use renderer::config::{CameraConfig, RenderConfig, TileSize, Config};
 use scene::{material::Material, shape::Shape};
-use utils::color;
+use utils::{color, metrics::Metrics};
 
 mod core;
 mod utils;
@@ -24,30 +23,43 @@ pub async fn run() {
 
     let scene = create_demo_scene();
 
-    if let Ok(output) = renderer::render(&config, &scene.into()).await {
-        output_image(output, &config, path);
-    };
-}
+    let mut metrics = Some(Metrics::new());
 
-fn output_image(image_data: Vec<u8>, config: &KernelConfig, path: &str) {
-    match image::save_buffer(
-        path,
-        &image_data,
-        config.image.width,
-        config.image.height,
-        image::ColorType::Rgba8,
-    ) {
-        Ok(_) => info!("Image saved"),
-        Err(e) => error!("{:?}", e),
+    if let Ok(output) = renderer::render(&config, &scene.into(), &mut metrics).await {
+        output_image(output, &config, path);
+
+        if let Some(m) = metrics.as_mut() {
+            m.capture_output_write();
+        }
+    };
+
+    if let Some(m) = metrics.as_mut() {
+        m.capture_total();
+
+        m.log();
     }
 }
 
-fn create_cover_config() -> KernelConfig {
+fn output_image(image_data: Vec<u8>, config: &Config, path: &str) {
+    match image::save_buffer(
+        path,
+        &image_data,
+        config.kernel.image.width,
+        config.kernel.image.height,
+        image::ColorType::Rgba8,
+    ) {
+        Ok(_) => log::info!("Output saved at path: {}", path),
+        Err(e) => log::error!("{:?}", e),
+    }
+}
+
+pub fn create_cover_config() -> Config {
     let render_config = RenderConfig {
-        width: 1920,
-        height: 1080,
-        samples: 64,
-        bounces: 12,
+        width: 3840,
+        height: 2160,
+        samples: 512,
+        bounces: 64,
+        tile_size: TileSize::Square(64)
     };
 
     let camera_config = CameraConfig {
@@ -59,10 +71,10 @@ fn create_cover_config() -> KernelConfig {
         dof_distance: 10.0,
     };
 
-    return KernelConfig::new(render_config, camera_config);
+    return Config::new(&render_config, &camera_config);
 }
 
-fn create_cover_scene() -> scene::Scene {
+pub fn create_cover_scene() -> scene::Scene {
     let mut scene = scene::Scene::new();
     let mut rng = rand::thread_rng();
 
@@ -115,12 +127,13 @@ fn create_cover_scene() -> scene::Scene {
     return scene;
 }
 
-fn create_demo_config() -> KernelConfig {
+pub fn create_demo_config() -> Config {
     let render_config = RenderConfig {
         width: 1920,
         height: 1080,
         samples: 128,
         bounces: 32,
+        tile_size: TileSize::Full
     };
 
     let camera_config = CameraConfig {
@@ -132,10 +145,10 @@ fn create_demo_config() -> KernelConfig {
         dof_distance: 3.4,
     };
 
-    return KernelConfig::new(render_config, camera_config);
+    return Config::new(&render_config, &camera_config);
 }
 
-fn create_demo_scene() -> scene::Scene {
+pub fn create_demo_scene() -> scene::Scene {
     let mut scene = scene::Scene::new();
 
     let diffuse_mat_1 = scene.register_material(Material::Diffuse(glam::vec3(0.6, 0.8, 0.0)));

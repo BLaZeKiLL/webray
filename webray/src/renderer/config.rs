@@ -1,3 +1,28 @@
+#[derive(Debug, Clone, Copy)]
+pub enum TileSize {
+    Full,
+    Square(u32),
+}
+
+#[derive(Debug)]
+pub struct RenderConfig {
+    pub width: u32,
+    pub height: u32,
+    pub samples: u32,
+    pub bounces: u32,
+    pub tile_size: TileSize,
+}
+
+#[derive(Debug)]
+pub struct CameraConfig {
+    pub look_from: glam::Vec3,
+    pub look_at: glam::Vec3,
+    pub v_up: glam::Vec3,
+    pub v_fov: f32,
+    pub dof_angle: f32,
+    pub dof_distance: f32,
+}
+
 #[derive(Debug, encase::ShaderType)]
 pub struct Image {
     pub width: u32,
@@ -11,7 +36,7 @@ pub struct Camera {
     center: glam::Vec3,
     dof_angle: f32,
     dof_disk_u: glam::Vec3,
-    dof_disk_v: glam::Vec3
+    dof_disk_v: glam::Vec3,
 }
 
 #[derive(Debug, encase::ShaderType)]
@@ -33,25 +58,9 @@ pub struct KernelConfig {
     pixel_zero_loc: glam::Vec3,
 }
 
-pub struct RenderConfig {
-    pub width: u32,
-    pub height: u32,
-    pub samples: u32,
-    pub bounces: u32,
-}
-
-pub struct CameraConfig {
-    pub look_from: glam::Vec3,
-    pub look_at: glam::Vec3,
-    pub v_up: glam::Vec3,
-    pub v_fov: f32,
-    pub dof_angle: f32,
-    pub dof_distance: f32
-}
-
 impl KernelConfig {
     /// A lot of camera calculations
-    pub fn new(render_config: RenderConfig, camera_config: CameraConfig) -> Self {
+    pub fn new(render_config: &RenderConfig, camera_config: &CameraConfig) -> Self {
         // Determine viewport dimensions.
         let h = (camera_config.v_fov.to_radians() / 2.0).tan(); // 90 deg this equation = 1.0
         let viewport_height = 2.0 * h * camera_config.dof_distance;
@@ -73,13 +82,14 @@ impl KernelConfig {
 
         // Calculate the location of the upper left pixel.
         let upper_left = camera_config.look_from
-            - (camera_config.dof_distance * w) 
-            - (viewport_u / 2.0) 
+            - (camera_config.dof_distance * w)
+            - (viewport_u / 2.0)
             - (viewport_v / 2.0);
         let pixel_zero_loc = upper_left + 0.5 * (delta_u + delta_v);
 
         // Calculate the camera defocus disk basis vectors.
-        let defocus_radius = camera_config.dof_distance * (camera_config.dof_angle / 2.0).to_radians().tan();
+        let defocus_radius =
+            camera_config.dof_distance * (camera_config.dof_angle / 2.0).to_radians().tan();
         let defocus_disk_u = u * defocus_radius;
         let defocus_disk_v = v * defocus_radius;
 
@@ -94,7 +104,7 @@ impl KernelConfig {
             center: camera_config.look_from,
             dof_angle: camera_config.dof_angle,
             dof_disk_u: defocus_disk_u,
-            dof_disk_v: defocus_disk_v
+            dof_disk_v: defocus_disk_v,
         };
 
         let viewport = Viewport {
@@ -123,5 +133,44 @@ impl KernelConfig {
         let mut buffer = encase::UniformBuffer::new(Vec::new());
         buffer.write(self).unwrap();
         return Ok(buffer.into_inner());
+    }
+}
+
+#[derive(Debug, encase::ShaderType)]
+pub struct ExecutionContext {
+    pub tile_position: glam::UVec2,
+}
+
+impl ExecutionContext {
+    pub fn as_wgsl_bytes(&self) -> encase::internal::Result<Vec<u8>> {
+        let mut buffer = encase::UniformBuffer::new(Vec::new());
+        buffer.write(self).unwrap();
+        return Ok(buffer.into_inner());
+    }
+}
+
+pub struct SystemConfig {
+    pub tile_size: TileSize,
+}
+
+impl SystemConfig {
+    pub fn new(render_config: &RenderConfig) -> Self {
+        return SystemConfig {
+            tile_size: render_config.tile_size,
+        };
+    }
+}
+
+pub struct Config {
+    pub kernel: KernelConfig,
+    pub system: SystemConfig,
+}
+
+impl Config {
+    pub fn new(render_config: &RenderConfig, camera_config: &CameraConfig) -> Self {
+        return Config {
+            kernel: KernelConfig::new(render_config, camera_config),
+            system: SystemConfig::new(render_config),
+        };
     }
 }
