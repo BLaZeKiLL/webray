@@ -1322,7 +1322,7 @@ dependencies = [
 
 [[package]]
 name = "webray"
-version = "0.1.0"
+version = "0.1.7"
 dependencies = [
  "bytemuck",
  "cfg-if 0.1.10",

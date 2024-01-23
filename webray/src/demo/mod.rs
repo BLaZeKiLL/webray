@@ -85,11 +85,11 @@ pub fn create_cover_scene() -> Scene {
 
 pub fn create_demo_config() -> Config {
     let render_config = RenderConfig {
-        width: 3840,
-        height: 2160,
-        samples: 512,
+        width: 1920,
+        height: 1080,
+        samples: 128,
         bounces: 32,
-        tile_size: TileSize::Square(256),
+        tile_size: TileSize::Full,
     };
 
     let camera_config = CameraConfig {

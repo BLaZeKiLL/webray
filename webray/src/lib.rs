@@ -13,19 +13,29 @@ mod renderer;
 mod scene;
 mod utils;
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
-pub fn run() {
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+pub fn init() {
     cfg_if::cfg_if! {
         if #[cfg(target_arch = "wasm32")] {
             std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-            console_log::init_with_level(log::Level::Info).expect("Could not initialize logger");
-            wasm_bindgen_futures::spawn_local(run_internal());
+            console_log::init().unwrap();
         } else {
             env_logger::builder()
                 .filter_level(log::LevelFilter::Info)
                 .format_timestamp_millis()
                 .init();
+        }
+    }
 
+    log::info!("WebRay Loaded");
+}
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+pub fn run() {
+    cfg_if::cfg_if! {
+        if #[cfg(target_arch = "wasm32")] {
+            wasm_bindgen_futures::spawn_local(run_internal());
+        } else {
             pollster::block_on(run_internal());
         }
     }

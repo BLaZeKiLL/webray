@@ -4,7 +4,6 @@
 	"private": true,
 	"scripts": {
 		"wasm": "wasm-pack build ./webray --out-dir ../src/lib/wasm/webray",
-		"dev": "yarn wasm && vite dev",
 		"build": "yarn wasm && vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -14,7 +13,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-static": "^3.0.1",
+		"@sveltejs/adapter-static": "2.0.3",
 		"@sveltejs/kit": "^1.27.4",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
@@ -28,8 +27,8 @@
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
 		"vite": "^4.4.2",
-		"vite-plugin-top-level-await": "^1.4.0",
-		"vite-plugin-wasm": "^3.2.2",
+		"vite-plugin-top-level-await": "^1.4.1",
+		"vite-plugin-wasm": "^3.3.0",
 		"vitest": "^0.34.0"
 	},
 	"type": "module"
