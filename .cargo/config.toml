@@ -1,2 +1,5 @@
 [env]
 METAL_DEVICE_WRAPPER_TYPE="1" # Metal validation layer
+
+[build]
+rustflags=["--cfg=web_sys_unstable_apis"] #https://github.com/gfx-rs/wgpu/wiki/Running-on-the-Web-with-WebGPU-and-WebGL

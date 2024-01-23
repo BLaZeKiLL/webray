@@ -371,12 +371,12 @@ fn render_ray(ray: Ray) -> vec3f {
         let ray = Ray(current_ray_origin, current_ray_direction);
 
         if hit_spheres(ray, Interval(0.001, INF_F32), &hit) {
-            var scatter = Ray();
+            var scatter_ray = Ray();
             var attenuation = vec3f();
 
-            if scatter(ray, hit, &attenuation, &scatter) {
-                current_ray_origin = scatter.origin;
-                current_ray_direction = scatter.direction;
+            if scatter(ray, hit, &attenuation, &scatter_ray) {
+                current_ray_origin = scatter_ray.origin;
+                current_ray_direction = scatter_ray.direction;
 
                 accumulated_color *= attenuation;
             } else { // else should never happen

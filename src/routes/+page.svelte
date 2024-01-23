@@ -1,8 +1,11 @@
 <script lang="ts">
-    import { run } from '$lib/wasm/wgpu-hello';
+	import { onMount } from 'svelte';
+    import { init, run } from '$lib/wasm/webray';
 
-    run();
+    onMount(() => {
+        init();
+        run(); // this doesn't block, I guess cause we use wasm_bindgen_futures
+    });
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<img width="1280" height="720" id="output-image-target" alt="webray render output">
