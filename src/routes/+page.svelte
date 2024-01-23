@@ -4,7 +4,7 @@
 
     onMount(() => {
         init();
-        run();
+        run(); // this doesn't block, I guess cause we use wasm_bindgen_futures
     });
 </script>
 

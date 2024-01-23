@@ -10,9 +10,9 @@ pub fn create_cover_config() -> Config {
     let render_config = RenderConfig {
         width: 1920,
         height: 1080,
-        samples: 256,
+        samples: 64,
         bounces: 12,
-        tile_size: TileSize::Square(128),
+        tile_size: TileSize::Square(256),
     };
 
     let camera_config = CameraConfig {
