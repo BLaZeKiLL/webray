@@ -4,7 +4,9 @@
 
     onMount(() => {
         init();
-        run(); // this doesn't block, I guess cause we use wasm_bindgen_futures
+        // this doesn't block, I guess cause we use wasm_bindgen_futures
+        // could try returning a promise
+        run();
     });
 </script>
 
