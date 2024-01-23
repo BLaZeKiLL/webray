@@ -42,9 +42,9 @@ pub fn run() {
 }
 
 async fn run_internal() {
-    let config = demo::create_demo_config();
+    let config = demo::create_cover_config();
 
-    let scene = demo::create_demo_scene();
+    let scene = demo::create_cover_scene();
 
     let mut metrics: Option<Metrics>;
 

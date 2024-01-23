@@ -7,18 +7,11 @@ pub fn output_image(image_data: Vec<u8>, dimensions: glam::UVec2) {
         match found_canvas.dyn_into::<web_sys::HtmlCanvasElement>() {
             Ok(canvas_as_canvas) => canvas_as_canvas,
             Err(e) => {
-                log::error!(
-                    "In searching for a staging canvas for outputting an image \
-                    (element with id \"staging-canvas\"), found non-canvas element: {:?}.
-                    Replacing with standard staging canvas.",
-                    e
-                );
                 e.remove();
                 create_staging_canvas(&document)
             }
         }
     } else {
-        log::info!("Output image staging canvas element not found; creating.");
         create_staging_canvas(&document)
     };
 
@@ -52,23 +45,18 @@ pub fn output_image(image_data: Vec<u8>, dimensions: glam::UVec2) {
         match found_image_element.dyn_into::<web_sys::HtmlImageElement>() {
             Ok(e) => e,
             Err(e) => {
-                log::error!(
-                    "Found an element with the id \"output-image-target\" but it was not an image: {:?}.
-                    Replacing with default image output element.",
-                    e
-                );
                 e.remove();
                 create_output_image_element(&document)
             }
         }
     } else {
-        log::info!("Output image element not found; creating.");
         create_output_image_element(&document)
     };
 
     let data_url = canvas.to_data_url().unwrap();
     image_element.set_src(&data_url);
-    log::info!("Copied image from staging canvas to image element.");
+    
+    log::info!("Image displayed");
 }
 
 fn create_staging_canvas(document: &web_sys::Document) -> web_sys::HtmlCanvasElement {
@@ -83,8 +71,6 @@ fn create_staging_canvas(document: &web_sys::Document) -> web_sys::HtmlCanvasEle
     new_canvas.set_attribute("hidden", "true").unwrap();
     new_canvas.set_attribute("background-color", "red").unwrap();
     body.append_child(&new_canvas).unwrap();
-
-    log::info!("Created new staging canvas: {:?}", &new_canvas);
 
     return new_canvas;
 }
@@ -101,8 +87,6 @@ fn create_output_image_element(document: &web_sys::Document) -> web_sys::HtmlIma
 
     body.append_child(&new_image)
         .expect("Failed to append output image target to document body.");
-
-    log::info!("Created new output target image: {:?}", &new_image);
 
     return new_image;
 }

@@ -8,11 +8,11 @@ use crate::{
 
 pub fn create_cover_config() -> Config {
     let render_config = RenderConfig {
-        width: 3840,
-        height: 2160,
-        samples: 512,
-        bounces: 64,
-        tile_size: TileSize::Square(64),
+        width: 1920,
+        height: 1080,
+        samples: 256,
+        bounces: 12,
+        tile_size: TileSize::Square(128),
     };
 
     let camera_config = CameraConfig {
