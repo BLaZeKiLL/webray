@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: build
+      - name: Build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'
         run: |
