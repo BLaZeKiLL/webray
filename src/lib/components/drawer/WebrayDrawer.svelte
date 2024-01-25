@@ -7,8 +7,12 @@
     </span>
 
 	<div
-		class="mt-2 flex snap-y snap-mandatory scroll-py-4 flex-col gap-4 px-2 overflow-y-scroll scroll-smooth"
+		class="my-2 flex snap-y snap-mandatory scroll-py-4 flex-col gap-4 px-2 overflow-y-scroll scroll-smooth"
 	>
 		<slot />
 	</div>
+
+	<span class="px-2">
+		<slot name="footer"/>
+	</span>
 </div>

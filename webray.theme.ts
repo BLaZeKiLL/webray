@@ -9,7 +9,7 @@ export const webray_theme: CustomThemeConfig = {
 		"--theme-font-family-heading": `system-ui`,
 		"--theme-font-color-base": "0 0 0",
 		"--theme-font-color-dark": "255 255 255",
-		"--theme-rounded-base": "9999px",
+		"--theme-rounded-base": "8px",
 		"--theme-rounded-container": "8px",
 		"--theme-border-base": "0px",
 		// =~= Theme On-X Colors =~=

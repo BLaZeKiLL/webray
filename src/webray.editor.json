@@ -1,16 +1,24 @@
 {
     "windows": {
         "w_scene": {
-
+            "icon": "",
+            "label": null,
+            "tooltip": "Scene"
         },
         "w_materials": {
-
+            "icon": "",
+            "label": null,
+            "tooltip": "Materials"
         },
         "w_camera": {
-
+            "icon": "",
+            "label": null,
+            "tooltip": "Camera"
         },
         "w_render_settings": {
-
+            "icon": "",
+            "label": null,
+            "tooltip": "Render Settings"
         }
     },
     "toolbars": {
