@@ -98,6 +98,5 @@ export const webray_theme: CustomThemeConfig = {
 		"--color-surface-700": "24 36 57", // #182439
 		"--color-surface-800": "19 29 46", // #131d2e
 		"--color-surface-900": "16 24 37", // #101825
-		
 	}
 }

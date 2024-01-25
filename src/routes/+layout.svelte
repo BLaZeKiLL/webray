@@ -1,26 +1,39 @@
 <script>
 	import '../app.pcss';
 	import { AppShell } from '@skeletonlabs/skeleton';
+	import WebrayLeftBar from '../lib/components/ui/WebrayLeftBar.svelte';
+	import WebrayRightBar from '../lib/components/ui/WebrayRightBar.svelte';
+	import WebrayAppBar from '../lib/components/ui/WebrayAppBar.svelte';
+	import WebrayRenderBar from '../lib/components/ui/WebrayRenderBar.svelte';
+	import WebrayFooter from '../lib/components/ui/WebrayFooter.svelte';
 </script>
 
-<AppShell slotPageContent="overflow-y-auto" slotSidebarLeft="w-2/12" slotSidebarRight="w-2/12">
+<AppShell
+	slotPageContent="overflow-y-auto"
+	slotSidebarLeft="w-2/12 overflow-y-clip"
+	slotSidebarRight="w-2/12 overflow-y-clip"
+>
 	<svelte:fragment slot="header">
-		Header
+		<WebrayAppBar />
 	</svelte:fragment>
 
 	<svelte:fragment slot="sidebarLeft">
-		Sidebar Left
+		<WebrayLeftBar />
 	</svelte:fragment>
-	
+
 	<svelte:fragment slot="sidebarRight">
-		Sidebar Right
+		<WebrayRightBar />
 	</svelte:fragment>
-	<!-- (pageHeader) -->
+
+	<svelte:fragment slot="pageHeader">
+		<WebrayRenderBar />
+	</svelte:fragment>
+
 	<!-- Router Slot -->
 	<slot />
 	<!-- ---- / ---- -->
 	<svelte:fragment slot="pageFooter">
-		Page Footer
+		<WebrayFooter />
 	</svelte:fragment>
 	<!-- (footer) -->
 </AppShell>
