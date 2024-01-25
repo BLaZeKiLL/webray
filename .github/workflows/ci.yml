@@ -1,0 +1,46 @@
+name: Contentious Integration
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      
+      - name: Setup Rust Cache
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Setup Wasm Pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: build
+        env:
+          BASE_PATH: '/${{ github.event.repository.name }}'
+        run: |
+          yarn build
+
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v2
+        with:
+          # this should match the `pages` option in your adapter-static options
+          path: 'build/'
