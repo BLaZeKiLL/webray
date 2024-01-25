@@ -3,10 +3,10 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"start": "yarn build && yarn preview",
-		"wasm": "wasm-pack build ./webray --out-dir ../src/lib/wasm/webray",
+		"dev": "yarn wasm && vite",
 		"build": "yarn wasm && vite build",
 		"preview": "vite preview",
+		"wasm": "wasm-pack build ./webray --out-dir ../src/lib/wasm/webray",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest",

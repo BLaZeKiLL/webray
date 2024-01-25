@@ -1,7 +1,4 @@
 <script lang="ts">
-
 </script>
 
-<div class="snap-start shrink-0 card text-center">
-    Field
-</div>
+<div class="card shrink-0 snap-start text-center">Field</div>

@@ -17,10 +17,10 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
-      
+
       - name: Setup Rust Cache
         uses: Swatinem/rust-cache@v2
-      
+
       - name: Setup Wasm Pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
