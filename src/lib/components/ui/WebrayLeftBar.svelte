@@ -1,11 +1,11 @@
 <script lang="ts">
 	import WebrayField from "../fields/WebrayField.svelte";
-import WebrayWindow from "../windows/WebrayWindow.svelte";
+    import WebrayDrawer from "../drawer/WebrayDrawer.svelte";
 </script>
 
 <div class="h-full flex flex-col border-r border-surface-600">
     <div class="h-full">
-        <WebrayWindow>
+        <WebrayDrawer>
             <span slot="header" class="sticky flex flex-row">
                 <h2>Scene</h2>
                 <span class="grow"></span>
@@ -15,6 +15,6 @@ import WebrayWindow from "../windows/WebrayWindow.svelte";
             {#each Array.from({ length: 30 }) as _, i}
                 <WebrayField />
             {/each}
-        </WebrayWindow>
+        </WebrayDrawer>
     </div>
 </div>

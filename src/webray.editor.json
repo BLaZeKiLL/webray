@@ -1,0 +1,32 @@
+{
+    "windows": {
+        "w_scene": {
+
+        },
+        "w_materials": {
+
+        },
+        "w_camera": {
+
+        },
+        "w_render_settings": {
+
+        }
+    },
+    "toolbars": {
+        "t_app_bar": {
+
+        },
+        "t_image_bar": {
+
+        }
+    },
+    "actions": {
+        "a_download": {
+
+        },
+        "a_render": {
+
+        }
+    }
+}
