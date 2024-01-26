@@ -14,11 +14,11 @@ const icons = {
 	i_camera: Camera,
 	i_render_settings: RenderSettings
 } as {
-    [key:string]: any
+	[key: string]: any;
 };
 
 export class Icons {
-    public static getIcon(id: string): any {
-        return icons[id];
-    }
+	public static getIcon(id: string): any {
+		return icons[id];
+	}
 }

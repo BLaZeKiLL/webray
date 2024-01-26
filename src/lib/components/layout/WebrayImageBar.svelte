@@ -12,12 +12,12 @@
 <WebrayToolbar>
 	<span slot="lead">
 		{#each imageToolbar.lead as tool}
-			<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip}/>
+			<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip} />
 		{/each}
 	</span>
 	<span slot="trail">
 		{#each imageToolbar.trail as tool}
-		<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip}/>
-	{/each}
+			<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip} />
+		{/each}
 	</span>
 </WebrayToolbar>
