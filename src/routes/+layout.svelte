@@ -15,7 +15,7 @@
 </script>
 
 <AppShell
-	slotPageContent="overflow-y-auto flex flex-col items-center bg-gray-950"
+	slotPageContent="overflow-y-auto flex flex-col items-center justify-center bg-gray-950"
 	slotSidebarLeft="w-1/6 overflow-y-clip"
 	slotSidebarRight="w-1/6 overflow-y-clip"
 	slotPageFooter="h-1/6"

@@ -10,10 +10,4 @@
 	});
 </script>
 
-<img id="output-image-target" alt="webray render output" class="output" />
-
-<style>
-	.output {
-		max-height: 100%;
-	}
-</style>
+<img id="output-image-target" alt="webray render output" class="max-h-full" />
