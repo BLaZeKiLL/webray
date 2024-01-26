@@ -24,19 +24,23 @@
 	"toolbars": {
 		"t_app_bar": {},
 		"t_image_bar": {
-			"lead": {
-				"icon": "i_render",
-				"label": null,
-				"tooltip": "Render Image",
-				"action": "a_render"
-			},
-			"center": {},
-			"trail": {
-				"icon": "i_download",
-				"label": null,
-				"tooltip": "Download Image",
-				"action": "a_download"
-			}
+			"lead": [
+				{
+					"icon": "i_render",
+					"label": null,
+					"tooltip": "Render Image",
+					"action": "a_render"
+				}
+			],
+			"center": [],
+			"trail": [
+				{
+					"icon": "i_download",
+					"label": null,
+					"tooltip": "Download Image",
+					"action": "a_download"
+				}
+			]
 		}
 	},
 	"actions": {
