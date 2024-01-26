@@ -2,12 +2,16 @@
 	import '../app.pcss';
 
 	import { AppShell } from '@skeletonlabs/skeleton';
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';			
 
 	import WebrayLeftBar from '$lib/components/layout/WebrayLeftBar.svelte';
 	import WebrayRightBar from '$lib/components/layout/WebrayRightBar.svelte';
 	import WebrayAppBar from '$lib/components/layout/WebrayAppBar.svelte';
 	import WebrayRenderBar from '$lib/components/layout/WebrayImageBar.svelte';
 	import WebrayFooter from '$lib/components/layout/WebrayFooter.svelte';
+
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 </script>
 
 <AppShell

@@ -2,6 +2,7 @@
 	import WebrayToolbar from '../toolbar/WebrayToolbar.svelte';
 
 	import { WebrayEditor, ID, Icons } from '../../editor';
+	import WebrayIconButton from '../ui/WebrayIconButton.svelte';
 
 	const imageToolbar = WebrayEditor.getToolbar(ID.t_image_bar);
 	const renderIcon = Icons.getIcon(imageToolbar.lead[0].icon);
@@ -10,9 +11,13 @@
 
 <WebrayToolbar>
 	<span slot="lead">
-		<svelte:component this={renderIcon} style="font-size: 1.5rem"/>
+		{#each imageToolbar.lead as tool}
+			<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip}/>
+		{/each}
 	</span>
 	<span slot="trail">
-		<svelte:component this={downloadIcon} style="font-size: 1.5rem"/>
+		{#each imageToolbar.trail as tool}
+		<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip}/>
+	{/each}
 	</span>
 </WebrayToolbar>

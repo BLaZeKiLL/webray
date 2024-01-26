@@ -3,12 +3,34 @@
 		"w_scene": {
 			"icon": "i_scene",
 			"label": null,
-			"tooltip": "Scene"
+			"tooltip": "Scene",
+            "fields": [
+                {
+                    "type": "list",
+                    "binding": "webray:scene:spheres",
+                    "data_type": "d_sphere"
+                }
+            ]
 		},
 		"w_materials": {
 			"icon": "i_materials",
 			"label": null,
-			"tooltip": "Materials"
+			"tooltip": "Materials",
+            "fields": [
+                {
+                    "type": "list",
+                    "binding": "webray:scene:spheres",
+                    "data_type": {
+                        "type": "selection",
+                        "label": "Material Type",
+                        "options": [
+                            "d_mat_diffuse",
+                            "d_mat_metal",
+                            "d_mat_dielectric"
+                        ]
+                    }
+                }
+            ]
 		},
 		"w_camera": {
 			"icon": "i_camera",
@@ -22,7 +44,9 @@
 		}
 	},
 	"toolbars": {
-		"t_app_bar": {},
+		"t_app_bar": {
+            
+        },
 		"t_image_bar": {
 			"lead": [
 				{
@@ -46,5 +70,81 @@
 	"actions": {
 		"a_download": {},
 		"a_render": {}
-	}
+	},
+    "data_types": {
+        "d_sphere": {
+            "properties": [
+                {
+                    "label": "Name",
+                    "tooltip": "",
+                    "type": "string",
+                    "default": "Sphere"
+                },
+                {
+                    "label": "Position",
+                    "tooltip": "",
+                    "type": "vec3f",
+                    "default": { "x": 0.0, "y": 0.0, "z": 0.0 }
+                },
+                {
+                    "label": "Radius",
+                    "tooltip": "",
+                    "type": "f32",
+                    "default": 0.5
+                },
+                {
+                    "label": "Material ID",
+                    "tooltip": "",
+                    "type": "u32",
+                    "default": 0
+                }
+            ]
+        },
+        "d_mat_diffuse": {
+            "properties": [
+                {
+                    "label": "Color",
+                    "tooltip": "",
+                    "type": "rgb",
+                    "default": { "r": 0.3, "g": 0.3, "b": 0.3 }
+                }
+            ]
+        },
+        "d_mat_metal": {
+            "properties": [
+                {
+                    "label": "Color",
+                    "tooltip": "",
+                    "type": "rgb",
+                    "default": { "r": 0.3, "g": 0.3, "b": 0.3 }
+                },
+                {
+                    "label": "Roughness",
+                    "tooltip": "",
+                    "type": "f32",
+                    "default": 0.1
+                }
+            ]
+        },
+        "d_mat_dielectric": {
+            "properties": [
+                {
+                    "label": "IOR",
+                    "tooltip": "",
+                    "type": "f32",
+                    "default": 1.5
+                }
+            ]
+        },
+        "d_camera": {
+            "properties": [
+
+            ]
+        },
+        "d_render_settings": {
+            "properties": [
+
+            ]
+        }
+    }
 }

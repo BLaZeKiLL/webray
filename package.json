@@ -14,6 +14,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
+		"@floating-ui/dom": "^1.6.0",
 		"@iconify/json": "^2.2.174",
 		"@skeletonlabs/skeleton": "^2.7.1",
 		"@skeletonlabs/tw-plugin": "^0.3.1",
