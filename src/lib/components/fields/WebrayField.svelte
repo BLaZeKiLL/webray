@@ -1,7 +1,7 @@
 <script lang="ts">
-
+    export let text: string;
 </script>
 
-<div class="snap-start shrink-0 card text-center">
-    Field
+<div class="card shrink-0 snap-start text-center">
+    {text}
 </div>

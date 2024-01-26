@@ -2,16 +2,20 @@
 	import '../app.pcss';
 
 	import { AppShell } from '@skeletonlabs/skeleton';
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';
 
-	import WebrayLeftBar from '$lib/components/ui/WebrayLeftBar.svelte';
-	import WebrayRightBar from '$lib/components/ui/WebrayRightBar.svelte';
-	import WebrayAppBar from '$lib/components/ui/WebrayAppBar.svelte';
-	import WebrayRenderBar from '$lib/components/ui/WebrayRenderBar.svelte';
-	import WebrayFooter from '$lib/components/ui/WebrayFooter.svelte';
+	import WebrayLeftBar from '$lib/components/layout/WebrayLeftBar.svelte';
+	import WebrayRightBar from '$lib/components/layout/WebrayRightBar.svelte';
+	import WebrayAppBar from '$lib/components/layout/WebrayAppBar.svelte';
+	import WebrayRenderBar from '$lib/components/layout/WebrayImageBar.svelte';
+	import WebrayFooter from '$lib/components/layout/WebrayFooter.svelte';
+
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 </script>
 
 <AppShell
-	slotPageContent="overflow-y-auto flex flex-col items-center bg-gray-950"
+	slotPageContent="overflow-y-auto flex flex-col items-center justify-center bg-gray-950"
 	slotSidebarLeft="w-1/6 overflow-y-clip"
 	slotSidebarRight="w-1/6 overflow-y-clip"
 	slotPageFooter="h-1/6"
@@ -35,8 +39,8 @@
 	<!-- Router Slot -->
 	<slot />
 	<!-- ---- / ---- -->
+
 	<svelte:fragment slot="pageFooter">
 		<WebrayFooter />
 	</svelte:fragment>
-	<!-- (footer) -->
 </AppShell>

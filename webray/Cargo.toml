@@ -2,6 +2,10 @@
 name = "webray"
 version = "0.1.7"
 edition = "2021"
+license = "MIT"
+description = "WebGPU Powered Ray Tracer"
+repository = "https://github.com/BLaZeKiLL/webray"
+authors = ["Devashish Lal"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]
