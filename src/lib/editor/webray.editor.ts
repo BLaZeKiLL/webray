@@ -13,17 +13,15 @@ import type {
 const editor_json = _editor_json as unknown as WebrayEditorConfig;
 
 export class WebrayEditor {
-	public WebrayEditor() {}
-
-	public getWindow(id: string): Window {
+	public static getWindow(id: string): Window {
 		return editor_json.windows[id as keyof Windows] as Window;
 	}
 
-	public getToolbar(id: string): Toolbar {
+	public static getToolbar(id: string): Toolbar {
 		return editor_json.toolbars[id as keyof Toolbars] as Toolbar;
 	}
 
-	public getAction(id: string): Action {
+	public static getAction(id: string): Action {
 		return editor_json.actions[id as keyof Actions] as Action;
 	}
 }

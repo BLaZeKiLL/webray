@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Scene from '~icons/iconamoon/3d-light';
 import Download from '~icons/uil/image-download';
 import Render from '~icons/material-symbols/rocket-launch';
@@ -12,6 +13,12 @@ const icons = {
 	i_download: Download,
 	i_camera: Camera,
 	i_render_settings: RenderSettings
+} as {
+    [key:string]: any
 };
 
-export default icons;
+export class Icons {
+    public static getIcon(id: string): any {
+        return icons[id];
+    }
+}
