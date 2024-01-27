@@ -2,7 +2,7 @@
 	import { Tab, TabGroup } from '@skeletonlabs/skeleton';
 	import { WebrayEditor } from '../../editor';
 
-	import WebrayIconButton from '../ui/WebrayIconButton.svelte';
+	import WebrayIcon from '../ui/WebrayIcon.svelte';
 	import WebrayWindow from '../window/WebrayWindow.svelte';
 
 	export let windows: string[];
@@ -17,13 +17,12 @@
 	active="variant-ghost-primary"
 	hover="hover:variant-soft-primary"
 	regionPanel="region-height !my-2"
-	padding="p-1"
+	padding="p-2"
 	rounded=""
-	border=""
 >
 	{#each _windows as win, i}
 		<Tab bind:group={tab} name={win.icon} value={i}>
-			<WebrayIconButton icon={win.icon} tooltip={win.tooltip} />
+			<WebrayIcon icon={win.icon} tooltip={win.tooltip} />
 		</Tab>
 	{/each}
 

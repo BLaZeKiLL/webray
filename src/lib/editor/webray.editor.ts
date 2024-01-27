@@ -1,27 +1,33 @@
 import _editor_json from '../../webray.editor.json';
 
 import type {
-	Action,
-	Actions,
-	Toolbar,
-	Toolbars,
+	WebrayAction,
+	WebrayActions,
+	WebrayToolbar,
+	WebrayToolbars,
 	WebrayEditorConfig,
-	Window,
-	Windows
+	WebrayWindow,
+	WebrayWindows,
+	WebrayDataType,
+	WebrayDataTypes
 } from './webray.interfaces';
 
 const editor_json = _editor_json as unknown as WebrayEditorConfig;
 
 export class WebrayEditor {
-	public static getWindow(id: string): Window {
-		return editor_json.windows[id as keyof Windows] as Window;
+	public static getWindow(id: string): WebrayWindow {
+		return editor_json.windows[id as keyof WebrayWindows] as WebrayWindow;
 	}
 
-	public static getToolbar(id: string): Toolbar {
-		return editor_json.toolbars[id as keyof Toolbars] as Toolbar;
+	public static getToolbar(id: string): WebrayToolbar {
+		return editor_json.toolbars[id as keyof WebrayToolbars] as WebrayToolbar;
 	}
 
-	public static getAction(id: string): Action {
-		return editor_json.actions[id as keyof Actions] as Action;
+	public static getAction(id: string): WebrayAction {
+		return editor_json.actions[id as keyof WebrayActions] as WebrayAction;
+	}
+
+	public static getDataType(id: string): WebrayDataType {
+		return editor_json.data_types[id as keyof WebrayDataTypes] as WebrayDataType;
 	}
 }

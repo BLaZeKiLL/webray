@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { Window } from '../../editor';
+	import type { WebrayWindow } from '../../editor';
 	import WebrayField from '../data/WebrayField.svelte';
 
-	export let win: Window;
+	export let win: WebrayWindow;
 </script>
 
 <div class="h-full flex flex-col gap-4">
@@ -11,6 +11,8 @@
 			<WebrayField text={win.icon} />
 		{/each}
 	</div>
-	
-	<button type="button" class="btn variant-ghost-primary mx-2">Add</button>
+
+	{#if win.data.type === 'list'}
+		<button type="button" class="btn variant-ghost-primary mx-2">Add</button>
+	{/if}
 </div>

@@ -2,20 +2,24 @@
 	import WebrayToolbar from '../toolbar/WebrayToolbar.svelte';
 
 	import { WebrayEditor, ID } from '../../editor';
-	import WebrayIconButton from '../ui/WebrayIconButton.svelte';
+	import WebrayIcon from '../ui/WebrayIcon.svelte';
 
 	const imageToolbar = WebrayEditor.getToolbar(ID.t_image_bar);
 </script>
 
 <WebrayToolbar>
-	<svelte:fragment slot="lead">
+	<div slot="lead" class="btn-group variant-ghost-surface rounded-none">
 		{#each imageToolbar.lead as tool}
-			<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip} />
+			<button class="!p-2">
+				<WebrayIcon icon={tool.icon} tooltip={tool.tooltip} />
+			</button>
 		{/each}
-	</svelte:fragment>
-	<svelte:fragment slot="trail">
+	</div>
+	<div slot="trail" class="btn-group variant-ghost-surface rounded-none">
 		{#each imageToolbar.trail as tool}
-			<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip} />
+			<button class="!p-2">
+				<WebrayIcon icon={tool.icon} tooltip={tool.tooltip} />
+			</button>
 		{/each}
-	</svelte:fragment>
+	</div>
 </WebrayToolbar>

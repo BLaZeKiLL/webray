@@ -1,7 +1,7 @@
 <script lang="ts">
 </script>
 
-<div class="flex flex-row p-2">
+<div class="flex flex-row">
 	<slot name="lead" />
 	<span class="grow"></span>
 	<slot name="center" />

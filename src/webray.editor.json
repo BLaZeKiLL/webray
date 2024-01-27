@@ -59,6 +59,12 @@
 			"center": [],
 			"trail": [
 				{
+					"icon": "i_full_screen_enter",
+					"label": null,
+					"tooltip": "Full Screen",
+					"action": "a_full_screen_enter"
+				},
+				{
 					"icon": "i_download",
 					"label": null,
 					"tooltip": "Download Image",
@@ -69,7 +75,8 @@
 	},
 	"actions": {
 		"a_download": {},
-		"a_render": {}
+		"a_render": {},
+		"a_full_screen_enter": {}
 	},
 	"data_types": {
 		"d_sphere": {
