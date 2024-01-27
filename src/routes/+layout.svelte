@@ -7,7 +7,6 @@
 
 	import WebrayLeftBar from '$lib/components/layout/WebrayLeftBar.svelte';
 	import WebrayRightBar from '$lib/components/layout/WebrayRightBar.svelte';
-	import WebrayAppBar from '$lib/components/layout/WebrayAppBar.svelte';
 	import WebrayRenderBar from '$lib/components/layout/WebrayImageBar.svelte';
 	import WebrayFooter from '$lib/components/layout/WebrayFooter.svelte';
 
@@ -20,10 +19,6 @@
 	slotSidebarRight="w-1/6 overflow-y-clip"
 	slotPageFooter="h-1/6"
 >
-	<svelte:fragment slot="header">
-		<WebrayAppBar />
-	</svelte:fragment>
-
 	<svelte:fragment slot="sidebarLeft">
 		<WebrayLeftBar />
 	</svelte:fragment>
