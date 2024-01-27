@@ -4,39 +4,45 @@
 			"icon": "i_scene",
 			"label": null,
 			"tooltip": "Scene",
-			"fields": [
-				{
-					"type": "list",
-					"binding": "webray:scene:spheres",
-					"data_type": "d_sphere"
-				}
-			]
+			"data": {
+				"type": "list",
+				"binding": "webray:scene:spheres",
+				"data_type": "d_sphere"
+			}
 		},
 		"w_materials": {
 			"icon": "i_materials",
 			"label": null,
 			"tooltip": "Materials",
-			"fields": [
-				{
-					"type": "list",
-					"binding": "webray:scene:spheres",
-					"data_type": {
-						"type": "selection",
-						"label": "Material Type",
-						"options": ["d_mat_diffuse", "d_mat_metal", "d_mat_dielectric"]
-					}
+			"data": {
+				"type": "list",
+				"binding": "webray:scene:spheres",
+				"data_type": {
+					"type": "selection",
+					"label": "Material Type",
+					"options": ["d_mat_diffuse", "d_mat_metal", "d_mat_dielectric"]
 				}
-			]
+			}
 		},
 		"w_camera": {
 			"icon": "i_camera",
 			"label": null,
-			"tooltip": "Camera"
+			"tooltip": "Camera",
+			"data": {
+				"type": "fixed",
+				"binding": "webray:camera",
+				"data_type": "d_camera"
+			}
 		},
 		"w_render_settings": {
 			"icon": "i_render_settings",
 			"label": null,
-			"tooltip": "Render Settings"
+			"tooltip": "Render Settings",
+			"data": {
+				"type": "fixed",
+				"binding": "webray:render_settings",
+				"data_type": "d_render_settings"
+			}
 		}
 	},
 	"toolbars": {

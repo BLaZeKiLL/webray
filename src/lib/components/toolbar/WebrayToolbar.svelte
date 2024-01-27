@@ -2,9 +2,9 @@
 </script>
 
 <div class="flex flex-row p-2">
-	<span><slot name="lead" /></span>
+	<slot name="lead" />
 	<span class="grow"></span>
-	<span><slot name="center" /></span>
+	<slot name="center" />
 	<span class="grow"></span>
-	<span><slot name="trail" /></span>
+	<slot name="trail" />
 </div>

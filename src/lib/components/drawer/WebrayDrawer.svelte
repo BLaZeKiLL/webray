@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Tab, TabGroup } from '@skeletonlabs/skeleton';
 	import { WebrayEditor } from '../../editor';
-	
+
 	import WebrayIconButton from '../ui/WebrayIconButton.svelte';
 	import WebrayWindow from '../window/WebrayWindow.svelte';
 
@@ -14,13 +14,12 @@
 
 <TabGroup
 	class="h-full"
-	active="variant-filled-primary"
+	active="variant-ghost-primary"
 	hover="hover:variant-soft-primary"
-	regionPanel="region-height !my-2 px-2 flex flex-col gap-4 snap-y snap-mandatory overflow-y-scroll scroll-smooth"
+	regionPanel="region-height !my-2"
 	padding="p-1"
 	rounded=""
 	border=""
-	
 >
 	{#each _windows as win, i}
 		<Tab bind:group={tab} name={win.icon} value={i}>
@@ -29,6 +28,6 @@
 	{/each}
 
 	<svelte:fragment slot="panel">
-		<WebrayWindow win={_windows[tab]}/>
+		<WebrayWindow win={_windows[tab]} />
 	</svelte:fragment>
 </TabGroup>
