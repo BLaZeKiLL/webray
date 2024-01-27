@@ -6,8 +6,8 @@
 			"tooltip": "Scene",
 			"data": {
 				"type": "list",
-				"binding": "webray:scene:spheres",
-				"data_type": "d_sphere"
+				"binding": "webray:scene:objects",
+				"data_type": "d_obj"
 			}
 		},
 		"w_materials": {
@@ -16,7 +16,7 @@
 			"tooltip": "Materials",
 			"data": {
 				"type": "list",
-				"binding": "webray:scene:spheres",
+				"binding": "webray:scene:materials",
 				"data_type": "d_material"
 			}
 		},
@@ -75,15 +75,74 @@
 		"a_full_screen_enter": {}
 	},
 	"data_types": {
-		"d_sphere": {
+		"d_obj": {
 			"properties": [
 				{
 					"label": "Name",
 					"tooltip": "",
 					"type": "str",
-					"initial": "Sphere",
+					"initial": "Object",
 					"meta": {}
 				},
+				{
+					"label": "Material ID",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 0,
+					"meta": {}
+				},
+				{
+					"label": "Type",
+					"tooltip": "",
+					"type": "data_select",
+					"initial": "d_sphere",
+					"meta": {
+						"options": [
+							{
+								"label": "Sphere",
+								"value": "d_sphere"
+							}
+						]
+					}
+				}
+			]
+		},
+		"d_material": {
+			"properties": [
+				{
+					"label": "Name",
+					"tooltip": "",
+					"type": "str",
+					"initial": "Material",
+					"meta": {}
+				},
+				{
+					"label": "Type",
+					"tooltip": "",
+					"type": "data_select",
+					"initial": "d_mat_diffuse",
+					"meta": {
+						"options": [
+							{
+								"label": "Diffuse",
+								"value": "d_mat_diffuse"
+							},
+							{
+								"label": "Metal",
+								"value": "d_mat_metal"
+							},
+							{
+								"label": "Dielectric",
+								"value": "d_mat_dielectric"
+							}
+						]
+					}
+				}
+			]
+		},
+		"d_sphere": {
+			"properties": [
+
 				{
 					"label": "Position",
 					"tooltip": "",
@@ -97,38 +156,6 @@
 					"type": "f32",
 					"initial": 0.5,
 					"meta": {}
-				},
-				{
-					"label": "Material ID",
-					"tooltip": "",
-					"type": "u32",
-					"initial": 0,
-					"meta": {}
-				}
-			]
-		},
-		"d_material": {
-			"properties": [
-				{
-					"label": "Type",
-					"tooltip": "",
-					"type": "data_select",
-					"meta": {
-						"options": [
-							{
-								"label": "Diffuse",
-								"data_type": "d_mat_diffuse"
-							},
-							{
-								"label": "Metal",
-								"data_type": "d_mat_metal"
-							},
-							{
-								"label": "Dielectric",
-								"data_type": "d_mat_dielectric"
-							}
-						]
-					}
 				}
 			]
 		},
@@ -138,7 +165,7 @@
 					"label": "Color",
 					"tooltip": "",
 					"type": "rgb",
-					"initial": { "r": 0.3, "g": 0.3, "b": 0.3 },
+					"initial": "#808080",
 					"meta": {}
 				}
 			]
@@ -149,7 +176,7 @@
 					"label": "Color",
 					"tooltip": "",
 					"type": "rgb",
-					"initial": { "r": 0.3, "g": 0.3, "b": 0.3 },
+					"initial": "#808080",
 					"meta": {}
 				},
 				{
@@ -250,12 +277,37 @@
 				},
 				{
 					"label": "Tile Size",
-					"tooltip": "0 = full size",
+					"tooltip": "",
+					"type": "data_select",
+					"initial": "d_tile_size_full",
+					"meta": {
+						"options": [
+							{
+								"label": "Full",
+								"value": "d_tile_size_full"
+							},
+							{
+								"label": "Tilled",
+								"value": "d_tile_size"
+							}
+						]
+					}
+				}
+			]
+		},
+		"d_tile_size": {
+			"properties": [
+				{
+					"label": "Size",
+					"tooltip": "",
 					"type": "u32",
-					"initial": 0,
+					"initial": 128,
 					"meta": {}
 				}
 			]
+		},
+		"d_tile_size_full": {
+			"properties": []
 		}
 	}
 }

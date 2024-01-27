@@ -4,7 +4,7 @@
 	export let initial: any;
 	export let meta: any;
 
-	let colorValue: string;
+	$: colorValue = initial;
 </script>
 
 <span class="flex flex-row items-center justify-stretch gap-1">

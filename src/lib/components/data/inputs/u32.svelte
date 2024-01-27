@@ -4,14 +4,12 @@
 	export let initial: any;
 	export let meta: any;
 
-	let n: number | null = null;
-	let previousN: number | null = n;
+	$: value = initial;
 
-	function validator(node: HTMLInputElement, _: number | null) {
+	function validator(node: HTMLInputElement, _: number) {
 		return {
-			update(value: string | null) {
-				n = value === null || n! < parseInt(node.min) ? previousN : parseInt(value);
-				previousN = n;
+			update(val: string) {
+				value = Math.max(parseInt(node.min), Math.floor(parseFloat(val)));
 			}
 		};
 	}
@@ -23,8 +21,8 @@
 		class="webray-input input text-center text-surface-300 w-4/5"
 		type="number"
 		min="0"
-		use:validator={n}
-		bind:value={n}
+		use:validator={value}
+		bind:value={value}
 		placeholder="u32"
 	/>
 </span>

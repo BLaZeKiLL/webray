@@ -4,9 +4,9 @@
     export let label: string;
 	export let tooltip: string;
 	export let initial: any;
-    export let meta: {options: { label: string; data_type: string }[]};
+    export let meta: {options: { label: string; value: string }[]};
 
-	let data_type_value: string = meta.options[0].data_type;
+	$: data_type_value = initial;
 </script>
 
 <div class="flex flex-col">
@@ -14,7 +14,7 @@
 		<p class="mr-1 text-surface-200 w-1/5">{label}</p>
 		<select class="select webray-input w-4/5 text-surface-300" bind:value={data_type_value}>
 			{#each meta.options as option}
-				<option value={option.data_type}>{option.label}</option>
+				<option value={option.value}>{option.label}</option>
 			{/each}
 		</select>
 	</span>
