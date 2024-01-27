@@ -8,5 +8,12 @@ export const ID = {
 	t_image_bar: 't_image_bar',
 
 	a_download: 'a_download',
-	a_render: 'a_render'
+	a_render: 'a_render',
+
+	d_sphere: 'd_sphere',
+	d_mat_diffuse: 'd_mat_diffuse',
+	d_mat_metal: 'd_mat_metal',
+	d_mat_dielectric: 'd_mat_dielectric',
+	d_camera: 'd_camera',
+	d_render_settings: 'd_render_settings'
 };

@@ -1,23 +1,25 @@
 <script lang="ts">
 	import WebrayToolbar from '../toolbar/WebrayToolbar.svelte';
 
-	import { WebrayEditor, ID, Icons } from '../../editor';
-	import WebrayIconButton from '../ui/WebrayIconButton.svelte';
+	import { WebrayEditor, ID } from '../../editor';
+	import WebrayIcon from '../ui/WebrayIcon.svelte';
 
 	const imageToolbar = WebrayEditor.getToolbar(ID.t_image_bar);
-	const renderIcon = Icons.getIcon(imageToolbar.lead[0].icon);
-	const downloadIcon = Icons.getIcon(imageToolbar.trail[0].icon);
 </script>
 
 <WebrayToolbar>
-	<span slot="lead">
+	<div slot="lead" class="variant-ghost-surface btn-group rounded-none">
 		{#each imageToolbar.lead as tool}
-			<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip} />
+			<button class="!p-2">
+				<WebrayIcon icon={tool.icon} tooltip={tool.tooltip} />
+			</button>
 		{/each}
-	</span>
-	<span slot="trail">
+	</div>
+	<div slot="trail" class="variant-ghost-surface btn-group rounded-none">
 		{#each imageToolbar.trail as tool}
-			<WebrayIconButton icon={tool.icon} tooltip={tool.tooltip} />
+			<button class="!p-2">
+				<WebrayIcon icon={tool.icon} tooltip={tool.tooltip} />
+			</button>
 		{/each}
-	</span>
+	</div>
 </WebrayToolbar>

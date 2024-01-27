@@ -4,39 +4,41 @@
 			"icon": "i_scene",
 			"label": null,
 			"tooltip": "Scene",
-			"fields": [
-				{
-					"type": "list",
-					"binding": "webray:scene:spheres",
-					"data_type": "d_sphere"
-				}
-			]
+			"data": {
+				"type": "list",
+				"binding": "webray:scene:objects",
+				"data_type": "d_obj"
+			}
 		},
 		"w_materials": {
 			"icon": "i_materials",
 			"label": null,
 			"tooltip": "Materials",
-			"fields": [
-				{
-					"type": "list",
-					"binding": "webray:scene:spheres",
-					"data_type": {
-						"type": "selection",
-						"label": "Material Type",
-						"options": ["d_mat_diffuse", "d_mat_metal", "d_mat_dielectric"]
-					}
-				}
-			]
+			"data": {
+				"type": "list",
+				"binding": "webray:scene:materials",
+				"data_type": "d_material"
+			}
 		},
 		"w_camera": {
 			"icon": "i_camera",
 			"label": null,
-			"tooltip": "Camera"
+			"tooltip": "Camera",
+			"data": {
+				"type": "fixed",
+				"binding": "webray:camera",
+				"data_type": "d_camera"
+			}
 		},
 		"w_render_settings": {
 			"icon": "i_render_settings",
 			"label": null,
-			"tooltip": "Render Settings"
+			"tooltip": "Render Settings",
+			"data": {
+				"type": "fixed",
+				"binding": "webray:render_settings",
+				"data_type": "d_render_settings"
+			}
 		}
 	},
 	"toolbars": {
@@ -53,6 +55,12 @@
 			"center": [],
 			"trail": [
 				{
+					"icon": "i_full_screen_enter",
+					"label": null,
+					"tooltip": "Full Screen",
+					"action": "a_full_screen_enter"
+				},
+				{
 					"icon": "i_download",
 					"label": null,
 					"tooltip": "Download Image",
@@ -63,34 +71,91 @@
 	},
 	"actions": {
 		"a_download": {},
-		"a_render": {}
+		"a_render": {},
+		"a_full_screen_enter": {}
 	},
 	"data_types": {
-		"d_sphere": {
+		"d_obj": {
 			"properties": [
 				{
 					"label": "Name",
 					"tooltip": "",
-					"type": "string",
-					"default": "Sphere"
-				},
-				{
-					"label": "Position",
-					"tooltip": "",
-					"type": "vec3f",
-					"default": { "x": 0.0, "y": 0.0, "z": 0.0 }
-				},
-				{
-					"label": "Radius",
-					"tooltip": "",
-					"type": "f32",
-					"default": 0.5
+					"type": "str",
+					"initial": "Object",
+					"meta": {}
 				},
 				{
 					"label": "Material ID",
 					"tooltip": "",
 					"type": "u32",
-					"default": 0
+					"initial": 0,
+					"meta": {}
+				},
+				{
+					"label": "Type",
+					"tooltip": "",
+					"type": "data_select",
+					"initial": "d_sphere",
+					"meta": {
+						"options": [
+							{
+								"label": "Sphere",
+								"value": "d_sphere"
+							}
+						]
+					}
+				}
+			]
+		},
+		"d_material": {
+			"properties": [
+				{
+					"label": "Name",
+					"tooltip": "",
+					"type": "str",
+					"initial": "Material",
+					"meta": {}
+				},
+				{
+					"label": "Type",
+					"tooltip": "",
+					"type": "data_select",
+					"initial": "d_mat_diffuse",
+					"meta": {
+						"options": [
+							{
+								"label": "Diffuse",
+								"value": "d_mat_diffuse"
+							},
+							{
+								"label": "Metal",
+								"value": "d_mat_metal"
+							},
+							{
+								"label": "Dielectric",
+								"value": "d_mat_dielectric"
+							}
+						]
+					}
+				}
+			]
+		},
+		"d_sphere": {
+			"properties": [
+
+				{
+					"label": "Position",
+					"tooltip": "",
+					"type": "vec3f",
+					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"meta": {}
+				},
+				{
+					"label": "Radius",
+					"tooltip": "",
+					"type": "f32",
+					"initial": 0.5,
+					"meta": {}
 				}
 			]
 		},
@@ -100,7 +165,8 @@
 					"label": "Color",
 					"tooltip": "",
 					"type": "rgb",
-					"default": { "r": 0.3, "g": 0.3, "b": 0.3 }
+					"initial": "#808080",
+					"meta": {}
 				}
 			]
 		},
@@ -110,13 +176,15 @@
 					"label": "Color",
 					"tooltip": "",
 					"type": "rgb",
-					"default": { "r": 0.3, "g": 0.3, "b": 0.3 }
+					"initial": "#808080",
+					"meta": {}
 				},
 				{
 					"label": "Roughness",
 					"tooltip": "",
 					"type": "f32",
-					"default": 0.1
+					"initial": 0.1,
+					"meta": {}
 				}
 			]
 		},
@@ -126,14 +194,119 @@
 					"label": "IOR",
 					"tooltip": "",
 					"type": "f32",
-					"default": 1.5
+					"initial": 1.5,
+					"meta": {}
 				}
 			]
 		},
 		"d_camera": {
-			"properties": []
+			"properties": [
+				{
+					"label": "Look From",
+					"tooltip": "",
+					"type": "vec3f",
+					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"meta": {}
+				},
+				{
+					"label": "Look At",
+					"tooltip": "",
+					"type": "vec3f",
+					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"meta": {}
+				},
+				{
+					"label": "Camera Up",
+					"tooltip": "",
+					"type": "vec3f",
+					"initial": { "x": 0.0, "y": 1.0, "z": 0.0 },
+					"meta": {}
+				},
+				{
+					"label": "Field of View",
+					"tooltip": "",
+					"type": "f32",
+					"initial": 20.0,
+					"meta": {}
+				},
+				{
+					"label": "DOF Angle",
+					"tooltip": "Depth of field angle",
+					"type": "f32",
+					"initial": 0.6,
+					"meta": {}
+				},
+				{
+					"label": "DOF Distance",
+					"tooltip": "Depth of field distance",
+					"type": "f32",
+					"initial": 3.4,
+					"meta": {}
+				}
+			]
 		},
 		"d_render_settings": {
+			"properties": [
+				{
+					"label": "Width",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 1920,
+					"meta": {}
+				},
+				{
+					"label": "Height",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 1080,
+					"meta": {}
+				},
+				{
+					"label": "Samples",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 128,
+					"meta": {}
+				},
+				{
+					"label": "Bounces",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 32,
+					"meta": {}
+				},
+				{
+					"label": "Tile Size",
+					"tooltip": "",
+					"type": "data_select",
+					"initial": "d_tile_size_full",
+					"meta": {
+						"options": [
+							{
+								"label": "Full",
+								"value": "d_tile_size_full"
+							},
+							{
+								"label": "Tilled",
+								"value": "d_tile_size"
+							}
+						]
+					}
+				}
+			]
+		},
+		"d_tile_size": {
+			"properties": [
+				{
+					"label": "Size",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 128,
+					"meta": {}
+				}
+			]
+		},
+		"d_tile_size_full": {
 			"properties": []
 		}
 	}
