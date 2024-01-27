@@ -6,7 +6,7 @@ import Camera from '~icons/material-symbols/android-camera-outline';
 import RenderSettings from '~icons/cil/tv';
 import Material from '~icons/icon-park-outline/material';
 import FullScreenEnter from '~icons/gridicons/fullscreen';
-import FullScreenExit from '~icons/gridicons/fullscreen-exit'
+import FullScreenExit from '~icons/gridicons/fullscreen-exit';
 
 const icons = {
 	i_scene: Scene,

@@ -17,11 +17,7 @@
 			"data": {
 				"type": "list",
 				"binding": "webray:scene:spheres",
-				"data_type": {
-					"type": "selection",
-					"label": "Material Type",
-					"options": ["d_mat_diffuse", "d_mat_metal", "d_mat_dielectric"]
-				}
+				"data_type": "d_material"
 			}
 		},
 		"w_camera": {
@@ -84,26 +80,55 @@
 				{
 					"label": "Name",
 					"tooltip": "",
-					"type": "string",
-					"default": "Sphere"
+					"type": "str",
+					"initial": "Sphere",
+					"meta": {}
 				},
 				{
 					"label": "Position",
 					"tooltip": "",
 					"type": "vec3f",
-					"default": { "x": 0.0, "y": 0.0, "z": 0.0 }
+					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"meta": {}
 				},
 				{
 					"label": "Radius",
 					"tooltip": "",
 					"type": "f32",
-					"default": 0.5
+					"initial": 0.5,
+					"meta": {}
 				},
 				{
 					"label": "Material ID",
 					"tooltip": "",
 					"type": "u32",
-					"default": 0
+					"initial": 0,
+					"meta": {}
+				}
+			]
+		},
+		"d_material": {
+			"properties": [
+				{
+					"label": "Type",
+					"tooltip": "",
+					"type": "data_select",
+					"meta": {
+						"options": [
+							{
+								"label": "Diffuse",
+								"data_type": "d_mat_diffuse"
+							},
+							{
+								"label": "Metal",
+								"data_type": "d_mat_metal"
+							},
+							{
+								"label": "Dielectric",
+								"data_type": "d_mat_dielectric"
+							}
+						]
+					}
 				}
 			]
 		},
@@ -113,7 +138,8 @@
 					"label": "Color",
 					"tooltip": "",
 					"type": "rgb",
-					"default": { "r": 0.3, "g": 0.3, "b": 0.3 }
+					"initial": { "r": 0.3, "g": 0.3, "b": 0.3 },
+					"meta": {}
 				}
 			]
 		},
@@ -123,13 +149,15 @@
 					"label": "Color",
 					"tooltip": "",
 					"type": "rgb",
-					"default": { "r": 0.3, "g": 0.3, "b": 0.3 }
+					"initial": { "r": 0.3, "g": 0.3, "b": 0.3 },
+					"meta": {}
 				},
 				{
 					"label": "Roughness",
 					"tooltip": "",
 					"type": "f32",
-					"default": 0.1
+					"initial": 0.1,
+					"meta": {}
 				}
 			]
 		},
@@ -139,15 +167,95 @@
 					"label": "IOR",
 					"tooltip": "",
 					"type": "f32",
-					"default": 1.5
+					"initial": 1.5,
+					"meta": {}
 				}
 			]
 		},
 		"d_camera": {
-			"properties": []
+			"properties": [
+				{
+					"label": "Look From",
+					"tooltip": "",
+					"type": "vec3f",
+					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"meta": {}
+				},
+				{
+					"label": "Look At",
+					"tooltip": "",
+					"type": "vec3f",
+					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"meta": {}
+				},
+				{
+					"label": "Camera Up",
+					"tooltip": "",
+					"type": "vec3f",
+					"initial": { "x": 0.0, "y": 1.0, "z": 0.0 },
+					"meta": {}
+				},
+				{
+					"label": "Field of View",
+					"tooltip": "",
+					"type": "f32",
+					"initial": 20.0,
+					"meta": {}
+				},
+				{
+					"label": "DOF Angle",
+					"tooltip": "Depth of field angle",
+					"type": "f32",
+					"initial": 0.6,
+					"meta": {}
+				},
+				{
+					"label": "DOF Distance",
+					"tooltip": "Depth of field distance",
+					"type": "f32",
+					"initial": 3.4,
+					"meta": {}
+				}
+			]
 		},
 		"d_render_settings": {
-			"properties": []
+			"properties": [
+				{
+					"label": "Width",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 1920,
+					"meta": {}
+				},
+				{
+					"label": "Height",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 1080,
+					"meta": {}
+				},
+				{
+					"label": "Samples",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 128,
+					"meta": {}
+				},
+				{
+					"label": "Bounces",
+					"tooltip": "",
+					"type": "u32",
+					"initial": 32,
+					"meta": {}
+				},
+				{
+					"label": "Tile Size",
+					"tooltip": "0 = full size",
+					"type": "u32",
+					"initial": 0,
+					"meta": {}
+				}
+			]
 		}
 	}
 }

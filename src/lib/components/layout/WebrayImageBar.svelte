@@ -8,14 +8,14 @@
 </script>
 
 <WebrayToolbar>
-	<div slot="lead" class="btn-group variant-ghost-surface rounded-none">
+	<div slot="lead" class="variant-ghost-surface btn-group rounded-none">
 		{#each imageToolbar.lead as tool}
 			<button class="!p-2">
 				<WebrayIcon icon={tool.icon} tooltip={tool.tooltip} />
 			</button>
 		{/each}
 	</div>
-	<div slot="trail" class="btn-group variant-ghost-surface rounded-none">
+	<div slot="trail" class="variant-ghost-surface btn-group rounded-none">
 		{#each imageToolbar.trail as tool}
 			<button class="!p-2">
 				<WebrayIcon icon={tool.icon} tooltip={tool.tooltip} />

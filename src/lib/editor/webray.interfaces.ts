@@ -20,9 +20,9 @@ export interface WebrayWindow {
 }
 
 export interface WebrayData {
-    type: string;
-    binding: string;
-    data_type: string;
+	type: string;
+	binding: string;
+	data_type: string;
 }
 
 export interface WebrayToolbars {
@@ -51,23 +51,24 @@ export interface WebrayActions {
 export interface WebrayAction {}
 
 export interface WebrayDataTypes {
-    d_sphere: WebrayDataType;
-    d_mat_diffuse: WebrayDataType;
-    d_mat_metal: WebrayDataType;
-    d_mat_dielectric: WebrayDataType;
-    d_camera: WebrayDataType;
-    d_render_settings: WebrayDataType;
+	d_sphere: WebrayDataType;
+	d_mat_diffuse: WebrayDataType;
+	d_mat_metal: WebrayDataType;
+	d_mat_dielectric: WebrayDataType;
+	d_camera: WebrayDataType;
+	d_render_settings: WebrayDataType;
 }
 
 export interface WebrayDataType {
-    properties: WebrayProperty[];
+	properties: WebrayProperty[];
 }
 
 export interface WebrayProperty {
-    label: string;
-    tooltip: string;
-    type: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    default: any;
+	label: string;
+	tooltip: string;
+	type: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	initial: any;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	meta: any;
 }
-
