@@ -1,10 +1,10 @@
 <script lang="ts">
-	export let label: string;
-	export let tooltip: string;
-	export let initial: any;
-	export let meta: any;
+	import type { WebrayProperty } from "../../../editor";
 
-	$: value = initial;
+	export let property: WebrayProperty;
+	export let bind_path: string;
+
+	$: value = property.initial;
 
 	function validator(node: HTMLInputElement, _: number) {
 		return {
@@ -16,13 +16,13 @@
 </script>
 
 <span class="flex flex-row items-center justify-stretch gap-1">
-	<p class="mr-1 text-surface-200 w-1/5">{label}</p>
+	<p class="mr-1 w-1/5 text-surface-200">{property.label}</p>
 	<input
-		class="webray-input input text-center text-surface-300 w-4/5"
+		class="webray-input input w-4/5 text-center text-surface-300"
 		type="number"
 		min="0"
 		use:validator={value}
-		bind:value={value}
+		bind:value
 		placeholder="u32"
 	/>
 </span>

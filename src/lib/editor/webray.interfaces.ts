@@ -64,6 +64,7 @@ export interface WebrayDataType {
 }
 
 export interface WebrayProperty {
+	name: string,
 	label: string;
 	tooltip: string;
 	type: string;

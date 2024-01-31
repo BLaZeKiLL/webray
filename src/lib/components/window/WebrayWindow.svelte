@@ -8,11 +8,11 @@
 <div class="flex h-full flex-col gap-4">
 	<div class="flex grow snap-y snap-mandatory flex-col gap-4 overflow-y-scroll scroll-smooth px-2">
 		{#if win.data.type === 'list'}
-			{#each Array.from({ length: 30 }) as _, i}
-				<WebrayDataView data_type={win.data.data_type} />
+			{#each [] as _, i}
+				<WebrayDataView data_type={win.data.data_type} bind_path={win.data.binding} />
 			{/each}
 		{:else}
-			<WebrayDataView data_type={win.data.data_type} />
+			<WebrayDataView data_type={win.data.data_type} bind_path={win.data.binding} />
 		{/if}
 	</div>
 

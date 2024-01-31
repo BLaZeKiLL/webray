@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { WebrayProperty } from '../../editor';
 	import DataSelect from './inputs/data_select.svelte';
 	import F32 from './inputs/f32.svelte';
 	import Rgb from './inputs/rgb.svelte';
@@ -6,15 +7,12 @@
 	import U32 from './inputs/u32.svelte';
 	import Vec3f from './inputs/vec3f.svelte';
 
-	export let label: string;
-	export let type: string;
-	export let tooltip: string;
-	export let initial: any;
-	export let meta: any;
+	export let property: WebrayProperty;
+	export let bind_path: string;
 
 	let comp: any;
 
-	$: switch (type) {
+	$: switch (property.type) {
 		case 'f32':
 			comp = F32;
 			break;
@@ -35,9 +33,9 @@
 			comp = DataSelect;
 			break;
 		default:
-			console.error('Invalid input type: ' + type);
+			console.error('Invalid input type: ' + property.type);
 			break;
 	}
 </script>
 
-<svelte:component this={comp} {label} {tooltip} {initial} {meta} />
+<svelte:component this={comp} {property} {bind_path}/>

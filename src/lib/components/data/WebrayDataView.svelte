@@ -3,7 +3,8 @@
 	import WebrayProperty from './WebrayProperty.svelte';
 
 	export let data_type: string;
-    export let card_type: string = 'bg-initial';
+	export let bind_path: string;
+	export let card_type: string = 'bg-initial';
 
 	$: _data_type = WebrayEditor.getDataType(data_type);
 </script>
@@ -11,13 +12,7 @@
 {#if _data_type.properties.length !== 0}
 	<div class="card flex snap-start flex-col gap-2 p-2 {card_type}">
 		{#each _data_type.properties as property}
-			<WebrayProperty
-				label={property.label}
-				type={property.type}
-				tooltip={property.tooltip}
-				initial={property.initial}
-				meta={property.meta}
-			/>
+			<WebrayProperty {property} {bind_path}/>
 		{/each}
 	</div>
 {/if}
