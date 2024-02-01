@@ -1,4 +1,4 @@
-import { writable, derived, get } from 'svelte/store';
+import { writable, derived, get, type Writable } from 'svelte/store';
 import type { WebrayScene } from '../scene/webray.scene';
 import {
 	TileSize,
@@ -15,7 +15,7 @@ export class BinderStore {
 		this.store = writable<WebrayScene>(this.default_scene());
 	}
 
-	public bind_fixed(path: string, property: string) {
+	public bind<T>(path: string, property: string) {
 		const parts = path.split(':');
 
 		if (!(parts[0] === 'webray' && parts[1] === 'scene')) {
@@ -23,7 +23,7 @@ export class BinderStore {
 			return undefined;
 		}
 
-		const bind_path = parts[3];
+		const bind_path = parts[2]; // last part
 		const initial = get(this.store);
 
 		if (!(bind_path in initial)) {
@@ -42,8 +42,7 @@ export class BinderStore {
 			return prop; // ts sorcery
 		});
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const update = (value: any) => {
+		const update = (value: T) => {
 			this.store.update((state) => {
 				// this is a shallow copy
 				// can use structuredClone if a deep copy is required
@@ -51,17 +50,29 @@ export class BinderStore {
 
 				const data = change[bind_path as keyof WebrayScene];
 
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				(data[property as keyof typeof data] as any) = value; // ts sorcery
+				(data[property as keyof typeof data] as T) = value; // ts sorcery
 
 				return change;
 			});
 		};
 
+		const set = (value: T) => {
+			// this is a shallow copy
+			// can use structuredClone if a deep copy is required
+			const change = { ...get(this.store) };
+
+			const data = change[bind_path as keyof WebrayScene];
+
+			(data[property as keyof typeof data] as T) = value; // ts sorcery
+
+			this.store.set(change);
+		}
+
 		return {
 			subscribe,
-			update
-		};
+			update,
+			set
+		} as Writable<T>;
 	}
 
 	private default_scene(): WebrayScene {

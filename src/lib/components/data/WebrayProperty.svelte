@@ -29,7 +29,6 @@
 			comp = Str;
 			break;
 		case 'data_select':
-			console.log('beep');
 			comp = DataSelect;
 			break;
 		default:

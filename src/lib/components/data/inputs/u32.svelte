@@ -1,15 +1,16 @@
 <script lang="ts">
 	import type { WebrayProperty } from "../../../editor";
+	import binder from "$lib/store/binder.store";
 
 	export let property: WebrayProperty;
 	export let bind_path: string;
 
-	$: value = property.initial;
+	const store = binder.bind<number>(bind_path, property.name)!;
 
 	function validator(node: HTMLInputElement, _: number) {
 		return {
 			update(val: string) {
-				value = Math.max(parseInt(node.min), Math.floor(parseFloat(val)));
+				$store = Math.max(parseInt(node.min), Math.floor(parseFloat(val)));
 			}
 		};
 	}
@@ -21,8 +22,8 @@
 		class="webray-input input w-4/5 text-center text-surface-300"
 		type="number"
 		min="0"
-		use:validator={value}
-		bind:value
+		use:validator={$store}
+		bind:value={$store}
 		placeholder="u32"
 	/>
 </span>

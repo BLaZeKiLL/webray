@@ -232,7 +232,7 @@
 					"label": "Camera Up",
 					"tooltip": "",
 					"type": "vec3f",
-					"initial": { "x": 0.0, "y": 1.0, "z": 0.0 },
+					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
 					"meta": {}
 				},
 				{
@@ -284,7 +284,7 @@
 					"label": "Samples",
 					"tooltip": "",
 					"type": "u32",
-					"initial": 128,
+					"initial": 64,
 					"meta": {}
 				},
 				{
@@ -292,7 +292,7 @@
 					"label": "Bounces",
 					"tooltip": "",
 					"type": "u32",
-					"initial": 32,
+					"initial": 12,
 					"meta": {}
 				},
 				{
@@ -323,7 +323,7 @@
 					"label": "Size",
 					"tooltip": "",
 					"type": "u32",
-					"initial": 128,
+					"initial": 256,
 					"meta": {}
 				}
 			]
