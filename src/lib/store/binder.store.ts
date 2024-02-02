@@ -7,12 +7,17 @@ import {
 	type WMatMetal,
 	type WSphere
 } from '../types';
+import { get_prop, set_prop } from '../utils/object.extensions';
 
 export class BinderStore {
 	private store;
 
 	constructor() {
 		this.store = writable<WebrayScene>(this.default_scene());
+	}
+
+	public get scene() {
+		return get(this.store);
 	}
 
 	public bind<T>(path: string, property: string) {
@@ -31,14 +36,9 @@ export class BinderStore {
 			return undefined;
 		}
 
-		if (!(property in initial[bind_path as keyof WebrayScene])) {
-			console.error(`Bind property: ${property} not defined at path: ${path}`);
-			return undefined;
-		}
-
 		const { subscribe } = derived(this.store, (state) => {
 			const data = state[bind_path as keyof WebrayScene];
-			const prop = data[property as keyof typeof data];
+			const prop = get_prop(data, property);
 			return prop; // ts sorcery
 		});
 
@@ -50,7 +50,7 @@ export class BinderStore {
 
 				const data = change[bind_path as keyof WebrayScene];
 
-				(data[property as keyof typeof data] as T) = value; // ts sorcery
+				set_prop(data, property, value);
 
 				return change;
 			});
@@ -63,7 +63,7 @@ export class BinderStore {
 
 			const data = change[bind_path as keyof WebrayScene];
 
-			(data[property as keyof typeof data] as T) = value; // ts sorcery
+			set_prop(data, property, value);
 
 			this.store.set(change);
 		}
