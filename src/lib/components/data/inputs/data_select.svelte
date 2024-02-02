@@ -48,7 +48,7 @@
 			bind:value={$type}
 			use:validator={$type}
 		>
-			{#each meta.options as option}
+			{#each meta.options as option (option.value)}
 				<option value={option.value}>{option.label}</option>
 			{/each}
 		</select>

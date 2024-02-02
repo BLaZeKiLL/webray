@@ -11,7 +11,7 @@
 
 <div class="flex flex-row">
 	<div class="variant-ghost-surface btn-group rounded-none">
-		{#each toolbar.lead as tool}
+		{#each toolbar.lead as tool (tool.action)}
 			<button class="!p-2" on:click={() => invoke(tool.action)}>
 				<WebrayIcon icon={tool.icon} tooltip={tool.tooltip} />
 			</button>
@@ -21,7 +21,7 @@
 	<span class="grow"></span>
 
 	<div class="variant-ghost-surface btn-group rounded-none">
-		{#each toolbar.center as tool}
+		{#each toolbar.center as tool (tool.action)}
 			<button class="!p-2" on:click={() => invoke(tool.action)}>
 				<WebrayIcon icon={tool.icon} tooltip={tool.tooltip} />
 			</button>
@@ -31,7 +31,7 @@
 	<span class="grow"></span>
 
 	<div class="variant-ghost-surface btn-group rounded-none">
-		{#each toolbar.trail as tool}
+		{#each toolbar.trail as tool (tool.action)}
 			<button class="!p-2" on:click={() => invoke(tool.action)}>
 				<WebrayIcon icon={tool.icon} tooltip={tool.tooltip} />
 			</button>

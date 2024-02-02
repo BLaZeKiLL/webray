@@ -6,9 +6,9 @@
     export let data_type: string;
 	export let bind_path: string;
 
-    let count = get_prop(scene.current, bind_path.split(':')[2]).length;
+    $: count = get_prop(scene.current, bind_path.split(':')[2]).length;
 </script>
 
-{#each {length: count} as _, i}
+{#each {length: count} as _, i (i)}
     <WebrayDataView {data_type} bind_path={`${bind_path}[${i}]`} />
 {/each}

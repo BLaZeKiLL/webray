@@ -77,7 +77,7 @@
 			"id": 1,
 			"type": {
                 "type": "d_mat_diffuse",
-				"color": ""
+				"color": "#99CC00"
 			}
 		},
 		{
@@ -85,7 +85,7 @@
 			"id": 2,
 			"type": {
                 "type": "d_mat_diffuse",
-				"color": ""
+				"color": "#1A3480"
 			}
 		},
 		{
@@ -93,7 +93,7 @@
 			"id": 3,
 			"type": {
                 "type": "d_mat_metal",
-				"color": "",
+				"color": "#CC9933",
 				"roughness": 0.1
 			}
 		},
