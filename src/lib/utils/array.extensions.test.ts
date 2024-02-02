@@ -3,12 +3,14 @@ import { get_index_prop, set_index_prop } from './array.extensions';
 
 describe('scene test', () => {
 	describe('get_index_prop', () => {
-		const arr = [{
-			a: 'prop_a',
-			b: {
-				c: 'prop_c'
+		const arr = [
+			{
+				a: 'prop_a',
+				b: {
+					c: 'prop_c'
+				}
 			}
-		}];
+		];
 
 		it('should get simple prop', () => {
 			expect(get_index_prop(arr, 0, 'a')).toBe(arr[0].a);
@@ -20,12 +22,14 @@ describe('scene test', () => {
 	});
 
 	describe('set_index_prop', () => {
-		const arr = [{
-			a: 'prop_a',
-			b: {
-				c: 'prop_c'
+		const arr = [
+			{
+				a: 'prop_a',
+				b: {
+					c: 'prop_c'
+				}
 			}
-		}];
+		];
 
 		it('should set simple prop', () => {
 			set_index_prop(arr, 0, 'a', 'set_a');

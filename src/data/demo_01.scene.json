@@ -5,7 +5,7 @@
 			"id": 1,
 			"material_id": 1,
 			"type": {
-                "type": "d_sphere",
+				"type": "d_sphere",
 				"position": {
 					"x": 0,
 					"y": -100.5,
@@ -19,7 +19,7 @@
 			"id": 2,
 			"material_id": 4,
 			"type": {
-                "type": "d_sphere",
+				"type": "d_sphere",
 				"position": {
 					"x": -1,
 					"y": 0,
@@ -33,7 +33,7 @@
 			"id": 3,
 			"material_id": 4,
 			"type": {
-                "type": "d_sphere",
+				"type": "d_sphere",
 				"position": {
 					"x": -1,
 					"y": 0,
@@ -47,7 +47,7 @@
 			"id": 4,
 			"material_id": 2,
 			"type": {
-                "type": "d_sphere",
+				"type": "d_sphere",
 				"position": {
 					"x": 0,
 					"y": 0,
@@ -61,7 +61,7 @@
 			"id": 5,
 			"material_id": 3,
 			"type": {
-                "type": "d_sphere",
+				"type": "d_sphere",
 				"position": {
 					"x": 1,
 					"y": 0,
@@ -76,7 +76,7 @@
 			"name": "ground",
 			"id": 1,
 			"type": {
-                "type": "d_mat_diffuse",
+				"type": "d_mat_diffuse",
 				"color": "#99CC00"
 			}
 		},
@@ -84,7 +84,7 @@
 			"name": "diffuse",
 			"id": 2,
 			"type": {
-                "type": "d_mat_diffuse",
+				"type": "d_mat_diffuse",
 				"color": "#1A3480"
 			}
 		},
@@ -92,7 +92,7 @@
 			"name": "metal",
 			"id": 3,
 			"type": {
-                "type": "d_mat_metal",
+				"type": "d_mat_metal",
 				"color": "#CC9933",
 				"roughness": 0.1
 			}
@@ -101,7 +101,7 @@
 			"name": "dielectric",
 			"id": 4,
 			"type": {
-                "type": "d_mat_dielectric",
+				"type": "d_mat_dielectric",
 				"ior": 1.5
 			}
 		}

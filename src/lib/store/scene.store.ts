@@ -1,9 +1,10 @@
 import { writable, derived, get, type Writable } from 'svelte/store';
 import { get_prop, set_prop } from '../utils/object.extensions';
 import type { WebrayScene } from '../editor/webray.scene';
-import _demo_json from '../../data/demo_01.scene.json';
 import { get_index_prop, set_index_prop } from '../utils/array.extensions';
 
+import _demo_json from '../../data/demo_01.scene.json';
+import { tick } from 'svelte';
 
 export class SceneStore {
 	private store;
@@ -24,14 +25,14 @@ export class SceneStore {
 		}
 
 		const bind_path = parts[2].split('[')[0]; // last part
-		
+
 		const initial = get(this.store);
 
 		if (!(bind_path in initial)) {
 			throw new Error(`Bind path ${path} not defined`);
 		}
 
-		if (parts[2].includes('[')) {			
+		if (parts[2].includes('[')) {
 			const bind_index = parseInt(parts[2].split('[')[1].split(']')[0]);
 
 			return {
@@ -56,7 +57,7 @@ export class SceneStore {
 				console.error(data);
 			}
 
-			return prop; // ts sorcery
+			return prop;
 		});
 
 		const update = (value: T) => {
@@ -99,11 +100,19 @@ export class SceneStore {
 			const prop = get_index_prop(data, bind_index, property);
 
 			if (prop === undefined) {
-				console.error(`bind subscribe failed!, bind path: ${bind_path}, index: ${bind_index} property: ${property}`);
-				console.error(data);
+				// TODO: This is a dirty hacky fix :P
+				// re-check next micro tick as it maybe fixed by re-set validator
+				tick().then(() => {
+					if (get_index_prop(data, bind_index, property) === undefined) {
+						console.error(
+							`bind subscribe failed!, bind path: ${bind_path}, index: ${bind_index} property: ${property}`
+						);
+						console.error(data);
+					}
+				});
 			}
 
-			return prop; // ts sorcery
+			return prop;
 		});
 
 		const update = (value: T) => {
