@@ -1,13 +1,8 @@
 import { writable, derived, get, type Writable } from 'svelte/store';
 import type { WebrayScene } from '../scene/webray.scene';
-import {
-	TileSize,
-	type WMatDielectric,
-	type WMatDiffuse,
-	type WMatMetal,
-	type WSphere
-} from '../types';
+import type { WMatDielectric, WMatDiffuse, WMatMetal, WSphere } from '../types';
 import { get_prop, set_prop } from '../utils/object.extensions';
+import { ID } from '../editor';
 
 export class BinderStore {
 	private store;
@@ -66,7 +61,7 @@ export class BinderStore {
 			set_prop(data, property, value);
 
 			this.store.set(change);
-		}
+		};
 
 		return {
 			subscribe,
@@ -169,8 +164,7 @@ export class BinderStore {
 				samples: 128,
 				bounces: 32,
 				tile_size: {
-					type: TileSize.Tilled,
-					size: 256
+					type: ID.d_tile_size,
 				}
 			}
 		};

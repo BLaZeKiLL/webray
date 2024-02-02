@@ -1,4 +1,8 @@
-export enum TileSize {
-	Full = 'd_tile_size_full',
-	Tilled = 'd_tile_size'
+export interface WTileSizeFull {
+	type: string;
+}
+
+export interface WTileSize {
+	type: string;
+	size: number;
 }

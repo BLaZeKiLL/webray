@@ -15,7 +15,7 @@ import type {
 
 const editor_json = _editor_json as unknown as WebrayEditorConfig;
 
-const actions: {[id: string]: [() => void]} = {};
+const actions: { [id: string]: [() => void] } = {};
 
 export class WebrayEditor {
 	public static getWindow(id: string): WebrayWindow {
@@ -43,7 +43,7 @@ export class WebrayEditor {
 	}
 
 	public static invokeAction(id: string) {
-		actions[id].forEach(cb => cb());
+		actions[id].forEach((cb) => cb());
 	}
 }
 

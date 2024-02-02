@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { WebrayProperty } from "../../../editor";
-	import binder from "$lib/store/binder.store";
+	import type { WebrayProperty } from '../../../editor';
+	import binder from '$lib/store/binder.store';
 
 	export let property: WebrayProperty;
 	export let prop_prefix: string;

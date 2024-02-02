@@ -15,5 +15,7 @@ export const ID = {
 	d_mat_metal: 'd_mat_metal',
 	d_mat_dielectric: 'd_mat_dielectric',
 	d_camera: 'd_camera',
-	d_render_settings: 'd_render_settings'
+	d_render_settings: 'd_render_settings',
+	d_tile_size: 'd_tile_size',
+	d_tile_size_full: 'd_tile_size_full'
 };

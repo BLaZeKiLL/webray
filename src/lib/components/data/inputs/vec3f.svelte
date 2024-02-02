@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { WebrayProperty } from "../../../editor";
-	import binder from "$lib/store/binder.store";
-	import type { vec3f } from "../../../types";
-	import { writable_derived } from "../../../store/writable-derived.store";
+	import type { WebrayProperty } from '../../../editor';
+	import binder from '$lib/store/binder.store';
+	import type { vec3f } from '../../../types';
+	import { writable_derived } from '../../../store/writable-derived.store';
 
 	export let property: WebrayProperty;
 	export let prop_prefix: string;

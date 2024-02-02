@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { WebrayEditor, type WebrayToolbar } from "../../editor";
-	import WebrayIcon from "../ui/WebrayIcon.svelte";
+	import { WebrayEditor, type WebrayToolbar } from '../../editor';
+	import WebrayIcon from '../ui/WebrayIcon.svelte';
 
 	export let toolbar: WebrayToolbar;
 
 	const invoke = (action: string) => {
 		WebrayEditor.invokeAction(action);
-	}
+	};
 </script>
 
 <div class="flex flex-row">

@@ -1,4 +1,12 @@
-import type { TileSize, WMatDielectric, WMatDiffuse, WMatMetal, WSphere, vec3f } from '../types';
+import type {
+	WMatDielectric,
+	WMatDiffuse,
+	WMatMetal,
+	WSphere,
+	WTileSizeFull,
+	WTileSize,
+	vec3f
+} from '../types';
 
 export interface WebrayScene {
 	objects: WebrayObject[];
@@ -34,5 +42,5 @@ export interface WebrayRenderSettings {
 	height: number;
 	samples: number;
 	bounces: number;
-	tile_size: TileSize | { type: TileSize; size: number };
+	tile_size: WTileSizeFull | WTileSize;
 }

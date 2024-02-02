@@ -13,7 +13,7 @@
 {#if _data_type.properties.length !== 0}
 	<div class="card flex snap-start flex-col gap-2 p-2 {card_type}">
 		{#each _data_type.properties as property}
-			<WebrayProperty {property} {bind_path} {prop_prefix}/>
+			<WebrayProperty {property} {bind_path} {prop_prefix} />
 		{/each}
 	</div>
 {/if}

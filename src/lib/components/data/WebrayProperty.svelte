@@ -38,4 +38,4 @@
 	}
 </script>
 
-<svelte:component this={comp} {property} {bind_path} {prop_prefix}/>
+<svelte:component this={comp} {property} {bind_path} {prop_prefix} />

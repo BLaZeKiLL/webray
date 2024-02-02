@@ -6,4 +6,4 @@
 	const toolbar = WebrayEditor.getToolbar(ID.t_image_bar);
 </script>
 
-<WebrayToolbar {toolbar}/>
+<WebrayToolbar {toolbar} />
