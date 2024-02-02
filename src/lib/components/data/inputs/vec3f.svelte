@@ -5,9 +5,12 @@
 	import { writable_derived } from "../../../store/writable-derived.store";
 
 	export let property: WebrayProperty;
+	export let prop_prefix: string;
 	export let bind_path: string;
 
-	const store = binder.bind<vec3f>(bind_path, property.name)!;
+	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
+
+	const store = binder.bind<vec3f>(bind_path, prop_path)!;
 
 	const x_val = writable_derived(store, 'x');
 	const y_val = writable_derived(store, 'y');

@@ -3,9 +3,12 @@
 	import binder from "$lib/store/binder.store";
 
 	export let property: WebrayProperty;
+	export let prop_prefix: string;
 	export let bind_path: string;
 
-	const store = binder.bind<number>(bind_path, property.name)!;
+	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
+
+	const store = binder.bind<number>(bind_path, prop_path)!;
 
 	function validator(node: HTMLInputElement, _: number) {
 		return {

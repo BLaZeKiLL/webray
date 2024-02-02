@@ -8,6 +8,7 @@
 	import Vec3f from './inputs/vec3f.svelte';
 
 	export let property: WebrayProperty;
+	export let prop_prefix: string;
 	export let bind_path: string;
 
 	let comp: any;
@@ -37,4 +38,4 @@
 	}
 </script>
 
-<svelte:component this={comp} {property} {bind_path}/>
+<svelte:component this={comp} {property} {bind_path} {prop_prefix}/>

@@ -168,7 +168,10 @@ export class BinderStore {
 				height: 1080,
 				samples: 128,
 				bounces: 32,
-				tile_size: TileSize.Full
+				tile_size: {
+					type: TileSize.Tilled,
+					size: 256
+				}
 			}
 		};
 	}
