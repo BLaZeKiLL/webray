@@ -10,7 +10,7 @@
 
 	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
 
-	const store = scene.bind<vec3f>(bind_path, prop_path)!;
+	const store = scene.bind<vec3f>(bind_path, prop_path);
 
 	const x_val = writable_derived(store, 'x');
 	const y_val = writable_derived(store, 'y');

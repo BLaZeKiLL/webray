@@ -11,29 +11,49 @@ export class SceneStore {
 		this.store = writable<WebrayScene>(_demo_json);
 	}
 
-	public get scene() {
+	public get current() {
 		return get(this.store);
 	}
 
-	public bind<T>(path: string, property: string) {
+	public bind<T>(path: string, property: string, name = 'store'): Writable<T> {
 		const parts = path.split(':');
 
 		if (!(parts[0] === 'webray' && parts[1] === 'scene')) {
-			console.error(`Bind path ${path} not defined`);
-			return undefined;
+			throw new Error(`Bind path ${path} not defined`);
 		}
 
-		const bind_path = parts[2]; // last part
+		const bind_path = parts[2].split('[')[0]; // last part
+		
 		const initial = get(this.store);
 
 		if (!(bind_path in initial)) {
-			console.error(`Bind path ${path} not defined`);
-			return undefined;
+			throw new Error(`Bind path ${path} not defined`);
 		}
 
+		if (parts[2].includes('[')) {			
+			const bind_index = parseInt(parts[2].split('[')[1].split(']')[0]);
+
+			return {
+				name,
+				...this.list_bind<T>(bind_path, bind_index, property)
+			} as Writable<T>;
+		} else {
+			return {
+				name,
+				...this.single_bind<T>(bind_path, property)
+			} as Writable<T>;
+		}
+	}
+
+	private single_bind<T>(bind_path: string, property: string): Writable<T> {
 		const { subscribe } = derived(this.store, (state) => {
 			const data = state[bind_path as keyof WebrayScene];
 			const prop = get_prop(data, property);
+
+			if (prop === undefined) {
+				console.error(`bind subscribe failed!, bind path: ${bind_path}, property: ${property}`);
+			}
+
 			return prop; // ts sorcery
 		});
 
@@ -68,6 +88,10 @@ export class SceneStore {
 			update,
 			set
 		} as Writable<T>;
+	}
+
+	private list_bind<T>(bind_path: string, bind_index: number, property: string): Writable<T> {
+		
 	}
 }
 

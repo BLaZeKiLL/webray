@@ -8,7 +8,7 @@
 
 	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
 
-	const store = scene.bind<number>(bind_path, prop_path)!;
+	const store = scene.bind<number>(bind_path, prop_path);
 
 	function validator(node: HTMLInputElement, _: number) {
 		return {

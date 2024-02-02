@@ -2,7 +2,7 @@ import { derived, get, type Writable } from 'svelte/store';
 import { get_prop, set_prop } from '../utils/object.extensions';
 
 // TODO: instead of property use selector functions
-export function writable_derived<S, D>(store: Writable<S>, property: string) {
+export function writable_derived<S, D>(store: Writable<S>, property: string, name = 'store') {
 	const { subscribe } = derived(store, (state) => {
 		const prop = get_prop(state, property);
 		return prop; // ts sorcery
@@ -31,6 +31,7 @@ export function writable_derived<S, D>(store: Writable<S>, property: string) {
 	};
 
 	return {
+		name,
 		subscribe,
 		update,
 		set

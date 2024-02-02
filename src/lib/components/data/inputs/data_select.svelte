@@ -14,7 +14,7 @@
 
 	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
 
-	const store = scene.bind(bind_path, prop_path)!;
+	const store = scene.bind(bind_path, prop_path, bind_path);
 
 	// This will update type only other properties won't be reset, deterministic read depending on type
 	// so old keys would persist, it is possible that union of keys of all types be present on the object

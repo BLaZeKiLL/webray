@@ -8,7 +8,7 @@
 
 	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
 
-	const store = scene.bind<string>(bind_path, prop_path)!;
+	const store = scene.bind<string>(bind_path, prop_path);
 </script>
 
 <span class="flex flex-row items-center justify-stretch gap-1">
