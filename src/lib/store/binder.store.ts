@@ -164,7 +164,7 @@ export class BinderStore {
 				samples: 128,
 				bounces: 32,
 				tile_size: {
-					type: ID.d_tile_size,
+					type: ID.d_tile_size_full
 				}
 			}
 		};

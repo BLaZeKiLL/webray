@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { WebrayProperty } from '../../../editor';
+	import { WebrayEditor, type WebrayProperty } from '../../../editor';
 	import WebrayDataView from '../WebrayDataView.svelte';
 	import binder from '$lib/store/binder.store';
 	import { writable_derived } from '../../../store/writable-derived.store';
+	import { tick } from 'svelte';
 
 	export let property: WebrayProperty;
 	export let bind_path: string;
@@ -11,18 +12,42 @@
 
 	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
 
-	const store = binder.bind<string>(bind_path, prop_path)!;
+	const store = binder.bind(bind_path, prop_path)!;
 
-	// TODO: This will update type only other properties won't be rest
-	const type = writable_derived<string, string>(store, 'type');
+	// TODO: This will update type only other properties won't be reset, deterministic read depending on type
+	// so old keys would persist, it is possible that union of keys of all types be present on the object
+	// can use a validator to perform the reset
+	const type = writable_derived<any, string>(store, 'type');
 
 	const meta: { options: { label: string; value: string }[] } = property.meta;
+
+	function validator(_node: HTMLSelectElement, _val: string) {
+		return {
+			async update(val: string) {
+				const initial = WebrayEditor.getDataType($type).properties.reduce((p, c) => {
+					p[c.name] = c.initial;
+					return p;
+				}, {} as any);
+
+				await tick();
+
+				store.set({
+					type: val,
+					...initial
+				});
+			}
+		};
+	}
 </script>
 
 <div class="flex flex-col">
 	<span class="flex flex-row items-center justify-stretch gap-1">
 		<p class="mr-1 w-1/5 text-surface-200">{property.label}</p>
-		<select class="webray-input select w-4/5 text-surface-300" bind:value={$type}>
+		<select
+			class="webray-input select w-4/5 text-surface-300"
+			bind:value={$type}
+			use:validator={$type}
+		>
 			{#each meta.options as option}
 				<option value={option.value}>{option.label}</option>
 			{/each}
