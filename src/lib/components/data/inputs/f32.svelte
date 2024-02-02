@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { WebrayProperty } from '../../../editor';
-	import binder from '$lib/store/binder.store';
+	import scene from '$lib/store/scene.store';
 
 	export let property: WebrayProperty;
 	export let prop_prefix: string;
@@ -8,7 +8,7 @@
 
 	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
 
-	const store = binder.bind<number>(bind_path, prop_path)!;
+	const store = scene.bind<number>(bind_path, prop_path)!;
 </script>
 
 <span class="flex flex-row items-center justify-stretch gap-1">

@@ -1,5 +1,5 @@
-import binder from '$lib/store/binder.store';
+import scene from '$lib/store/scene.store';
 
 export function a_render() {
-	console.log(binder.scene);
+	console.log(scene.scene);
 }

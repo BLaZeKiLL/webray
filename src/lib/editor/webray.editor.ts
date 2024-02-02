@@ -1,4 +1,4 @@
-import _editor_json from '../../webray.editor.json';
+import _editor_json from '../../data/webray.editor.json';
 import { register_actions } from '../actions';
 
 import type {

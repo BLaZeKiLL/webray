@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { WebrayProperty } from '../../../editor';
-	import binder from '$lib/store/binder.store';
+	import scene from '$lib/store/scene.store';
 	import type { vec3f } from '../../../types';
 	import { writable_derived } from '../../../store/writable-derived.store';
 
@@ -10,7 +10,7 @@
 
 	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
 
-	const store = binder.bind<vec3f>(bind_path, prop_path)!;
+	const store = scene.bind<vec3f>(bind_path, prop_path)!;
 
 	const x_val = writable_derived(store, 'x');
 	const y_val = writable_derived(store, 'y');

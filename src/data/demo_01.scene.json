@@ -1,0 +1,138 @@
+{
+	"objects": [
+		{
+			"name": "ground",
+			"id": 1,
+			"material_id": 1,
+			"type": {
+                "type": "d_sphere",
+				"position": {
+					"x": 0,
+					"y": -100.5,
+					"z": -1
+				},
+				"radius": 100
+			}
+		},
+		{
+			"name": "left_outer",
+			"id": 2,
+			"material_id": 4,
+			"type": {
+                "type": "d_sphere",
+				"position": {
+					"x": -1,
+					"y": 0,
+					"z": -1
+				},
+				"radius": 0.5
+			}
+		},
+		{
+			"name": "left_inner",
+			"id": 3,
+			"material_id": 4,
+			"type": {
+                "type": "d_sphere",
+				"position": {
+					"x": -1,
+					"y": 0,
+					"z": -1
+				},
+				"radius": -0.4
+			}
+		},
+		{
+			"name": "center",
+			"id": 4,
+			"material_id": 2,
+			"type": {
+                "type": "d_sphere",
+				"position": {
+					"x": 0,
+					"y": 0,
+					"z": -1
+				},
+				"radius": 0.5
+			}
+		},
+		{
+			"name": "right",
+			"id": 5,
+			"material_id": 3,
+			"type": {
+                "type": "d_sphere",
+				"position": {
+					"x": 1,
+					"y": 0,
+					"z": -1
+				},
+				"radius": 0.5
+			}
+		}
+	],
+	"materials": [
+		{
+			"name": "ground",
+			"id": 1,
+			"type": {
+                "type": "d_mat_diffuse",
+				"color": ""
+			}
+		},
+		{
+			"name": "diffuse",
+			"id": 2,
+			"type": {
+                "type": "d_mat_diffuse",
+				"color": ""
+			}
+		},
+		{
+			"name": "metal",
+			"id": 3,
+			"type": {
+                "type": "d_mat_metal",
+				"color": "",
+				"roughness": 0.1
+			}
+		},
+		{
+			"name": "dielectric",
+			"id": 4,
+			"type": {
+                "type": "d_mat_dielectric",
+				"ior": 1.5
+			}
+		}
+	],
+	"camera": {
+		"look_from": {
+			"x": -2,
+			"y": 2,
+			"z": 1
+		},
+		"look_at": {
+			"x": 0,
+			"y": 0,
+			"z": -1
+		},
+		"v_up": {
+			"x": 0,
+			"y": 1,
+			"z": 0
+		},
+		"v_fov": 20,
+		"dof_angle": 0.6,
+		"dof_distance": 3.4
+	},
+	"render_settings": {
+		"width": 1920,
+		"height": 1080,
+		"samples": 128,
+		"bounces": 32,
+		"tile_size": {
+			"type": "d_tile_size_full"
+		}
+	}
+}

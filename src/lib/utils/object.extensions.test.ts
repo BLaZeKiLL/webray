@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { get_prop, set_prop } from './object.extensions';
 
-describe('binder test', () => {
+describe('scene test', () => {
 	describe('get_prop', () => {
 		const obj = {
 			a: 'prop_a',

@@ -1,25 +1,25 @@
 <script lang="ts">
 	import { WebrayEditor, type WebrayProperty } from '../../../editor';
 	import WebrayDataView from '../WebrayDataView.svelte';
-	import binder from '$lib/store/binder.store';
+	import scene from '$lib/store/scene.store';
 	import { writable_derived } from '../../../store/writable-derived.store';
 	import { tick } from 'svelte';
 
 	export let property: WebrayProperty;
 	export let bind_path: string;
 
-	export let prop_prefix: string; // this will be
+	export let prop_prefix: string; // this will be empty most probably
+
+	const meta: { options: { label: string; value: string }[] } = property.meta;
 
 	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
 
-	const store = binder.bind(bind_path, prop_path)!;
+	const store = scene.bind(bind_path, prop_path)!;
 
-	// TODO: This will update type only other properties won't be reset, deterministic read depending on type
+	// This will update type only other properties won't be reset, deterministic read depending on type
 	// so old keys would persist, it is possible that union of keys of all types be present on the object
-	// can use a validator to perform the reset
+	// hence we use a validator to perform the reset
 	const type = writable_derived<any, string>(store, 'type');
-
-	const meta: { options: { label: string; value: string }[] } = property.meta;
 
 	function validator(_node: HTMLSelectElement, _val: string) {
 		return {
