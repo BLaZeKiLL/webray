@@ -46,13 +46,26 @@
 		"t_image_bar": {
 			"lead": [
 				{
+					"icon": "i_save_file",
+					"label": null,
+					"tooltip": "Save scene",
+					"action": "a_save_file"
+				},
+				{
+					"icon": "i_load_file",
+					"label": null,
+					"tooltip": "Load scene",
+					"action": "a_load_file"
+				}
+			],
+			"center": [
+				{
 					"icon": "i_render",
 					"label": null,
 					"tooltip": "Render Image",
 					"action": "a_render"
 				}
 			],
-			"center": [],
 			"trail": [
 				{
 					"icon": "i_full_screen_enter",
@@ -72,7 +85,9 @@
 	"actions": {
 		"a_download": {},
 		"a_render": {},
-		"a_full_screen_enter": {}
+		"a_full_screen_enter": {},
+		"a_save_file": {},
+		"a_load_file": {}
 	},
 	"data_types": {
 		"d_obj": {

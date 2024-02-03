@@ -3,6 +3,7 @@
 	import { Icons } from '../../editor';
 
 	export let icon;
+	export let css: string = '';
 	export let tooltip: string;
 
 	const _icon = Icons.getIcon(icon);
@@ -16,7 +17,7 @@
 </script>
 
 <span use:popup={tooltipPopup}>
-	<svelte:component this={_icon} style="font-size: 1.5rem" />
+	<svelte:component this={_icon} class={css} style="font-size: 1.5rem" />
 </span>
 
 <div class="card variant-filled-secondary p-1" data-popup={target}>
