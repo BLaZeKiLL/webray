@@ -1,7 +1,7 @@
 import { writable, derived, get, type Writable, type Readable } from 'svelte/store';
 import { get_prop, set_prop } from '../utils/object.extensions';
 import type { WebrayScene } from '../editor/webray.scene';
-import { get_index_prop, set_index_prop } from '../utils/array.extensions';
+import { get_id_prop, set_index_prop } from '../utils/array.extensions';
 
 import _demo_json from '../../data/demo_01.scene.json';
 import { tick } from 'svelte';
@@ -35,6 +35,10 @@ export class SceneStore {
 
 			return change;
 		});
+	}
+
+	public del_list_item(path: string) {
+
 	}
 
 	public derived<T>(path: string): Readable<T> {
@@ -127,13 +131,13 @@ export class SceneStore {
 		const { subscribe } = derived(this.store, (state) => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const data = state[bind_path as keyof WebrayScene] as any[];
-			const prop = get_index_prop(data, bind_index, property);
+			const prop = get_id_prop(data, bind_index, property);
 
 			if (prop === undefined) {
 				// TODO: This is a dirty hacky fix :P
 				// re-check next micro tick as it maybe fixed by re-set validator
 				tick().then(() => {
-					if (get_index_prop(data, bind_index, property) === undefined) {
+					if (get_id_prop(data, bind_index, property) === undefined) {
 						console.error(
 							`bind subscribe failed!, bind path: ${bind_path}, index: ${bind_index} property: ${property}`
 						);

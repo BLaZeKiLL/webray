@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { get_index_prop, set_index_prop } from './array.extensions';
+import { get_id_prop, set_index_prop } from './array.extensions';
 
 describe('scene test', () => {
 	describe('get_index_prop', () => {
@@ -13,11 +13,11 @@ describe('scene test', () => {
 		];
 
 		it('should get simple prop', () => {
-			expect(get_index_prop(arr, 0, 'a')).toBe(arr[0].a);
+			expect(get_id_prop(arr, 0, 'a')).toBe(arr[0].a);
 		});
 
 		it('should get nested prop', () => {
-			expect(get_index_prop(arr, 0, 'b.c')).toBe(arr[0].b.c);
+			expect(get_id_prop(arr, 0, 'b.c')).toBe(arr[0].b.c);
 		});
 	});
 
