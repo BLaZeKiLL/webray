@@ -4,7 +4,7 @@ use crate::{
 };
 
 use self::{
-    config::Config,
+    config::KernelConfig,
     scene::KernelScene,
 };
 
@@ -18,7 +18,7 @@ pub mod scene;
 pub mod shapes;
 
 
-pub async fn render(config: &Config, scene: &KernelScene, metrics: &mut Option<Metrics>) -> Result<Vec<u8>, ()> {
+pub async fn render(config: &KernelConfig, scene: &KernelScene, metrics: &mut Option<Metrics>) -> Result<Vec<u8>, ()> {
     // dbg!(&config);
     // dbg!(&scene);
 
@@ -36,7 +36,7 @@ pub async fn render(config: &Config, scene: &KernelScene, metrics: &mut Option<M
         m.capture_device_acquisition();
     }
 
-    let buffers = KernelBuffers::new(&gpu, &config.kernel, scene);
+    let buffers = KernelBuffers::new(&gpu, &config.system, scene);
 
     let mut bindings = KernelBindings::new(&gpu);
 
@@ -57,7 +57,7 @@ pub async fn render(config: &Config, scene: &KernelScene, metrics: &mut Option<M
     }
 
     let result = kernel
-        .execute(&gpu, &config.kernel, &config.system, &bindings, &buffers)
+        .execute(&gpu, &config.system, &config.execution, &bindings, &buffers)
         .await;
 
     match result {

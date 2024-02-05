@@ -3,7 +3,7 @@ use crate::core::gpu::Gpu;
 use super::{
     bindings::KernelBindings,
     buffers::KernelBuffers,
-    config::{ExecutionContext, KernelConfig, SystemConfig, TileSize},
+    config::{ExecutionContext, SystemConfig, ExecutionConfig, TileSize},
 };
 
 pub struct Kernel {
@@ -20,37 +20,37 @@ impl Kernel {
     pub async fn execute(
         &self,
         gpu: &Gpu,
-        kernel_config: &KernelConfig,
         system_config: &SystemConfig,
+        execution_config: &ExecutionConfig,
         bindings: &KernelBindings,
         buffers: &KernelBuffers,
     ) -> Result<Vec<u8>, ()> {
         let tile_count = Self::count_tiles(
-            kernel_config.image.width,
-            kernel_config.image.height,
-            system_config.tile_size,
+            system_config.image.width,
+            system_config.image.height,
+            execution_config.tile_size,
         );
 
         log::info!(
             "Tile count: {}, width: {}, height: {}",
             tile_count.x * tile_count.y,
-            kernel_config.image.width,
-            kernel_config.image.height
+            system_config.image.width,
+            system_config.image.height
         );
 
-        match system_config.tile_size {
+        match execution_config.tile_size {
             TileSize::Full => {
                 log::info!(
                     "Rendering full tile, width: {}, height: {}",
-                    kernel_config.image.width,
-                    kernel_config.image.height
+                    system_config.image.width,
+                    system_config.image.height
                 );
 
                 self.render_tile(
                     gpu,
                     glam::uvec2(0, 0),
-                    kernel_config.image.width,
-                    kernel_config.image.height,
+                    system_config.image.width,
+                    system_config.image.height,
                     bindings,
                     buffers,
                 );
@@ -63,8 +63,8 @@ impl Kernel {
                     for y in 0..tile_count.y {
                         let tile_position = glam::uvec2(x, y);
 
-                        let width = ((x + 1) * size).min(kernel_config.image.width) - (x * size);
-                        let height = ((y + 1) * size).min(kernel_config.image.height) - (y * size);
+                        let width = ((x + 1) * size).min(system_config.image.width) - (x * size);
+                        let height = ((y + 1) * size).min(system_config.image.height) - (y * size);
 
                         log::info!(
                             "Rendering ({:07.3}%) tile {}: {}, width: {}, height: {}",
@@ -93,7 +93,7 @@ impl Kernel {
 
         log::info!("Reading result buffer");
 
-        let result = self.map_result(gpu, kernel_config, buffers).await;
+        let result = self.map_result(gpu, system_config, buffers).await;
 
         return result;
     }
@@ -148,7 +148,7 @@ impl Kernel {
     async fn map_result(
         &self,
         gpu: &Gpu,
-        kernel_config: &KernelConfig,
+        kernel_config: &SystemConfig,
         buffers: &KernelBuffers,
     ) -> Result<Vec<u8>, ()> {
         let mut encoder = gpu

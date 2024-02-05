@@ -12,7 +12,7 @@ pub struct WScene {
 pub struct WObject {
     pub id: u32,
     pub name: String,
-    pub material_id: u32,
+    pub material_id: usize,
 
     #[serde(rename = "type")]
     pub obj_type: WObjectType

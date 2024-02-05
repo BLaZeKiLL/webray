@@ -1,13 +1,13 @@
 #![deny(clippy::implicit_return)]
 #![allow(clippy::needless_return)]
 
+use scene::types::WScene;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
 use utils::metrics::Metrics;
 
 mod core;
-mod demo;
 mod output;
 mod renderer;
 mod scene;
@@ -30,15 +30,19 @@ pub fn initialize_kernel() {
     log::info!("WebRay Loaded");
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+pub fn render(value: JsValue) {
+    use scene::types::WScene;
+
+    let scene = serde_wasm_bindgen::from_value::<WScene>(value).unwrap();
+
+    wasm_bindgen_futures::spawn_local(run_internal(scene));
+}
+
+#[cfg(not(target_arch = "wasm32"))]
 pub fn render() {
-    cfg_if::cfg_if! {
-        if #[cfg(target_arch = "wasm32")] {
-            wasm_bindgen_futures::spawn_local(run_internal());
-        } else {
-            pollster::block_on(run_internal());
-        }
-    }
+    pollster::block_on(run_internal());
 }
 
 #[cfg(target_arch = "wasm32")]
@@ -51,11 +55,7 @@ pub fn parse_scene(value: JsValue) {
     log::info!("{}", scene);
 }
 
-async fn run_internal() {
-    let config = demo::create_demo_config();
-
-    let scene = demo::create_demo_scene();
-
+async fn run_internal(scene: WScene) {
     let mut metrics: Option<Metrics>;
 
     cfg_if::cfg_if! {
@@ -66,12 +66,12 @@ async fn run_internal() {
         }
     };
 
-    if let Ok(buffer) = renderer::render(&config, &scene.into(), &mut metrics).await {
+    if let Ok(buffer) = renderer::render(&scene.get_kernel_config(), &scene.get_kernel_scene(), &mut metrics).await {
         cfg_if::cfg_if! {
             if #[cfg(target_arch = "wasm32")] {
-                output::wasm::output_image(buffer, glam::uvec2(config.kernel.image.width, config.kernel.image.height));
+                output::wasm::output_image(buffer, glam::uvec2(scene.render_settings.width, scene.render_settings.height));
             } else {
-                output::native::output_image(buffer, glam::uvec2(config.kernel.image.width, config.kernel.image.height), "render.png");
+                output::native::output_image(buffer, glam::uvec2(scene.render_settings.width, scene.render_settings.height), "render.png");
             }
         }
 
