@@ -5,6 +5,7 @@ describe('scene test', () => {
 	describe('get_index_prop', () => {
 		const arr = [
 			{
+				id: 0,
 				a: 'prop_a',
 				b: {
 					c: 'prop_c'
@@ -24,6 +25,7 @@ describe('scene test', () => {
 	describe('set_index_prop', () => {
 		const arr = [
 			{
+				id: 0,
 				a: 'prop_a',
 				b: {
 					c: 'prop_c'
