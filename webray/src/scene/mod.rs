@@ -9,6 +9,7 @@ use crate::renderer::{
 use self::{material::Material, shape::Shape};
 
 pub mod material;
+pub mod types;
 pub mod shape;
 
 pub struct Scene {

@@ -12,7 +12,7 @@ pub fn create_cover_config() -> Config {
         height: 1080,
         samples: 64,
         bounces: 12,
-        tile_size: TileSize::Square(256),
+        tile_size: TileSize::Tile(256),
     };
 
     let camera_config = CameraConfig {

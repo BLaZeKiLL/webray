@@ -55,7 +55,7 @@ impl Kernel {
                     buffers,
                 );
             }
-            TileSize::Square(size) => {
+            TileSize::Tile(size) => {
                 let mut id = 1;
                 let total_tile_count = tile_count.x * tile_count.y;
 
@@ -239,7 +239,7 @@ impl Kernel {
     fn count_tiles(width: u32, height: u32, tile_size: TileSize) -> glam::UVec2 {
         return match tile_size {
             TileSize::Full => glam::uvec2(1, 1),
-            TileSize::Square(size) => glam::uvec2(width.div_ceil(size), height.div_ceil(size)),
+            TileSize::Tile(size) => glam::uvec2(width.div_ceil(size), height.div_ceil(size)),
         };
     }
 }

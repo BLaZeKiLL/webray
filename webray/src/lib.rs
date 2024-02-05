@@ -41,6 +41,16 @@ pub fn run() {
     }
 }
 
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+pub fn parse_scene(value: JsValue) {
+    use scene::types::WScene;
+
+    let scene = serde_wasm_bindgen::from_value::<WScene>(value).unwrap();
+
+    log::info!("{}", scene);
+}
+
 async fn run_internal() {
     let config = demo::create_demo_config();
 

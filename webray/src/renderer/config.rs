@@ -1,7 +1,7 @@
 #[derive(Debug, Clone, Copy)]
 pub enum TileSize {
     Full,
-    Square(u32),
+    Tile(u32),
 }
 
 #[derive(Debug)]
