@@ -1,4 +1,4 @@
 fn main() {
-    webray::init();
-    webray::run();
+    webray::initialize_kernel();
+    webray::render();
 }

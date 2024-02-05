@@ -17,6 +17,7 @@ pub mod material;
 pub mod scene;
 pub mod shapes;
 
+
 pub async fn render(config: &Config, scene: &KernelScene, metrics: &mut Option<Metrics>) -> Result<Vec<u8>, ()> {
     // dbg!(&config);
     // dbg!(&scene);
