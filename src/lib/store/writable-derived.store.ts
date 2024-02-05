@@ -29,7 +29,7 @@ export function writable_derived<S, D>(store: Writable<S>, property: string, nam
 			// can use structuredClone if a deep copy is required
 			const change = { ...state };
 
-			set_prop(state, property, value);
+			set_prop(change, property, value);
 
 			return change;
 		});
@@ -41,6 +41,57 @@ export function writable_derived<S, D>(store: Writable<S>, property: string, nam
 		const change = { ...get(store) };
 
 		set_prop(change, property, value);
+
+		store.set(change);
+	};
+
+	return {
+		name,
+		subscribe,
+		update,
+		set
+	} as Writable<D>;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function writable_indexed_derived<D>(store: Writable<any[]>, index: number, name = 'store') {
+	const { subscribe } = derived(store, (state) => {
+		if (state === undefined) {
+			return; // item no longer exists
+		}
+
+		const prop = state[index];
+
+		if (prop === undefined) {
+			tick().then(() => {
+				if (state[index] === undefined) {
+					console.error(`${name}: bind subscribe failed!, index: ${index}`);
+					console.error(state);
+				}
+			})
+		}
+
+		return prop; // ts sorcery
+	});
+
+	const update = (value: D) => {
+		store.update((state) => {
+			// this is a shallow copy
+			// can use structuredClone if a deep copy is required
+			const change = [ ...state ];
+
+			change[index] = value;
+
+			return change;
+		});
+	};
+
+	const set = (value: D) => {
+		// this is a shallow copy
+		// can use structuredClone if a deep copy is required
+		const change = [ ...get(store) ];
+
+		change[index] = value;
 
 		store.set(change);
 	};

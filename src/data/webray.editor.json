@@ -169,7 +169,7 @@
 					"label": "Position",
 					"tooltip": "",
 					"type": "vec3f",
-					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"initial": [ 0.0, 0.0, 0.0 ],
 					"meta": {}
 				},
 				{
@@ -233,7 +233,7 @@
 					"label": "Look From",
 					"tooltip": "",
 					"type": "vec3f",
-					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"initial": [ 0.0, 0.0, 0.0 ],
 					"meta": {}
 				},
 				{
@@ -241,7 +241,7 @@
 					"label": "Look At",
 					"tooltip": "",
 					"type": "vec3f",
-					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"initial": [ 0.0, 0.0, 0.0 ],
 					"meta": {}
 				},
 				{
@@ -249,7 +249,7 @@
 					"label": "Camera Up",
 					"tooltip": "",
 					"type": "vec3f",
-					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
+					"initial": [ 0.0, 0.0, 0.0 ],
 					"meta": {}
 				},
 				{

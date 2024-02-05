@@ -2,8 +2,8 @@ use core::fmt;
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct WScene {
-    // pub objects: Vec<WObject>,
-    // pub materials: Vec<WMaterial>,
+    pub objects: Vec<WObject>,
+    pub materials: Vec<WMaterial>,
     pub camera: WCamera,
     pub render_settings: WRenderSettings
 }
@@ -38,10 +38,10 @@ pub struct WMaterial {
 #[serde(tag = "type")]
 pub enum WMaterialType {
     #[serde(rename = "d_mat_diffuse")]
-    Diffuse { color: glam::Vec3 },
+    Diffuse { color: String },
 
     #[serde(rename = "d_mat_metal")]
-    Metal { color: glam::Vec3, roughness: f32 },
+    Metal { color: String, roughness: f32 },
 
     #[serde(rename = "d_mat_dielectric")]
     Dielectric { ior: f32 }
@@ -78,7 +78,49 @@ pub enum WTileSize {
 
 impl fmt::Display for WScene {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(f, "Camera:\n\t{}\nRenderSettings:\n\t{}", self.camera, self.render_settings);
+        write!(f, "Objects:").unwrap();
+
+        for item in &self.objects {
+            write!(f, "\n\tObject: {}", item).unwrap();
+        }
+
+        write!(f, "\nMaterials:").unwrap();
+
+        for item in &self.materials {
+            write!(f, "\n\tMaterial: {}", item).unwrap();
+        }
+
+        return write!(f, "\nCamera:\n\t{}\nRenderSettings:\n\t{}", self.camera, self.render_settings);
+    }
+}
+
+impl fmt::Display for WObject {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(f, "\n\t\tID: {}\n\t\tname: {}\n\t\tmaterial_id: {}\n\t\ttype: {}", self.id, self.name, self.material_id, self.obj_type);
+    }
+}
+
+impl fmt::Display for WObjectType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return match self {
+            WObjectType::Sphere { position, radius } => write!(f, "SPHERE(position: {}, radius: {})", position, radius),
+        }
+    }
+}
+
+impl fmt::Display for WMaterial {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(f, "\n\t\tID: {}\n\t\tname: {}\n\t\ttype: {}", self.id, self.name, self.mat_type);
+    }
+}
+
+impl fmt::Display for WMaterialType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return match self {
+            WMaterialType::Diffuse { color } => write!(f, "DIFFUSE(color: {})", color),
+            WMaterialType::Metal { color, roughness } => write!(f, "METAL(color: {}, roughness: {})", color, roughness),
+            WMaterialType::Dielectric { ior } => write!(f, "DIELECTRIC(ior: {})", ior),
+        }
     }
 }
 
