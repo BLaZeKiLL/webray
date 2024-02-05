@@ -5,6 +5,6 @@ export function a_add_list_item(params: { bind_path: string }) {
 }
 
 export function a_del_list_item(params: { bind_path: string }) {
-    console.log(params);
+    scene.del_list_item(params.bind_path);
 }
 

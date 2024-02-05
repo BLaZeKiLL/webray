@@ -1,10 +1,25 @@
 import { derived, get, type Writable } from 'svelte/store';
 import { get_prop, set_prop } from '../utils/object.extensions';
+import { tick } from 'svelte';
 
 // TODO: instead of property use selector functions
 export function writable_derived<S, D>(store: Writable<S>, property: string, name = 'store') {
 	const { subscribe } = derived(store, (state) => {
+		if (state === undefined) {
+			return; // item no longer exists
+		}
+
 		const prop = get_prop(state, property);
+
+		if (prop === undefined) {
+			tick().then(() => {
+				if (get_prop(state, property) === undefined) {
+					console.error(`${name}: bind subscribe failed!, property: ${property}`);
+					console.error(state);
+				}
+			})
+		}
+
 		return prop; // ts sorcery
 	});
 
