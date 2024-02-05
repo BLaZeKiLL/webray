@@ -26,7 +26,7 @@
 			"tooltip": "Camera",
 			"data": {
 				"type": "fixed",
-				"binding": "webray:camera",
+				"binding": "webray:scene:camera",
 				"data_type": "d_camera"
 			}
 		},
@@ -36,7 +36,7 @@
 			"tooltip": "Render Settings",
 			"data": {
 				"type": "fixed",
-				"binding": "webray:render_settings",
+				"binding": "webray:scene:render_settings",
 				"data_type": "d_render_settings"
 			}
 		}
@@ -46,13 +46,26 @@
 		"t_image_bar": {
 			"lead": [
 				{
+					"icon": "i_save_file",
+					"label": null,
+					"tooltip": "Save scene",
+					"action": "a_save_file"
+				},
+				{
+					"icon": "i_load_file",
+					"label": null,
+					"tooltip": "Load scene",
+					"action": "a_load_file"
+				}
+			],
+			"center": [
+				{
 					"icon": "i_render",
 					"label": null,
 					"tooltip": "Render Image",
 					"action": "a_render"
 				}
 			],
-			"center": [],
 			"trail": [
 				{
 					"icon": "i_full_screen_enter",
@@ -72,12 +85,17 @@
 	"actions": {
 		"a_download": {},
 		"a_render": {},
-		"a_full_screen_enter": {}
+		"a_full_screen_enter": {},
+		"a_save_file": {},
+		"a_load_file": {},
+		"a_add_list_item": {},
+		"a_del_list_item": {}
 	},
 	"data_types": {
 		"d_obj": {
 			"properties": [
 				{
+					"name": "name",
 					"label": "Name",
 					"tooltip": "",
 					"type": "str",
@@ -85,6 +103,7 @@
 					"meta": {}
 				},
 				{
+					"name": "material_id",
 					"label": "Material ID",
 					"tooltip": "",
 					"type": "u32",
@@ -92,6 +111,7 @@
 					"meta": {}
 				},
 				{
+					"name": "type",
 					"label": "Type",
 					"tooltip": "",
 					"type": "data_select",
@@ -110,6 +130,7 @@
 		"d_material": {
 			"properties": [
 				{
+					"name": "name",
 					"label": "Name",
 					"tooltip": "",
 					"type": "str",
@@ -117,6 +138,7 @@
 					"meta": {}
 				},
 				{
+					"name": "type",
 					"label": "Type",
 					"tooltip": "",
 					"type": "data_select",
@@ -142,8 +164,8 @@
 		},
 		"d_sphere": {
 			"properties": [
-
 				{
+					"name": "position",
 					"label": "Position",
 					"tooltip": "",
 					"type": "vec3f",
@@ -151,6 +173,7 @@
 					"meta": {}
 				},
 				{
+					"name": "radius",
 					"label": "Radius",
 					"tooltip": "",
 					"type": "f32",
@@ -162,6 +185,7 @@
 		"d_mat_diffuse": {
 			"properties": [
 				{
+					"name": "color",
 					"label": "Color",
 					"tooltip": "",
 					"type": "rgb",
@@ -173,6 +197,7 @@
 		"d_mat_metal": {
 			"properties": [
 				{
+					"name": "color",
 					"label": "Color",
 					"tooltip": "",
 					"type": "rgb",
@@ -180,6 +205,7 @@
 					"meta": {}
 				},
 				{
+					"name": "roughness",
 					"label": "Roughness",
 					"tooltip": "",
 					"type": "f32",
@@ -191,6 +217,7 @@
 		"d_mat_dielectric": {
 			"properties": [
 				{
+					"name": "ior",
 					"label": "IOR",
 					"tooltip": "",
 					"type": "f32",
@@ -202,6 +229,7 @@
 		"d_camera": {
 			"properties": [
 				{
+					"name": "look_from",
 					"label": "Look From",
 					"tooltip": "",
 					"type": "vec3f",
@@ -209,6 +237,7 @@
 					"meta": {}
 				},
 				{
+					"name": "look_at",
 					"label": "Look At",
 					"tooltip": "",
 					"type": "vec3f",
@@ -216,13 +245,15 @@
 					"meta": {}
 				},
 				{
+					"name": "v_up",
 					"label": "Camera Up",
 					"tooltip": "",
 					"type": "vec3f",
-					"initial": { "x": 0.0, "y": 1.0, "z": 0.0 },
+					"initial": { "x": 0.0, "y": 0.0, "z": 0.0 },
 					"meta": {}
 				},
 				{
+					"name": "v_fov",
 					"label": "Field of View",
 					"tooltip": "",
 					"type": "f32",
@@ -230,6 +261,7 @@
 					"meta": {}
 				},
 				{
+					"name": "dof_angle",
 					"label": "DOF Angle",
 					"tooltip": "Depth of field angle",
 					"type": "f32",
@@ -237,6 +269,7 @@
 					"meta": {}
 				},
 				{
+					"name": "dof_distance",
 					"label": "DOF Distance",
 					"tooltip": "Depth of field distance",
 					"type": "f32",
@@ -248,6 +281,7 @@
 		"d_render_settings": {
 			"properties": [
 				{
+					"name": "width",
 					"label": "Width",
 					"tooltip": "",
 					"type": "u32",
@@ -255,6 +289,7 @@
 					"meta": {}
 				},
 				{
+					"name": "height",
 					"label": "Height",
 					"tooltip": "",
 					"type": "u32",
@@ -262,20 +297,23 @@
 					"meta": {}
 				},
 				{
+					"name": "samples",
 					"label": "Samples",
 					"tooltip": "",
 					"type": "u32",
-					"initial": 128,
+					"initial": 64,
 					"meta": {}
 				},
 				{
+					"name": "bounces",
 					"label": "Bounces",
 					"tooltip": "",
 					"type": "u32",
-					"initial": 32,
+					"initial": 12,
 					"meta": {}
 				},
 				{
+					"name": "tile_size",
 					"label": "Tile Size",
 					"tooltip": "",
 					"type": "data_select",
@@ -298,10 +336,11 @@
 		"d_tile_size": {
 			"properties": [
 				{
+					"name": "size",
 					"label": "Size",
 					"tooltip": "",
 					"type": "u32",
-					"initial": 128,
+					"initial": 256,
 					"meta": {}
 				}
 			]

@@ -1,28 +1,32 @@
 <script lang="ts">
-	export let label: string;
-	export let tooltip: string;
-	export let initial: any;
-	export let meta: any;
+	import type { WebrayProperty } from '../../../editor';
+	import scene from '$lib/store/scene.store';
 
-	$: value = initial;
+	export let property: WebrayProperty;
+	export let prop_prefix: string;
+	export let bind_path: string;
+
+	const prop_path = prop_prefix === '' ? property.name : `${prop_prefix}.${property.name}`;
+
+	const store = scene.bind<number>(bind_path, prop_path);
 
 	function validator(node: HTMLInputElement, _: number) {
 		return {
 			update(val: string) {
-				value = Math.max(parseInt(node.min), Math.floor(parseFloat(val)));
+				$store = Math.max(parseInt(node.min), Math.floor(parseFloat(val)));
 			}
 		};
 	}
 </script>
 
 <span class="flex flex-row items-center justify-stretch gap-1">
-	<p class="mr-1 text-surface-200 w-1/5">{label}</p>
+	<p class="mr-1 w-1/5 text-surface-200">{property.label}</p>
 	<input
-		class="webray-input input text-center text-surface-300 w-4/5"
+		class="webray-input input w-4/5 text-center text-surface-300"
 		type="number"
 		min="0"
-		use:validator={value}
-		bind:value={value}
+		use:validator={$store}
+		bind:value={$store}
 		placeholder="u32"
 	/>
 </span>
