@@ -87,7 +87,9 @@
 		"a_render": {},
 		"a_full_screen_enter": {},
 		"a_save_file": {},
-		"a_load_file": {}
+		"a_load_file": {},
+		"a_add_list_item": {},
+		"a_del_list_item": {}
 	},
 	"data_types": {
 		"d_obj": {

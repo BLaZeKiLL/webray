@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { WebrayWindow } from '../../editor';
+	import { ID, WebrayEditor, type WebrayWindow } from '../../editor';
 	import WebrayDataView from '../data/WebrayDataView.svelte';
 	import WebrayListDataView from '../data/WebrayListDataView.svelte';
 
@@ -16,6 +16,6 @@
 	</div>
 
 	{#if win.data.type === 'list'}
-		<button type="button" class="variant-ghost-primary btn mx-2">Add</button>
+		<button type="button" on:click={() => WebrayEditor.invokeAction(ID.a_add_list_item, { bind_path: win.data.binding })} class="variant-ghost-primary btn mx-2">Add</button>
 	{/if}
 </div>

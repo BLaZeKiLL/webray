@@ -15,7 +15,8 @@ import type {
 
 const editor_json = _editor_json as unknown as WebrayEditorConfig;
 
-const actions: { [id: string]: [() => void] } = {};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const actions: { [id: string]: [(params: any) => void] } = {};
 
 export class WebrayEditor {
 	public static getWindow(id: string): WebrayWindow {
@@ -34,7 +35,8 @@ export class WebrayEditor {
 		return editor_json.data_types[id as keyof WebrayDataTypes] as WebrayDataType;
 	}
 
-	public static registerActionCallback(id: string, cb: () => void) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	public static registerActionCallback(id: string, cb: (params: any) => void) {
 		if (id in actions) {
 			actions[id].push(cb);
 		} else {
@@ -42,8 +44,22 @@ export class WebrayEditor {
 		}
 	}
 
-	public static invokeAction(id: string) {
-		actions[id].forEach((cb) => cb());
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	public static invokeAction(id: string, params: any = {}) {
+		actions[id].forEach((cb) => cb(params));
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	public static getDefaultObj(type: string): any {
+		return WebrayEditor.getDataType(type).properties.reduce((p, c) => {
+			if (c.type === 'data_select') {
+				const nested_obj = WebrayEditor.getDefaultObj(c.initial);
+				nested_obj['type'] = c.initial;
+				return {...p, [c.name]: nested_obj };
+			} else {
+			return {...p, [c.name]: c.initial};
+			}
+		}, {});
 	}
 }
 

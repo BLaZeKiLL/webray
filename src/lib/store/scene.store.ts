@@ -1,10 +1,11 @@
-import { writable, derived, get, type Writable } from 'svelte/store';
+import { writable, derived, get, type Writable, type Readable } from 'svelte/store';
 import { get_prop, set_prop } from '../utils/object.extensions';
 import type { WebrayScene } from '../editor/webray.scene';
 import { get_index_prop, set_index_prop } from '../utils/array.extensions';
 
 import _demo_json from '../../data/demo_01.scene.json';
 import { tick } from 'svelte';
+import { BindDataMap, WebrayEditor } from '../editor';
 
 export class SceneStore {
 	private store;
@@ -15,6 +16,35 @@ export class SceneStore {
 
 	public get current() {
 		return get(this.store);
+	}
+
+	public add_list_item(path: string) {
+		const bind_path = SceneStore.get_binding_path(path);
+		const data_type = BindDataMap[bind_path as keyof typeof BindDataMap];
+		const item = WebrayEditor.getDefaultObj(data_type);
+
+		this.store.update(state => {
+			const change = { ...state };
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const list = change[bind_path as keyof WebrayScene] as any[];
+
+			item.id = list.length + 1;
+
+			list.push(item);
+
+			return change;
+		});
+	}
+
+	public derived<T>(path: string): Readable<T> {
+		const bind_path = SceneStore.get_binding_path(path);
+
+		return derived(this.store, state => {
+			const data = state[bind_path as keyof WebrayScene] as T;
+
+			return data;
+		});
 	}
 
 	public bind<T>(path: string, property: string, name = 'store'): Writable<T> {
@@ -148,6 +178,21 @@ export class SceneStore {
 			update,
 			set
 		} as Writable<T>;
+	}
+
+	public static get_binding_path(bind_path: string): string {
+		const parts = bind_path.split(':');
+
+		return parts[2].split('[')[0];
+	}
+
+	public static get_binding_path_with_index(bind_path: string): { path: string, index: number } {
+		const parts = bind_path.split(':');
+
+		return {
+			path: parts[2].split('[')[0],
+			index: parseInt(parts[2].split('[')[1].split(']')[0])
+		};
 	}
 }
 
