@@ -4,5 +4,5 @@
 pub struct KSphere {
     pub center: glam::Vec3,
     pub radius: f32,
-    pub mid: glam::UVec4
+    pub mid: glam::UVec4,
 }

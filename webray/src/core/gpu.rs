@@ -31,9 +31,6 @@ impl Gpu {
             panic!("Aborting due to an error: {}", error);
         }));
 
-        return Gpu {
-            device,
-            queue,
-        };
+        return Gpu { device, queue };
     }
 }

@@ -27,4 +27,4 @@ export const ID = {
 export const BindDataMap = {
 	objects: 'd_obj',
 	materials: 'd_material'
-}
+};

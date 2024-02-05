@@ -23,7 +23,7 @@ export class SceneStore {
 		const data_type = BindDataMap[bind_path as keyof typeof BindDataMap];
 		const item = WebrayEditor.getDefaultObj(data_type);
 
-		this.store.update(state => {
+		this.store.update((state) => {
 			const change = { ...state };
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -40,13 +40,16 @@ export class SceneStore {
 	public del_list_item(path: string) {
 		const bind = SceneStore.get_binding_path_with_index(path);
 
-		this.store.update(state => {
+		this.store.update((state) => {
 			const change = { ...state };
 
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const list = change[bind.path as keyof WebrayScene] as any[];
 
-			list.splice(list.findIndex(val => val.id === bind.id), 1);
+			list.splice(
+				list.findIndex((val) => val.id === bind.id),
+				1
+			);
 
 			return change;
 		});
@@ -55,7 +58,7 @@ export class SceneStore {
 	public derived<T>(path: string): Readable<T> {
 		const bind_path = SceneStore.get_binding_path(path);
 
-		return derived(this.store, state => {
+		return derived(this.store, (state) => {
 			const data = state[bind_path as keyof WebrayScene] as T;
 
 			return data;
@@ -103,7 +106,7 @@ export class SceneStore {
 						console.error(`bind subscribe failed!, bind path: ${bind_path}, property: ${property}`);
 						console.error(data);
 					}
-				})
+				});
 			}
 
 			return prop;
@@ -152,7 +155,7 @@ export class SceneStore {
 				// TODO: This is a dirty hacky fix :P
 				// re-check next micro tick as it maybe fixed by re-set validator
 				tick().then(() => {
-					if (data.find(val => val.id === bind_index) === undefined) {
+					if (data.find((val) => val.id === bind_index) === undefined) {
 						// console.warn('Item does not exist');
 						// console.warn(data);
 						return;
@@ -212,7 +215,7 @@ export class SceneStore {
 		return parts[2].split('[')[0];
 	}
 
-	public static get_binding_path_with_index(bind_path: string): { path: string, id: number } {
+	public static get_binding_path_with_index(bind_path: string): { path: string; id: number } {
 		const parts = bind_path.split(':');
 
 		return {

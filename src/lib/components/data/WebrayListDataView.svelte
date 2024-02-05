@@ -15,7 +15,10 @@
 		<span slot="header" class="flex flex-row items-center">
 			<h4 class="h4 text-surface-200">ID: {item.id}</h4>
 			<span class="grow"></span>
-			<button on:click={() => WebrayEditor.invokeAction(ID.a_del_list_item, { bind_path: `${bind_path}[${item.id}]` })}>
+			<button
+				on:click={() =>
+					WebrayEditor.invokeAction(ID.a_del_list_item, { bind_path: `${bind_path}[${item.id}]` })}
+			>
 				<WebrayIcon icon="i_delete_item" tooltip="Delete item" css="text-error-400" />
 			</button>
 		</span>

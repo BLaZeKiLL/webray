@@ -21,7 +21,8 @@ impl WScene {
         let mut materials: HashMap<usize, (u32, u32)> = HashMap::new();
 
         for mat in self.materials[..].iter() {
-            match &mat.mat_type { // because of color have to do a borrow
+            match &mat.mat_type {
+                // because of color have to do a borrow
                 WMaterialType::Diffuse { color } => {
                     let albedo = hex_to_rgb(color).unwrap();
                     let idx = kernel_scene.register_diffuse_material(KDiffuseMat { albedo });
@@ -55,7 +56,7 @@ impl WScene {
                                 radius,
                                 mid: glam::uvec4(mat.0, mat.1, 0, 0),
                             });
-                        },
+                        }
                         None => panic!("Material not found: {}", &obj.material_id),
                     }
                 }

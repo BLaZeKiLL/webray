@@ -55,9 +55,9 @@ export class WebrayEditor {
 			if (c.type === 'data_select') {
 				const nested_obj = WebrayEditor.getDefaultObj(c.initial);
 				nested_obj['type'] = c.initial;
-				return {...p, [c.name]: nested_obj };
+				return { ...p, [c.name]: nested_obj };
 			} else {
-			return {...p, [c.name]: c.initial};
+				return { ...p, [c.name]: c.initial };
 			}
 		}, {});
 	}

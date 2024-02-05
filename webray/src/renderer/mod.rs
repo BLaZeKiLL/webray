@@ -1,12 +1,10 @@
 use crate::{
     core::gpu::Gpu,
-    renderer::{bindings::KernelBindings, buffers::KernelBuffers, kernel::Kernel}, utils::metrics::Metrics,
+    renderer::{bindings::KernelBindings, buffers::KernelBuffers, kernel::Kernel},
+    utils::metrics::Metrics,
 };
 
-use self::{
-    config::KernelConfig,
-    scene::KernelScene,
-};
+use self::{config::KernelConfig, scene::KernelScene};
 
 mod bindings;
 mod buffers;
@@ -17,8 +15,11 @@ pub mod material;
 pub mod scene;
 pub mod shapes;
 
-
-pub async fn render(config: &KernelConfig, scene: &KernelScene, metrics: &mut Option<Metrics>) -> Result<Vec<u8>, ()> {
+pub async fn render(
+    config: &KernelConfig,
+    scene: &KernelScene,
+    metrics: &mut Option<Metrics>,
+) -> Result<Vec<u8>, ()> {
     // dbg!(&config);
     // dbg!(&scene);
 

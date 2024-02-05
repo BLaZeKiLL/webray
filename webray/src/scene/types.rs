@@ -5,7 +5,7 @@ pub struct WScene {
     pub objects: Vec<WObject>,
     pub materials: Vec<WMaterial>,
     pub camera: WCamera,
-    pub render_settings: WRenderSettings
+    pub render_settings: WRenderSettings,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -15,14 +15,14 @@ pub struct WObject {
     pub material_id: usize,
 
     #[serde(rename = "type")]
-    pub obj_type: WObjectType
+    pub obj_type: WObjectType,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum WObjectType {
     #[serde(rename = "d_sphere")]
-    Sphere { position: glam::Vec3, radius: f32 }
+    Sphere { position: glam::Vec3, radius: f32 },
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -31,7 +31,7 @@ pub struct WMaterial {
     pub name: String,
 
     #[serde(rename = "type")]
-    pub mat_type: WMaterialType
+    pub mat_type: WMaterialType,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -44,7 +44,7 @@ pub enum WMaterialType {
     Metal { color: String, roughness: f32 },
 
     #[serde(rename = "d_mat_dielectric")]
-    Dielectric { ior: f32 }
+    Dielectric { ior: f32 },
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -54,7 +54,7 @@ pub struct WCamera {
     pub v_up: glam::Vec3,
     pub v_fov: f32,
     pub dof_angle: f32,
-    pub dof_distance: f32
+    pub dof_distance: f32,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -63,7 +63,7 @@ pub struct WRenderSettings {
     pub height: u32,
     pub samples: u32,
     pub bounces: u32,
-    pub tile_size: WTileSize
+    pub tile_size: WTileSize,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -73,7 +73,7 @@ pub enum WTileSize {
     Full,
 
     #[serde(rename = "d_tile_size")]
-    Tile { size: u32 }
+    Tile { size: u32 },
 }
 
 impl fmt::Display for WScene {
@@ -90,27 +90,41 @@ impl fmt::Display for WScene {
             write!(f, "\n\tMaterial: {}", item).unwrap();
         }
 
-        return write!(f, "\nCamera:\n\t{}\nRenderSettings:\n\t{}", self.camera, self.render_settings);
+        return write!(
+            f,
+            "\nCamera:\n\t{}\nRenderSettings:\n\t{}",
+            self.camera, self.render_settings
+        );
     }
 }
 
 impl fmt::Display for WObject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(f, "\n\t\tID: {}\n\t\tname: {}\n\t\tmaterial_id: {}\n\t\ttype: {}", self.id, self.name, self.material_id, self.obj_type);
+        return write!(
+            f,
+            "\n\t\tID: {}\n\t\tname: {}\n\t\tmaterial_id: {}\n\t\ttype: {}",
+            self.id, self.name, self.material_id, self.obj_type
+        );
     }
 }
 
 impl fmt::Display for WObjectType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         return match self {
-            WObjectType::Sphere { position, radius } => write!(f, "SPHERE(position: {}, radius: {})", position, radius),
-        }
+            WObjectType::Sphere { position, radius } => {
+                write!(f, "SPHERE(position: {}, radius: {})", position, radius)
+            }
+        };
     }
 }
 
 impl fmt::Display for WMaterial {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(f, "\n\t\tID: {}\n\t\tname: {}\n\t\ttype: {}", self.id, self.name, self.mat_type);
+        return write!(
+            f,
+            "\n\t\tID: {}\n\t\tname: {}\n\t\ttype: {}",
+            self.id, self.name, self.mat_type
+        );
     }
 }
 
@@ -118,9 +132,11 @@ impl fmt::Display for WMaterialType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         return match self {
             WMaterialType::Diffuse { color } => write!(f, "DIFFUSE(color: {})", color),
-            WMaterialType::Metal { color, roughness } => write!(f, "METAL(color: {}, roughness: {})", color, roughness),
+            WMaterialType::Metal { color, roughness } => {
+                write!(f, "METAL(color: {}, roughness: {})", color, roughness)
+            }
             WMaterialType::Dielectric { ior } => write!(f, "DIELECTRIC(ior: {})", ior),
-        }
+        };
     }
 }
 
@@ -132,7 +148,11 @@ impl fmt::Display for WCamera {
 
 impl fmt::Display for WRenderSettings {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(f, "width: {}\n\theight: {}\n\tsamples: {}\n\tbounces: {}\n\ttile size: {}", self.width, self.height, self.samples, self.bounces, self.tile_size);
+        return write!(
+            f,
+            "width: {}\n\theight: {}\n\tsamples: {}\n\tbounces: {}\n\ttile size: {}",
+            self.width, self.height, self.samples, self.bounces, self.tile_size
+        );
     }
 }
 
@@ -141,6 +161,6 @@ impl fmt::Display for WTileSize {
         return match self {
             WTileSize::Full => write!(f, "FULL()"),
             WTileSize::Tile { size } => write!(f, "TILE(size: {})", size),
-        }
+        };
     }
 }

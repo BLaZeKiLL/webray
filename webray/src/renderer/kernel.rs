@@ -3,7 +3,7 @@ use crate::core::gpu::Gpu;
 use super::{
     bindings::KernelBindings,
     buffers::KernelBuffers,
-    config::{ExecutionContext, SystemConfig, ExecutionConfig, TileSize},
+    config::{ExecutionConfig, ExecutionContext, SystemConfig, TileSize},
 };
 
 pub struct Kernel {
@@ -75,7 +75,14 @@ impl Kernel {
                             height
                         );
 
-                        self.render_tile(gpu, tile_position * size, width, height, bindings, buffers);
+                        self.render_tile(
+                            gpu,
+                            tile_position * size,
+                            width,
+                            height,
+                            bindings,
+                            buffers,
+                        );
 
                         id += 1;
                     }

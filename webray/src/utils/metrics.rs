@@ -51,9 +51,15 @@ impl Metrics {
 
     pub fn log(&self) {
         log::info!("===== WebRay Metrics =====");
-        log::info!("Device Acquisition: {} secs", self.device_acquisition.as_secs_f64());
+        log::info!(
+            "Device Acquisition: {} secs",
+            self.device_acquisition.as_secs_f64()
+        );
         log::info!("Scene Upload: {} secs", self.scene_upload.as_secs_f64());
-        log::info!("Kernel Initialization: {} secs", self.kernel_initialization.as_secs_f64());
+        log::info!(
+            "Kernel Initialization: {} secs",
+            self.kernel_initialization.as_secs_f64()
+        );
         log::info!("Rendering: {} secs", self.rendering.as_secs_f64());
         log::info!("Output write: {} secs", self.output_write.as_secs_f64());
         log::info!("Total: {} secs", self.total.as_secs_f64());

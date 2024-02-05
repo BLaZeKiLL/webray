@@ -66,7 +66,13 @@ async fn run_internal(scene: WScene) {
         }
     };
 
-    if let Ok(buffer) = renderer::render(&scene.get_kernel_config(), &scene.get_kernel_scene(), &mut metrics).await {
+    if let Ok(buffer) = renderer::render(
+        &scene.get_kernel_config(),
+        &scene.get_kernel_scene(),
+        &mut metrics,
+    )
+    .await
+    {
         cfg_if::cfg_if! {
             if #[cfg(target_arch = "wasm32")] {
                 output::wasm::output_image(buffer, glam::uvec2(scene.render_settings.width, scene.render_settings.height));

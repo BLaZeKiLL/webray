@@ -17,7 +17,7 @@ export function writable_derived<S, D>(store: Writable<S>, property: string, nam
 					console.error(`${name}: bind subscribe failed!, property: ${property}`);
 					console.error(state);
 				}
-			})
+			});
 		}
 
 		return prop; // ts sorcery
@@ -68,7 +68,7 @@ export function writable_indexed_derived<D>(store: Writable<any[]>, index: numbe
 					console.error(`${name}: bind subscribe failed!, index: ${index}`);
 					console.error(state);
 				}
-			})
+			});
 		}
 
 		return prop; // ts sorcery
@@ -78,7 +78,7 @@ export function writable_indexed_derived<D>(store: Writable<any[]>, index: numbe
 		store.update((state) => {
 			// this is a shallow copy
 			// can use structuredClone if a deep copy is required
-			const change = [ ...state ];
+			const change = [...state];
 
 			change[index] = value;
 
@@ -89,7 +89,7 @@ export function writable_indexed_derived<D>(store: Writable<any[]>, index: numbe
 	const set = (value: D) => {
 		// this is a shallow copy
 		// can use structuredClone if a deep copy is required
-		const change = [ ...get(store) ];
+		const change = [...get(store)];
 
 		change[index] = value;
 
