@@ -2,7 +2,7 @@
 	import type { WebrayProperty } from '../../../editor';
 	import scene from '$lib/store/scene.store';
 	import type { vec3f } from '../../../types';
-	import { writable_derived } from '../../../store/writable-derived.store';
+	import { writable_indexed_derived } from '../../../store/writable-derived.store';
 
 	export let property: WebrayProperty;
 	export let prop_prefix: string;
@@ -12,9 +12,9 @@
 
 	const store = scene.bind<vec3f>(bind_path, prop_path);
 
-	const x_val = writable_derived(store, 'x');
-	const y_val = writable_derived(store, 'y');
-	const z_val = writable_derived(store, 'z');
+	const x_val = writable_indexed_derived(store, 0, 'vec3f[0]');
+	const y_val = writable_indexed_derived(store, 1, 'vec3f[1]');
+	const z_val = writable_indexed_derived(store, 2, 'vec3f[2]');
 </script>
 
 <span class="flex flex-row items-center justify-stretch gap-1">

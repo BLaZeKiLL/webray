@@ -39,23 +39,22 @@ pub fn output_image(image_data: Vec<u8>, dimensions: glam::UVec2) {
 
     context.put_image_data(&image_data, 0.0, 0.0).unwrap();
 
-    let image_element = if let Some(found_image_element) =
-        document.get_element_by_id("output-image-target")
-    {
-        match found_image_element.dyn_into::<web_sys::HtmlImageElement>() {
-            Ok(e) => e,
-            Err(e) => {
-                e.remove();
-                create_output_image_element(&document)
+    let image_element =
+        if let Some(found_image_element) = document.get_element_by_id("output-image-target") {
+            match found_image_element.dyn_into::<web_sys::HtmlImageElement>() {
+                Ok(e) => e,
+                Err(e) => {
+                    e.remove();
+                    create_output_image_element(&document)
+                }
             }
-        }
-    } else {
-        create_output_image_element(&document)
-    };
+        } else {
+            create_output_image_element(&document)
+        };
 
     let data_url = canvas.to_data_url().unwrap();
     image_element.set_src(&data_url);
-    
+
     log::info!("Image displayed");
 }
 

@@ -6,11 +6,7 @@
 			"material_id": 1,
 			"type": {
 				"type": "d_sphere",
-				"position": {
-					"x": 0,
-					"y": -100.5,
-					"z": -1
-				},
+				"position": [0, -100.5, -1],
 				"radius": 100
 			}
 		},
@@ -20,11 +16,7 @@
 			"material_id": 4,
 			"type": {
 				"type": "d_sphere",
-				"position": {
-					"x": -1,
-					"y": 0,
-					"z": -1
-				},
+				"position": [-1, 0, -1],
 				"radius": 0.5
 			}
 		},
@@ -34,11 +26,7 @@
 			"material_id": 4,
 			"type": {
 				"type": "d_sphere",
-				"position": {
-					"x": -1,
-					"y": 0,
-					"z": -1
-				},
+				"position": [-1, 0, -1],
 				"radius": -0.4
 			}
 		},
@@ -48,11 +36,7 @@
 			"material_id": 2,
 			"type": {
 				"type": "d_sphere",
-				"position": {
-					"x": 0,
-					"y": 0,
-					"z": -1
-				},
+				"position": [0, 0, -1],
 				"radius": 0.5
 			}
 		},
@@ -62,11 +46,7 @@
 			"material_id": 3,
 			"type": {
 				"type": "d_sphere",
-				"position": {
-					"x": 1,
-					"y": 0,
-					"z": -1
-				},
+				"position": [1, 0, -1],
 				"radius": 0.5
 			}
 		}
@@ -107,21 +87,9 @@
 		}
 	],
 	"camera": {
-		"look_from": {
-			"x": -2,
-			"y": 2,
-			"z": 1
-		},
-		"look_at": {
-			"x": 0,
-			"y": 0,
-			"z": -1
-		},
-		"v_up": {
-			"x": 0,
-			"y": 1,
-			"z": 0
-		},
+		"look_from": [-2, 2, 1],
+		"look_at": [0, 0, -1],
+		"v_up": [0, 1, 0],
 		"v_fov": 20,
 		"dof_angle": 0.6,
 		"dof_distance": 3.4

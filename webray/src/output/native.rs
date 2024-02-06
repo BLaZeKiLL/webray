@@ -1,4 +1,3 @@
-#[cfg(not(target_arch = "wasm32"))]
 pub fn output_image(image_data: Vec<u8>, dimensions: glam::UVec2, path: &str) {
     match image::save_buffer(
         path,

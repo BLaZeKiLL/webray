@@ -1,7 +1,7 @@
 #[derive(Debug, Clone, Copy)]
 pub enum TileSize {
     Full,
-    Square(u32),
+    Tile(u32),
 }
 
 #[derive(Debug)]
@@ -51,14 +51,14 @@ pub struct Viewport {
 }
 
 #[derive(Debug, encase::ShaderType)]
-pub struct KernelConfig {
+pub struct SystemConfig {
     pub image: Image,
     pub camera: Camera,
     pub viewport: Viewport,
     pixel_zero_loc: glam::Vec3,
 }
 
-impl KernelConfig {
+impl SystemConfig {
     /// A lot of camera calculations
     pub fn new(render_config: &RenderConfig, camera_config: &CameraConfig) -> Self {
         // Determine viewport dimensions.
@@ -117,7 +117,7 @@ impl KernelConfig {
             upper_left,
         };
 
-        return KernelConfig {
+        return SystemConfig {
             image,
             camera,
             viewport,
@@ -149,28 +149,28 @@ impl ExecutionContext {
     }
 }
 
-pub struct SystemConfig {
+pub struct ExecutionConfig {
     pub tile_size: TileSize,
 }
 
-impl SystemConfig {
+impl ExecutionConfig {
     pub fn new(render_config: &RenderConfig) -> Self {
-        return SystemConfig {
+        return ExecutionConfig {
             tile_size: render_config.tile_size,
         };
     }
 }
 
-pub struct Config {
-    pub kernel: KernelConfig,
+pub struct KernelConfig {
     pub system: SystemConfig,
+    pub execution: ExecutionConfig,
 }
 
-impl Config {
+impl KernelConfig {
     pub fn new(render_config: &RenderConfig, camera_config: &CameraConfig) -> Self {
-        return Config {
-            kernel: KernelConfig::new(render_config, camera_config),
-            system: SystemConfig::new(render_config),
+        return KernelConfig {
+            system: SystemConfig::new(render_config, camera_config),
+            execution: ExecutionConfig::new(render_config),
         };
     }
 }

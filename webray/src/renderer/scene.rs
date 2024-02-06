@@ -1,11 +1,14 @@
-use super::{shapes::KSphere, material::{KDiffuseMat, KMetalMat, KDielectricMat}};
+use super::{
+    material::{KDielectricMat, KDiffuseMat, KMetalMat},
+    shapes::KSphere,
+};
 
 #[derive(Debug)]
 pub struct KernelScene {
     spheres: Vec<KSphere>,
     diffuse_mats: Vec<KDiffuseMat>,
     metal_mats: Vec<KMetalMat>,
-    dielectric_mats: Vec<KDielectricMat>
+    dielectric_mats: Vec<KDielectricMat>,
 }
 
 impl KernelScene {
@@ -14,7 +17,7 @@ impl KernelScene {
             spheres: Vec::new(),
             diffuse_mats: Vec::new(),
             metal_mats: Vec::new(),
-            dielectric_mats: Vec::new()
+            dielectric_mats: Vec::new(),
         };
     }
 

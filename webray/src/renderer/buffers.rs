@@ -5,7 +5,7 @@ use wgpu::util::DeviceExt;
 use crate::core::gpu::Gpu;
 
 use super::{
-    config::{ExecutionContext, KernelConfig},
+    config::{ExecutionContext, SystemConfig},
     scene::KernelScene,
 };
 
@@ -31,11 +31,11 @@ pub struct KernelBuffers {
 }
 
 impl KernelBuffers {
-    pub fn new(gpu: &Gpu, config: &KernelConfig, scene: &KernelScene) -> Self {
+    pub fn new(gpu: &Gpu, system_config: &SystemConfig, scene: &KernelScene) -> Self {
         // &arr and &arr[..] are different, second one is a slice and what we need
         let result_buffer = gpu.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("Result buffer"),
-            size: config.result_size(),
+            size: system_config.result_size(),
             usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
@@ -43,8 +43,8 @@ impl KernelBuffers {
         let render_texture = gpu.device.create_texture(&wgpu::TextureDescriptor {
             label: Some("Render texture"),
             size: wgpu::Extent3d {
-                width: config.image.width,
-                height: config.image.height,
+                width: system_config.image.width,
+                height: system_config.image.height,
                 depth_or_array_layers: 1,
             },
             mip_level_count: 1,
@@ -62,7 +62,7 @@ impl KernelBuffers {
             .device
             .create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("Config uniform buffer"),
-                contents: &config.as_wgsl_bytes().unwrap()[..],
+                contents: &system_config.as_wgsl_bytes().unwrap()[..],
                 usage: wgpu::BufferUsages::UNIFORM,
             });
 

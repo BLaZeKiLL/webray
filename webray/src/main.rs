@@ -1,4 +1,11 @@
 fn main() {
-    webray::init();
-    webray::run();
+    webray::initialize_kernel();
+
+    cfg_if::cfg_if! {
+        if #[cfg(target_arch = "wasm32")] {
+            log::error!("Platform not supported");
+        } else {
+            webray::render();
+        }
+    }
 }

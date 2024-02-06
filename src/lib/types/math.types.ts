@@ -1,5 +1,1 @@
-export interface vec3f {
-	x: number;
-	y: number;
-	z: number;
-}
+export type vec3f = [number, number, number];

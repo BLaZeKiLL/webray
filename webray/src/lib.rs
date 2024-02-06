@@ -5,20 +5,20 @@
 use wasm_bindgen::prelude::*;
 
 use utils::metrics::Metrics;
+use scene::types::WScene;
 
 mod core;
-mod demo;
 mod output;
 mod renderer;
 mod scene;
 mod utils;
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
-pub fn init() {
+pub fn initialize_kernel() {
     cfg_if::cfg_if! {
         if #[cfg(target_arch = "wasm32")] {
             std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-            console_log::init().unwrap();
+            console_log::init_with_level(log::Level::Warn).unwrap();
         } else {
             env_logger::builder()
                 .filter_level(log::LevelFilter::Info)
@@ -30,22 +30,36 @@ pub fn init() {
     log::info!("WebRay Loaded");
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen)]
-pub fn run() {
-    cfg_if::cfg_if! {
-        if #[cfg(target_arch = "wasm32")] {
-            wasm_bindgen_futures::spawn_local(run_internal());
-        } else {
-            pollster::block_on(run_internal());
-        }
-    }
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+pub fn render(value: JsValue) -> js_sys::Promise {
+    use scene::types::WScene;
+
+    let scene = serde_wasm_bindgen::from_value::<WScene>(value).unwrap();
+
+    // not sure if the move is required here
+    return wasm_bindgen_futures::future_to_promise(async move {
+        run_internal(scene).await;
+        return Ok(JsValue::TRUE);
+    });
 }
 
-async fn run_internal() {
-    let config = demo::create_demo_config();
+#[cfg(not(target_arch = "wasm32"))]
+pub fn render() {
+    pollster::block_on(run_internal());
+}
 
-    let scene = demo::create_demo_scene();
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen]
+pub fn parse_scene(value: JsValue) {
+    use scene::types::WScene;
 
+    let scene = serde_wasm_bindgen::from_value::<WScene>(value).unwrap();
+
+    log::info!("{}", scene);
+}
+
+async fn run_internal(scene: WScene) {
     let mut metrics: Option<Metrics>;
 
     cfg_if::cfg_if! {
@@ -56,12 +70,18 @@ async fn run_internal() {
         }
     };
 
-    if let Ok(buffer) = renderer::render(&config, &scene.into(), &mut metrics).await {
+    if let Ok(buffer) = renderer::render(
+        &scene.get_kernel_config(),
+        &scene.get_kernel_scene(),
+        &mut metrics,
+    )
+    .await
+    {
         cfg_if::cfg_if! {
             if #[cfg(target_arch = "wasm32")] {
-                output::wasm::output_image(buffer, glam::uvec2(config.kernel.image.width, config.kernel.image.height));
+                output::wasm::output_image(buffer, glam::uvec2(scene.render_settings.width, scene.render_settings.height));
             } else {
-                output::native::output_image(buffer, glam::uvec2(config.kernel.image.width, config.kernel.image.height), "render.png");
+                output::native::output_image(buffer, glam::uvec2(scene.render_settings.width, scene.render_settings.height), "render.png");
             }
         }
 
