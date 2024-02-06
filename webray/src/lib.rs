@@ -1,11 +1,11 @@
 #![deny(clippy::implicit_return)]
 #![allow(clippy::needless_return)]
 
-use scene::types::WScene;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
 use utils::metrics::Metrics;
+use scene::types::WScene;
 
 mod core;
 mod output;
@@ -18,7 +18,7 @@ pub fn initialize_kernel() {
     cfg_if::cfg_if! {
         if #[cfg(target_arch = "wasm32")] {
             std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-            console_log::init().unwrap();
+            console_log::init_with_level(log::Level::Warn).unwrap();
         } else {
             env_logger::builder()
                 .filter_level(log::LevelFilter::Info)
@@ -32,12 +32,16 @@ pub fn initialize_kernel() {
 
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
-pub fn render(value: JsValue) {
+pub fn render(value: JsValue) -> js_sys::Promise {
     use scene::types::WScene;
 
     let scene = serde_wasm_bindgen::from_value::<WScene>(value).unwrap();
 
-    wasm_bindgen_futures::spawn_local(run_internal(scene));
+    // not sure if the move is required here
+    return wasm_bindgen_futures::future_to_promise(async move {
+        run_internal(scene).await;
+        return Ok(JsValue::TRUE);
+    });
 }
 
 #[cfg(not(target_arch = "wasm32"))]

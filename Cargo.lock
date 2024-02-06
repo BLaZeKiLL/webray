@@ -1339,6 +1339,7 @@ dependencies = [
  "flume",
  "glam",
  "image",
+ "js-sys",
  "log",
  "pollster",
  "rand",
