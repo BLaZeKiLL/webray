@@ -3,15 +3,17 @@ import { get_prop, set_prop } from '../utils/object.extensions';
 import type { WebrayScene } from '../editor/webray.scene';
 import { get_id_prop, set_index_prop } from '../utils/array.extensions';
 
-import _demo_json from '../../data/demo_01.scene.json';
 import { tick } from 'svelte';
 import { BindDataMap, WebrayEditor } from '../editor';
+
+import _demo_json from '../../data/demo_01.scene.json';
 
 export class SceneStore {
 	private store;
 
 	constructor() {
-		this.store = writable<WebrayScene>(_demo_json);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		this.store = writable<WebrayScene>(_demo_json as any);
 	}
 
 	public get current() {
