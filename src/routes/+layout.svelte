@@ -11,6 +11,7 @@
 	import WebrayRenderBar from '$lib/components/layout/WebrayImageBar.svelte';
 	import WebrayFooter from '$lib/components/layout/WebrayFooter.svelte';
 	import { editorStore } from '../lib/store/editor.store';
+	import { OutputView } from '../lib/types';
 
 	initializeStores();
 
@@ -22,7 +23,6 @@
 <Toast />
 
 <AppShell
-	slotPageContent="overflow-y-auto flex flex-col items-center justify-center bg-gray-950"
 	slotSidebarLeft="w-1/6 overflow-y-clip"
 	slotSidebarRight="w-1/6 overflow-y-clip"
 	slotPageFooter="h-1/6"
@@ -40,10 +40,26 @@
 	</svelte:fragment>
 
 	<!-- Router Slot -->
-	<slot />
+	<span
+		class:fullscreen={$editorStore.output_view === OutputView.FULLSCREEN}
+
+	 	class="overflow-y-auto h-full flex flex-col items-center justify-center bg-gray-950">
+		<slot />
+	</span>
 	<!-- ---- / ---- -->
 
 	<svelte:fragment slot="pageFooter">
 		<WebrayFooter />
 	</svelte:fragment>
 </AppShell>
+
+<style>
+	.fullscreen {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		z-index: 10;
+	}
+</style>
