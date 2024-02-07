@@ -16,7 +16,7 @@
 	};
 </script>
 
-<span use:popup={tooltipPopup}>
+<span use:popup={tooltipPopup} class="[&>*]:pointer-events-none">
 	<svelte:component this={_icon} class={css} style="font-size: 1.5rem" />
 </span>
 
