@@ -22,7 +22,7 @@ const icons = {
 	i_full_screen_exit: FullScreenExit,
 	i_delete_item: DeleteItem,
 	i_save_file: SaveFile,
-	i_load_file: LoadFile,
+	i_load_file: LoadFile
 } as {
 	[key: string]: any;
 };

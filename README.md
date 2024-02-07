@@ -25,7 +25,8 @@ Webray is a WebGPU powered ray tracer + Svelte based editor
 
 The editor is available [here](https://blazekill.github.io/webray/) along [Demo Scene 01](https://github.com/BLaZeKiLL/webray/blob/main/src/data/demo_01.scene.json) and [Demo Scene 02](https://github.com/BLaZeKiLL/webray/blob/main/src/data/demo_02.scene.json) which can be imported.
 
-### Tools 
+### Tools
+
 - <img align="center" src="https://api.iconify.design/iconamoon/3d-light.svg?color=%23888888"> Objects in the current scene
 - <img align="center" src="https://api.iconify.design/uil/image-download.svg?color=%23888888"> Download rendered image
 - <img align="center" src="https://api.iconify.design/material-symbols/imagesmode-outline-rounded.svg?color=%23888888"> Render the current scene as an image

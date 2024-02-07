@@ -12,3 +12,8 @@ export enum KernelState {
 	RENDERING,
 	DONE
 }
+
+export enum OutputView {
+	DEFAULT,
+	FULLSCREEN
+}

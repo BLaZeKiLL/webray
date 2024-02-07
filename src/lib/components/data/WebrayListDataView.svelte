@@ -10,6 +10,7 @@
 	$: store = scene.derived<any[]>(bind_path);
 </script>
 
+<!-- TODO: Need a virtual scroll view for performance reasons -->
 {#each $store as item (item.id)}
 	<WebrayDataView {data_type} bind_path={`${bind_path}[${item.id}]`}>
 		<span slot="header" class="flex flex-row items-center">

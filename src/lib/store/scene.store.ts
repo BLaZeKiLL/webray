@@ -43,6 +43,7 @@ export class SceneStore {
 		});
 	}
 
+	// TODO: there is a bug here, maybe the it's just the bindings messing up
 	public del_list_item(path: string) {
 		const bind = SceneStore.get_binding_path_with_index(path);
 

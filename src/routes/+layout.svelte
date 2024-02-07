@@ -13,7 +13,7 @@
 	import { editorStore } from '../lib/store/editor.store';
 
 	initializeStores();
-	
+
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	editorStore.set_toaster(getToastStore());
