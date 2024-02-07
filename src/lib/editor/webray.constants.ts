@@ -11,6 +11,10 @@ export const ID = {
 	a_render: 'a_render',
 	a_add_list_item: 'a_add_list_item',
 	a_del_list_item: 'a_del_list_item',
+	a_full_screen_enter: 'a_full_screen_enter',
+	a_full_screen_exit: 'a_full_screen_exit',
+	a_save_file: 'a_save_file',
+	a_load_file: 'a_load_file',
 
 	d_obj: 'd_obj',
 	d_material: 'd_material',

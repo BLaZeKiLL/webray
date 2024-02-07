@@ -20,6 +20,10 @@ export class SceneStore {
 		return get(this.store);
 	}
 
+	public import_scene(scene_json: WebrayScene) {
+		this.store.set(scene_json);
+	}
+
 	public add_list_item(path: string) {
 		const bind_path = SceneStore.get_binding_path(path);
 		const data_type = BindDataMap[bind_path as keyof typeof BindDataMap];
