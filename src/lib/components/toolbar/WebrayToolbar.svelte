@@ -9,6 +9,7 @@
 	};
 </script>
 
+<!-- TODO: tooltips are not positioned correctly -->
 <div class="flex flex-row">
 	<div class="variant-ghost-surface btn-group rounded-none">
 		{#each toolbar.lead as tool (tool.action)}

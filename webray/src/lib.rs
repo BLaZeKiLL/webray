@@ -4,8 +4,8 @@
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-use utils::metrics::Metrics;
 use scene::types::WScene;
+use utils::metrics::Metrics;
 
 mod core;
 mod output;

@@ -86,6 +86,7 @@
 		"a_download": {},
 		"a_render": {},
 		"a_full_screen_enter": {},
+		"a_full_screen_exit": {},
 		"a_save_file": {},
 		"a_load_file": {},
 		"a_add_list_item": {},
