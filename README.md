@@ -16,7 +16,12 @@ Webray is a WebGPU powered ray tracer + Svelte based editor
 
 > :warning: **WebGPU**: Is experimental api. Webray is tested using the latest desktop chrome version. system may slow down or crash during rendering or while working with large scenes (Demo 02), please use webray at your own risk.
 
+<img src="./cover.png">
+
 ## Editor Documentation
+
+<img src="./editor.png">
+
 The editor is available [here](https://blazekill.github.io/webray/) along [Demo Scene 01](https://github.com/BLaZeKiLL/webray/blob/main/src/data/demo_01.scene.json) and [Demo Scene 02](https://github.com/BLaZeKiLL/webray/blob/main/src/data/demo_02.scene.json) which can be imported.
 
 ### Tools 
@@ -33,4 +38,7 @@ The editor is available [here](https://blazekill.github.io/webray/) along [Demo 
 - <img align="center" src="https://api.iconify.design/material-symbols/file-open-outline-rounded.svg?color=%23888888"> Import scene json file
 
 ## WebRay Renderer
+
+<img src="./render.png">
+
 The renderer is implemented in rust and compiled to wasm with the core kernel implemented as a wgsl compute shader using wgpu.
