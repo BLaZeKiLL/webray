@@ -17,6 +17,7 @@ Webray is a WebGPU powered ray tracer + Svelte based editor
 > :warning: **WebGPU**: Is an experimental api. Webray is tested on the latest desktop chrome version. your system may slow down or crash during rendering or while working with large scenes like Demo Scene 02 (PR's helping to optimize the editor are welcome). please use webray at your own risk.
 
 <img src="./cover.png">
+<p align="center">4K @ 512 Samples, 64 Bounces. 20 mins on webray-native</p>
 
 ## Editor Documentation
 
