@@ -19,7 +19,9 @@
 				<span class="grow"></span>
 				<button
 					on:click={() =>
-						WebrayEditor.invokeAction(ID.a_del_list_item, { bind_path: `${bind_path}[${item.id}]` })}
+						WebrayEditor.invokeAction(ID.a_del_list_item, {
+							bind_path: `${bind_path}[${item.id}]`
+						})}
 				>
 					<WebrayIcon icon="i_delete_item" tooltip="Delete item" css="text-error-400" />
 				</button>
