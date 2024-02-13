@@ -42,8 +42,8 @@
 	<!-- Router Slot -->
 	<span
 		class:fullscreen={$editorStore.output_view === OutputView.FULLSCREEN}
-
-	 	class="overflow-y-auto h-full flex flex-col items-center justify-center bg-gray-950">
+		class="flex h-full flex-col items-center justify-center overflow-y-auto bg-gray-950"
+	>
 		<slot />
 	</span>
 	<!-- ---- / ---- -->

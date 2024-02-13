@@ -20,6 +20,6 @@
 	<svelte:component this={_icon} class={css} style="font-size: 1.5rem" />
 </span>
 
-<div class="card variant-filled-secondary p-1" data-popup={target}>
+<div class="card variant-filled-secondary z-50 p-1" data-popup={target}>
 	{tooltip}
 </div>

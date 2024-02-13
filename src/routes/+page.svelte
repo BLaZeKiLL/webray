@@ -30,7 +30,9 @@
 		<ProgressRadial meter="stroke-primary-500" track="stroke-primary-500/30" />
 	</div>
 {:else if $editorStore.kernel_state === KernelState.INITIAL}
-	<div class="max-h-full flex flex-row items-center gap-2 h4">Press <WebrayIcon icon="i_render" tooltip="" /> to render an image</div>
+	<div class="h4 flex max-h-full flex-row items-center gap-2">
+		Press <WebrayIcon icon="i_render" tooltip="" /> to render an image
+	</div>
 {/if}
 
 {#if $editorStore.output_view === OutputView.FULLSCREEN}
