@@ -2,7 +2,7 @@
 resolver = "2"
 
 members = [
-  "webray"
+  "webray","webray-cli"
 ]
 
 [profile.dev]

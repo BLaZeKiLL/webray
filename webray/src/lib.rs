@@ -33,8 +33,6 @@ pub fn initialize_kernel() {
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 pub fn render(value: JsValue) -> js_sys::Promise {
-    use scene::types::WScene;
-
     let scene = serde_wasm_bindgen::from_value::<WScene>(value).unwrap();
 
     // not sure if the move is required here
@@ -42,11 +40,6 @@ pub fn render(value: JsValue) -> js_sys::Promise {
         run_internal(scene).await;
         return Ok(JsValue::TRUE);
     });
-}
-
-#[cfg(not(target_arch = "wasm32"))]
-pub fn render() {
-    pollster::block_on(run_internal());
 }
 
 #[cfg(target_arch = "wasm32")]
@@ -57,6 +50,13 @@ pub fn parse_scene(value: JsValue) {
     let scene = serde_wasm_bindgen::from_value::<WScene>(value).unwrap();
 
     log::info!("{}", scene);
+}
+
+#[cfg(not(target_arch = "wasm32"))]
+pub fn render(json: String) {
+    let scene = serde_json::from_str::<WScene>(&json).unwrap();
+
+    pollster::block_on(run_internal(scene));
 }
 
 async fn run_internal(scene: WScene) {
