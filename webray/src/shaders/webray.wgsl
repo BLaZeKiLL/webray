@@ -337,7 +337,7 @@ fn hit_spheres(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) ->
     var closest_so_far = ray_limits.max;
 
     // arrayLength returns a u32, so we make i also u32 to make logical operation happy
-    for (var i = 0u; i < arrayLength(&spheres); i++) {
+    for (var i = 0u; i < 5u; i++) {
         let sphere = spheres[i];
 
         if hit_sphere(sphere, ray, Interval(ray_limits.min, closest_so_far), &temp_hit) {
@@ -381,17 +381,16 @@ fn render_ray(ray: Ray) -> vec3f {
 
                 accumulated_color *= attenuation;
             } else { // else should never happen
-                accumulated_color = ERR_COLOR; // break viz
+                accumulated_color = ERR_COLOR;
                 break;
             }
         } else {
-            return ERR_COLOR;
             break;
         }
     }
 
     // number of bounce visualization
-    accumulated_color = vec3f(1.0, 1.0, 1.0) / f32(bounce + 1);
+    // accumulated_color = vec3f(1.0, 1.0, 1.0) / f32(bounce + 1);
 
     // max bounce condition
     if bounce >= config.image.bounces {
