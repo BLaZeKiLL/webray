@@ -313,7 +313,7 @@ fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function,
     if !interval_surrounds(ray_limits, root) {
         root = (-half_b + sqrtd) / a;
         if !interval_surrounds(ray_limits, root) {
-            return true;
+            return false;
         }
     }
 
@@ -381,7 +381,6 @@ fn render_ray(ray: Ray) -> vec3f {
 
                 accumulated_color *= attenuation;
             } else { // else should never happen
-                accumulated_color = ERR_COLOR;
                 break;
             }
         } else {
@@ -390,7 +389,7 @@ fn render_ray(ray: Ray) -> vec3f {
     }
 
     // number of bounce visualization
-    accumulated_color = vec3f(1.0, 1.0, 1.0) / f32(bounce + 1);
+    // accumulated_color = vec3f(1.0, 1.0, 1.0) / f32(bounce + 1);
 
     // max bounce condition
     if bounce >= config.image.bounces {
