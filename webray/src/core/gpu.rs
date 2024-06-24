@@ -19,9 +19,7 @@ impl Gpu {
             .request_device(
                 &wgpu::DeviceDescriptor {
                     label: Some("Main GPU"),
-                    required_features: 
-                        wgpu::Features::default() | 
-                        wgpu::Features::BGRA8UNORM_STORAGE, // TODO: test for webgpu-mobile
+                    required_features: wgpu::Features::default(),
                     required_limits: wgpu::Limits::default(),
                 },
                 None,
