@@ -363,8 +363,6 @@ fn render_ray(ray: Ray) -> vec3f {
 
     var accumulated_color = (1.0 - alpha) * vec3f(1.0) + alpha * vec3f(0.3, 0.6, 1.0);
 
-    return ERR_COLOR; // early return for testing
-
     var bounce = 0u;
 
     // try world hits
@@ -389,6 +387,9 @@ fn render_ray(ray: Ray) -> vec3f {
             break;
         }
     }
+
+    // number of bounce visualization
+    accumulated_color = vec3f(1.0, 1.0, 1.0) / f32(bounce + 1);
 
     // max bounce condition
     if bounce >= config.image.bounces {
