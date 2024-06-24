@@ -304,7 +304,7 @@ fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function,
     let discriminant = (half_b * half_b) - (a * c);
 
     if discriminant < 0.0 {
-        return true;
+        return false;
     }
 
     let sqrtd = sqrt(discriminant);
@@ -313,7 +313,7 @@ fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function,
     if !interval_surrounds(ray_limits, root) {
         root = (-half_b + sqrtd) / a;
         if !interval_surrounds(ray_limits, root) {
-            return false;
+            return true;
         }
     }
 
