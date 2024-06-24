@@ -6,7 +6,7 @@ const ERR_COLOR = vec3f(1.0, 0.0, 1.0);
 
 // UTILS_START
 fn vec3f_len_squared(v: vec3f) -> f32 {
-    return v.x * v.x + v.y * v.y + v.z * v.z;
+    return (v.x * v.x) + (v.y * v.y) + (v.z * v.z);
 }
 
 fn vec3f_near_zero(v: vec3f) -> bool {
@@ -301,10 +301,10 @@ fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function,
     let half_b = dot(origin_to_center, ray.direction);
     let c = vec3f_len_squared(origin_to_center) - sphere.radius * sphere.radius;
 
-    let discriminant = half_b * half_b - a * c;
+    let discriminant = (half_b * half_b) - (a * c);
 
     if discriminant < 0.0 {
-        return false;
+        return true;
     }
 
     let sqrtd = sqrt(discriminant);
@@ -337,7 +337,7 @@ fn hit_spheres(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) ->
     var closest_so_far = ray_limits.max;
 
     // arrayLength returns a u32, so we make i also u32 to make logical operation happy
-    for (var i = 0u; i < 5u; i++) {
+    for (var i = 0u; i < arrayLength(&spheres); i++) {
         let sphere = spheres[i];
 
         if hit_sphere(sphere, ray, Interval(ray_limits.min, closest_so_far), &temp_hit) {
@@ -390,7 +390,7 @@ fn render_ray(ray: Ray) -> vec3f {
     }
 
     // number of bounce visualization
-    // accumulated_color = vec3f(1.0, 1.0, 1.0) / f32(bounce + 1);
+    accumulated_color = vec3f(1.0, 1.0, 1.0) / f32(bounce + 1);
 
     // max bounce condition
     if bounce >= config.image.bounces {
