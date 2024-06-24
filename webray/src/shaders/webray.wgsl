@@ -330,6 +330,7 @@ fn hit_sphere(sphere: Sphere, ray: Ray, ray_limits: Interval, hit: ptr<function,
 
     return true;
 }
+
 fn hit_spheres(ray: Ray, ray_limits: Interval, hit: ptr<function, HitRecord>) -> bool {
     var temp_hit = HitRecord();
     var hit_anything = false;
@@ -380,10 +381,11 @@ fn render_ray(ray: Ray) -> vec3f {
 
                 accumulated_color *= attenuation;
             } else { // else should never happen
-                accumulated_color = ERR_COLOR;
+                accumulated_color = ERR_COLOR; // break viz
                 break;
             }
         } else {
+            return ERR_COLOR;
             break;
         }
     }
