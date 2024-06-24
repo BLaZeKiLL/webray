@@ -236,10 +236,11 @@ impl Kernel {
         return gpu
             .device
             .create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                compilation_options: wgpu::PipelineCompilationOptions::default(),
                 label: Some("Compute pipeline"),
                 layout: Some(&pipeline_layout),
                 module: &shader,
-                entry_point: "main",
+                entry_point: "main"
             });
     }
 
